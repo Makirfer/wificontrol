@@ -239,6 +239,21 @@ public final class RecipeAdapter implements RouterAdapter {
                 case "sha256Hex": out = sha256Hex(fill((String) args.get(0))); break;
                 case "sha1Hex": out = digestHex("SHA-1", fill((String) args.get(0))); break;
                 case "md5Hex": out = digestHex("MD5", fill((String) args.get(0))); break;
+                case "xorChars": {
+                    // Cada carácter XOR un número (p. ej. "0x1f"): ofuscación usada por paneles Askey/Movistar.
+                    String text = fill((String) args.get(0));
+                    int key;
+                    try {
+                        key = Integer.decode(fill((String) args.get(1)).trim());
+                    } catch (NumberFormatException e) {
+                        throw new RecipeException("xorChars: número no válido.");
+                    }
+                    if (key < 0 || key > 0xFFFF) throw new RecipeException("xorChars: número fuera de rango.");
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < text.length(); i++) sb.append((char) (text.charAt(i) ^ key));
+                    out = sb.toString();
+                    break;
+                }
                 case "base64":
                     out = java.util.Base64.getEncoder().encodeToString(
                             fill((String) args.get(0)).getBytes(StandardCharsets.UTF_8));
@@ -403,7 +418,12 @@ public final class RecipeAdapter implements RouterAdapter {
                     cookie = cookieName + "=" + cookieValue + (fixed.isEmpty() ? "" : "; " + fixed);
                 }
                 if (!cookie.isEmpty()) c.setRequestProperty("Cookie", cookie);
-                if (body != null) {
+                if (body == null && "POST".equals(method)) {
+                    // POST sin formulario (como $.post sin datos): cuerpo vacío con Content-Length: 0
+                    c.setDoOutput(true);
+                    c.setFixedLengthStreamingMode(0);
+                    c.getOutputStream().close();
+                } else if (body != null) {
                     byte[] data = body.getBytes(StandardCharsets.UTF_8);
                     c.setDoOutput(true);
                     c.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");

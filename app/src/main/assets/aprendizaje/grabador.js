@@ -128,7 +128,8 @@
 
     // --- foto de la página y scripts propios del panel (ahí suele estar cómo se cifra la contraseña)
     function snapshot() {
-      out({ type: 'page', url: w.location.href, title: d.title, html: cut(d.documentElement ? d.documentElement.outerHTML : ''), t: Date.now() });
+      var html = d.documentElement ? d.documentElement.outerHTML : '';
+      out({ type: 'page', url: w.location.href, title: d.title, html: html.length > 60000 ? html.slice(0, 60000) + '…[recortado]' : html, t: Date.now() });
       var scripts = d.getElementsByTagName('script');
       for (var i = 0; i < scripts.length; i++) {
         var src = scripts[i].src;

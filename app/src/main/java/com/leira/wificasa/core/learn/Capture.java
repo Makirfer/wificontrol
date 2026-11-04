@@ -96,8 +96,33 @@ public final class Capture {
         events.add(new Object[]{step, ev});
     }
 
+    /**
+     * Valores asignados en el código de las páginas a variables con nombre de contraseña o clave
+     * (p. ej. {@code wpaPskKey = htmlDecode('…')} o {@code sPasswd = mess_userpass("…")}).
+     * Los paneles de algunos routers incrustan así la clave WiFi o la de administración.
+     */
+    private static final Pattern SECRET_ASSIGN = Pattern.compile(
+            "\\b[A-Za-z_$]*(?i:password|passwd|psk|wpakey|passphrase|pwd|passw|secret)[A-Za-z_$0-9]*"
+                    + "\\s*[:=]\\s*[A-Za-z_$.]*\\(?[A-Za-z_$.]*\\(?\\s*[\"']([^\"'\\s]{4,})[\"']");
+
+    private void harvest(Object v) {
+        if (v instanceof String) {
+            Matcher m = SECRET_ASSIGN.matcher((String) v);
+            while (m.find()) {
+                String val = m.group(1);
+                // Se descartan selectores y nombres de campos, que no son secretos.
+                if (!val.matches(".*[#\\[\\]$(){}<>=,].*") && !val.matches("(?i).*(password|passwd|psk).*")) addSecret(val);
+            }
+        } else if (v instanceof Map) {
+            for (Object o : ((Map<?, ?>) v).values()) harvest(o);
+        } else if (v instanceof List) {
+            for (Object o : (List<?>) v) harvest(o);
+        }
+    }
+
     /** Grabación saneada, lista para guardar o compartir. */
     public synchronized String sanitizedJson() {
+        for (Object[] e : events) harvest(e[1]);
         Map<String, Object> root = new LinkedHashMap<>();
         root.put("format", FORMAT);
         root.put("date", new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ROOT).format(new Date()));
@@ -129,7 +154,7 @@ public final class Capture {
                 + "3. La contraseña aparece como " + MASK_PASSWORD + " y otros valores sensibles como " + MASK
                 + ". Usa ${cred.password} y ${cred.user}; si la contraseña se cifra o se resume antes de enviarse, "
                 + "deduce cómo a partir de los scripts del panel y usa las funciones permitidas.\n"
-                + "4. Pon \"validation\": {\"status\": \"untested\"} y \"minEngine\": 1.\n"
+                + "4. Pon \"validation\": {\"status\": \"untested\"} y \"minEngine\": 1 (o 2 si usas xorChars).\n"
                 + "5. Rellena \"router\" (vendor, model, commercialName, isps) con lo que se vea en la grabación y añade "
                 + "en \"router.detect\" 1 o 2 expresiones regulares que reconozcan la página de inicio de este modelo.\n"
                 + "6. Declara en \"capabilities\" solo lo que la grabación demuestre que se puede hacer.\n"

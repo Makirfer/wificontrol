@@ -13,6 +13,8 @@ import android.webkit.HttpAuthHandler;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -160,6 +162,24 @@ public class LearnActivity extends Activity {
             public void onPageFinished(WebView view, String url) {
                 view.evaluateJavascript(recorderJs, null);
                 runOnUiThread(() -> updateCounter());
+            }
+
+            /**
+             * Las peticiones que el panel hace mientras carga una página llegan antes que el
+             * grabador. Aquí se anotan al menos su método y su dirección (sin contenido).
+             */
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                try {
+                    String u = request.getUrl().toString();
+                    if (!u.matches("(?i).*\\.(png|gif|jpe?g|svg|ico|css|woff2?|ttf)(\\?.*)?$")) {
+                        capture.record("{\"type\":\"request\",\"method\":" + quote(request.getMethod())
+                                + ",\"url\":" + quote(u) + "}");
+                    }
+                } catch (Exception ignored) {
+                    // solo es una anotación
+                }
+                return null; // la petición sigue su curso normal
             }
 
             @Override

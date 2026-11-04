@@ -1,4 +1,13 @@
-# WiFi Casa 2.4.1
+# WiFi Casa 2.4.2
+
+## Novedades de la 2.4.2
+
+- Modo aprendizaje más seguro: también borra las contraseñas y claves WiFi que algunos paneles
+  llevan escritas dentro de su propio código (p. ej. los Askey de Movistar).
+- La grabación anota también las peticiones que el panel hace mientras carga cada página y
+  guarda las páginas más completas.
+- Motor de recetas v2: nueva función `xorChars` (la usan los routers Askey de Movistar para
+  ofuscar usuario y contraseña).
 
 ## Novedades de la 2.4.1
 

@@ -32,14 +32,14 @@ public final class Recipe {
 
     public static final String FORMAT = "wificasa-recipe/1";
     /** Versión del motor de recetas de esta app. Una receta con "minEngine" mayor se rechaza. */
-    public static final int ENGINE_VERSION = 1;
+    public static final int ENGINE_VERSION = 2;
 
     static final int MAX_STEPS = 60;
     static final int MAX_REGEX = 500;
     static final int MAX_FILE = 256 * 1024;
 
     static final Set<String> STEP_TYPES = set("request", "extract", "fail", "require", "set", "compute", "choose", "call");
-    static final Set<String> FUNCTIONS = set("sha256Hex", "sha1Hex", "md5Hex", "base64", "rsaPkcs1Base64",
+    static final Set<String> FUNCTIONS = set("sha256Hex", "sha1Hex", "md5Hex", "base64", "xorChars", "rsaPkcs1Base64",
             "hexEscapeDecode", "xmlUnescape", "lower", "upper", "repeat");
     static final Set<String> TRANSFORMS = set("xmlUnescape", "hexEscapeDecode", "lower", "upper", "trim");
     static final Set<String> FILTERS = set("url", "lower", "upper", "or", "sha256Hex", "rsa");
@@ -304,7 +304,7 @@ public final class Recipe {
                     if (!FUNCTIONS.contains(fn)) throw new RecipeException(where + ": función no permitida \"" + fn + "\".");
                     if (!(m.get("args") instanceof List)) throw new RecipeException(where + ": \"args\" debe ser una lista.");
                     List<?> args = (List<?>) m.get("args");
-                    int want = fn.equals("rsaPkcs1Base64") || fn.equals("repeat") ? 2 : 1;
+                    int want = fn.equals("rsaPkcs1Base64") || fn.equals("repeat") || fn.equals("xorChars") ? 2 : 1;
                     if (args.size() != want) throw new RecipeException(where + ": " + fn + " necesita " + want + " argumento(s).");
                     for (int i = 0; i < args.size(); i++) {
                         if (!(args.get(i) instanceof String)) throw new RecipeException(where + ": los argumentos deben ser texto.");

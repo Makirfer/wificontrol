@@ -708,6 +708,7 @@
                     "sha1Hex",
                     "md5Hex",
                     "base64",
+                    "xorChars",
                     "rsaPkcs1Base64",
                     "hexEscapeDecode",
                     "xmlUnescape",

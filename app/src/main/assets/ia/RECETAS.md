@@ -118,7 +118,8 @@ con `DOTALL` (el punto también abarca saltos de línea); `group` por defecto es
 
 **Funciones (`compute`)**: `sha256Hex(texto)`, `sha1Hex(texto)`, `md5Hex(texto)`, `base64(texto)`
 (p. ej. para la cabecera `Authorization: Basic …`: `base64("${cred.user}:${cred.password}")` guardado en una
-variable y usado en `headers`), `rsaPkcs1Base64(nombreClave, texto)`,
+variable y usado en `headers`), `xorChars(texto, número)` (cada carácter XOR el número, p. ej. `"0x1f"`;
+necesita `"minEngine": 2`), `rsaPkcs1Base64(nombreClave, texto)`,
 `hexEscapeDecode(texto)` (`\x41` → `A`), `xmlUnescape(texto)`, `lower`, `upper`,
 `repeat(texto, veces)`.
 
