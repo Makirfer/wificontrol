@@ -43,6 +43,7 @@ public final class Capture {
     };
 
     private final String host;
+    private String vendor = "", model = "", isp = "";
     private final List<Object[]> events = new ArrayList<>(); // {paso, Map evento}
     private final Set<String> secrets = new LinkedHashSet<>();
     private final Set<String> scriptsSeen = new HashSet<>();
@@ -53,6 +54,34 @@ public final class Capture {
     public Capture(String host, String knownPassword) {
         this.host = host;
         addSecret(knownPassword);
+    }
+
+    /** Marca, modelo y compañía que indica el usuario (vienen en la pegatina del router). */
+    public synchronized void setRouter(String vendor, String model, String isp) {
+        this.vendor = vendor == null ? "" : vendor.trim();
+        this.model = model == null ? "" : model.trim();
+        this.isp = isp == null ? "" : isp.trim();
+    }
+
+    /** "askey-rtf8316vw" a partir de marca y modelo; "router" si no se conocen. */
+    public synchronized String slug() { return slug(vendor + " " + model); }
+
+    public static String slug(String s) {
+        String n = java.text.Normalizer.normalize(s == null ? "" : s, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9]+", "-").replaceAll("^-+|-+$", "");
+        if (n.length() > 60) n = n.substring(0, 60).replaceAll("-+$", "");
+        return n.isEmpty() ? "router" : n;
+    }
+
+    /** Nombre del archivo de la grabación, p. ej. "grabacion-askey-rtf8316vw-2026-11-04.txt". */
+    public String fileName() {
+        return "grabacion-" + slug() + "-" + new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date()) + ".txt";
+    }
+
+    public synchronized String routerTitle() {
+        String t = (vendor + " " + model).trim();
+        return t.isEmpty() ? "router sin identificar" : t + (isp.isEmpty() ? "" : " (" + isp + ")");
     }
 
     public synchronized void setStep(int s) { step = s; }
@@ -127,6 +156,12 @@ public final class Capture {
         root.put("format", FORMAT);
         root.put("date", new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ROOT).format(new Date()));
         root.put("routerBase", host);
+        Map<String, Object> router = new LinkedHashMap<>();
+        router.put("vendor", vendor);
+        router.put("model", model);
+        router.put("isp", isp);
+        router.put("suggestedId", slug());
+        root.put("router", router);
         List<Object> steps = new ArrayList<>();
         for (String s : STEPS) steps.add(s);
         root.put("steps", steps);
@@ -142,26 +177,58 @@ public final class Capture {
         return Json.write(root);
     }
 
-    /** Texto completo para la IA: instrucciones, documentación del formato, ejemplo y grabación. */
+    /**
+     * Archivo completo para compartir: unas líneas para la persona (qué hacer con él), las
+     * instrucciones para la IA, la documentación del formato, un ejemplo y la grabación.
+     * Está pensado para que funcione con cualquier IA (Claude, ChatGPT, Gemini…).
+     */
     public String promptForAi(String recipeDocs, String exampleRecipe) {
-        return "Eres un asistente que escribe recetas para la app WiFi Casa.\n\n"
-                + "TAREA: a partir de la GRABACIÓN de abajo (lo que hizo el panel web de un router mientras el "
-                + "usuario iniciaba sesión, abría la lista de dispositivos, cortaba Internet a uno, se lo devolvía y "
-                + "cerraba sesión), escribe UNA receta en formato \"wificasa-recipe/1\".\n\n"
-                + "REGLAS:\n"
-                + "1. Responde solo con el JSON de la receta, sin explicaciones ni ``` alrededor.\n"
-                + "2. Usa únicamente los pasos, funciones, filtros y campos de la documentación. No inventes otros.\n"
-                + "3. La contraseña aparece como " + MASK_PASSWORD + " y otros valores sensibles como " + MASK
-                + ". Usa ${cred.password} y ${cred.user}; si la contraseña se cifra o se resume antes de enviarse, "
-                + "deduce cómo a partir de los scripts del panel y usa las funciones permitidas.\n"
-                + "4. Pon \"validation\": {\"status\": \"untested\"} y \"minEngine\": 1 (o 2 si usas xorChars).\n"
-                + "5. Rellena \"router\" (vendor, model, commercialName, isps) con lo que se vea en la grabación y añade "
-                + "en \"router.detect\" 1 o 2 expresiones regulares que reconozcan la página de inicio de este modelo.\n"
-                + "6. Declara en \"capabilities\" solo lo que la grabación demuestre que se puede hacer.\n"
-                + "7. Si falta información para alguna operación, omítela y explica el motivo en \"limitations\".\n\n"
-                + "===== DOCUMENTACIÓN DEL FORMATO =====\n" + recipeDocs + "\n\n"
-                + "===== EJEMPLO DE RECETA COMPLETA (otro router) =====\n" + exampleRecipe + "\n\n"
-                + "===== GRABACIÓN =====\n" + sanitizedJson() + "\n";
+        String id = slug();
+        String line = "==================================================================\n";
+        return line
+                + "GRABACIÓN DE ROUTER PARA WIFI CASA · " + routerTitle() + "\n"
+                + line
+                + "PARA TI (la persona que ha grabado):\n"
+                + "  1. Abre Claude, ChatGPT o Gemini y adjunta este archivo.\n"
+                + "  2. Escribe: «Lee las instrucciones del archivo y hazme la receta».\n"
+                + "  3. Te devolverá un archivo receta-" + id + ".json (o un bloque de texto que empieza por { ).\n"
+                + "  4. En WiFi Casa: Ajustes → Modelo de router → Mi router no está → Importar una receta,\n"
+                + "     y abre ese archivo o pega el texto. La app la probará con tu router.\n"
+                + "  La contraseña del router y las claves WiFi se han borrado de este archivo. Aun así,\n"
+                + "  compártelo solo con la IA.\n\n"
+                + line
+                + "PARA LA IA: INSTRUCCIONES\n"
+                + line
+                + "Eres un asistente que escribe recetas para la app Android WiFi Casa, que pausa y reanuda Internet a\n"
+                + "dispositivos concretos hablando con el panel web del router.\n\n"
+                + "TAREA: a partir de la GRABACIÓN del final (lo que hizo el panel web del router " + routerTitle()
+                + " mientras el usuario seguía 5 pasos: 1 iniciar sesión, 2 abrir la lista de dispositivos, 3 cortar "
+                + "Internet a uno, 4 devolvérselo, 5 cerrar sesión), escribe UNA receta en formato \"wificasa-recipe/1\".\n\n"
+                + "CÓMO ENTREGARLA:\n"
+                + "- Si puedes crear archivos, entrega un archivo descargable llamado receta-" + id + ".json.\n"
+                + "  Si no, responde con el JSON completo dentro de un único bloque de código.\n"
+                + "- Usa \"id\": \"" + id + "\" (marca-modelo en minúsculas con guiones).\n"
+                + "- Después, explica al usuario en 2 o 3 frases sencillas qué hace la receta y qué no.\n\n"
+                + "REGLAS DE LA RECETA:\n"
+                + "1. Usa únicamente los pasos, funciones, filtros y campos de la documentación. No inventes otros.\n"
+                + "2. La contraseña aparece como " + MASK_PASSWORD + " y otros valores sensibles como " + MASK
+                + ". Nunca escribas contraseñas en la receta: usa ${cred.password} y ${cred.user}. Si el panel cifra, "
+                + "resume u ofusca la contraseña antes de enviarla, deduce cómo a partir de sus scripts y usa las "
+                + "funciones permitidas.\n"
+                + "3. Pon \"validation\": {\"status\": \"untested\"}, \"version\": \"0.1.0\" y \"minEngine\": 1 "
+                + "(o 2 si usas xorChars).\n"
+                + "4. Rellena \"router\" (vendor, model, commercialName, isps) y añade en \"router.detect\" 1 o 2 "
+                + "expresiones regulares que reconozcan la página de inicio de este modelo sin iniciar sesión.\n"
+                + "5. Declara en \"capabilities\" solo lo que la grabación demuestre. Para BLOCK/UNBLOCK, comprueba que "
+                + "lo grabado corta de verdad el acceso a Internet del dispositivo (no confundas, por ejemplo, filtros de "
+                + "puente o de VLAN con bloqueos).\n"
+                + "6. Las peticiones que se hacen al cargar una página aparecen como eventos \"request\" (solo método y "
+                + "dirección); su respuesta suele verse en el HTML de la página o deducirse de sus scripts.\n"
+                + "7. Si falta información para alguna operación, omítela, explícalo en \"limitations\" y dile al "
+                + "usuario qué paso concreto debe volver a grabar y dónde buscarlo en el panel.\n\n"
+                + line + "DOCUMENTACIÓN DEL FORMATO\n" + line + recipeDocs + "\n\n"
+                + line + "EJEMPLO DE RECETA COMPLETA (otro router)\n" + line + exampleRecipe + "\n\n"
+                + line + "GRABACIÓN\n" + line + sanitizedJson() + "\n";
     }
 
     // ------------------------------------------------------------------ saneado

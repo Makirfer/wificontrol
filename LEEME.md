@@ -1,4 +1,16 @@
-# WiFi Casa 2.4.2
+# WiFi Casa 2.5
+
+## Novedades de la 2.5
+
+- **Guía paso a paso** del recetario (sale la primera vez y en «📖 Cómo funciona»): buscar en el
+  catálogo, grabar el router, pasárselo a una IA, importar y probar la receta y publicarla.
+- **Archivos con el nombre del router**: al empezar a grabar se piden marca, modelo y compañía
+  (de la pegatina). La grabación se llama `grabacion-marca-modelo-fecha.txt` y la receta
+  `receta-marca-modelo.json`.
+- **La grabación se explica sola**: empieza con unas líneas para la persona (qué hacer con ella)
+  y unas instrucciones completas para cualquier IA (Claude, ChatGPT, Gemini…).
+- **«Compartir con una IA»** envía la grabación como archivo a la app de la IA, con el mensaje
+  ya escrito. Las recetas instaladas también se pueden enviar como archivo.
 
 ## Novedades de la 2.4.2
 

@@ -67,19 +67,64 @@ final class RecipeFlows {
 
     /** Opciones para un router que todavía no está en la app. */
     void showAddRouterMenu() {
+        if (!a.getSharedPreferences("wificasa", Context.MODE_PRIVATE).getBoolean("guia_vista", false)) {
+            a.getSharedPreferences("wificasa", Context.MODE_PRIVATE).edit().putBoolean("guia_vista", true).apply();
+            showGuide();
+            return;
+        }
         String[] items = {
-                "🔎  Buscar en el catálogo",
+                "📖  Cómo funciona (paso a paso)",
+                "🔎  Buscar mi router en el catálogo",
                 "🎓  Aprender un router nuevo (grabar su panel)",
                 "📥  Importar una receta"
         };
         new AlertDialog.Builder(a)
                 .setTitle("Añadir un modelo de router")
                 .setItems(items, (d, w) -> {
-                    if (w == 0) searchCatalog();
-                    else if (w == 1) startLearning();
+                    if (w == 0) showGuide();
+                    else if (w == 1) searchCatalog();
+                    else if (w == 2) startLearning();
                     else importRecipe("");
                 })
                 .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    /** Guía completa: buscar, grabar, pasar a la IA, probar y publicar. */
+    void showGuide() {
+        String text = "WiFi Casa habla con cada modelo de router mediante una «receta». Si la tuya no existe, "
+                + "puedes crearla tú en unos 15 minutos y compartirla con todos.\n\n"
+                + "0 · BUSCA PRIMERO\n"
+                + "Ajustes → Modelo de router → Mi router no está → Buscar en el catálogo. Si tu router aparece, "
+                + "instálalo y listo.\n\n"
+                + "1 · GRABA EL PANEL DE TU ROUTER\n"
+                + "• Conéctate al WiFi de ese router y crea su ubicación (📍) con dirección, usuario y contraseña.\n"
+                + "• Elige «Aprender un router nuevo» y escribe la marca y el modelo de la pegatina.\n"
+                + "• Se abre el panel del router dentro de la app. Sigue los 5 pasos de la barra de arriba y pulsa "
+                + "«Hecho ▶» al terminar cada uno: entrar, ver la lista de aparatos, cortar Internet a uno (que no "
+                + "sea tu móvil), devolvérselo y salir.\n"
+                + "• Busca el bloqueo en apartados como Control parental, Control de acceso o Filtro MAC. Si no lo "
+                + "encuentras, pregúntale a la IA antes de seguir.\n\n"
+                + "2 · PÁSALO A UNA IA\n"
+                + "• Al terminar, pulsa «Compartir con una IA» y elige Claude, ChatGPT o Gemini. El archivo "
+                + "(grabacion-marca-modelo-fecha.txt) ya lleva las instrucciones y no contiene tus contraseñas.\n"
+                + "• Escribe: «Lee las instrucciones del archivo y hazme la receta».\n"
+                + "• La IA te dará un archivo receta-marca-modelo.json o un texto que empieza por { .\n\n"
+                + "3 · IMPÓRTALA Y PRUÉBALA\n"
+                + "• «Importar una receta» → abre el archivo o pega el texto → Validar → Probar.\n"
+                + "• Primero solo lee (no cambia nada). Luego, con tu permiso, corta y devuelve Internet unos "
+                + "segundos a un aparato.\n"
+                + "• Si algo falla, pulsa «Copiar informe», pégaselo a la IA y pide que la corrija.\n\n"
+                + "4 · COMPÁRTELA\n"
+                + "• Si todo sale bien, pulsa «Publicar». Se abre GitHub con el formulario preparado: pega la "
+                + "receta (ya está copiada) y envía. Necesitas una cuenta gratuita de GitHub.\n"
+                + "• Se valida sola y, cuando se aprueba, cualquiera con tu router la encontrará en el catálogo.";
+        new AlertDialog.Builder(a)
+                .setTitle("Cómo añadir tu router")
+                .setView(scrollText(text))
+                .setPositiveButton("Buscar en el catálogo", (d, w) -> searchCatalog())
+                .setNeutralButton("Grabar mi router", (d, w) -> startLearning())
+                .setNegativeButton("Cerrar", null)
                 .show();
     }
 
@@ -160,23 +205,60 @@ final class RecipeFlows {
     // ================================================================== aprender
 
     void startLearning() {
-        RouterCredentials c = host.credentials();
+        final RouterCredentials c = host.credentials();
+        LinearLayout box = box();
+        TextView t = new TextView(a);
+        t.setText("Mira la pegatina del router (debajo o detrás). Con estos datos se nombrarán la grabación y la "
+                + "receta, para que otros usuarios la encuentren.");
+        t.setTextColor(Color.parseColor("#6B665E"));
+        box.addView(t);
+        final EditText vendor = field(box, "Marca (p. ej. Askey, ZTE, TP-Link)");
+        final EditText model = field(box, "Modelo (p. ej. RTF8316VW, Archer C6)");
+        final EditText isp = field(box, "Compañía, si es de una (p. ej. Movistar)");
         new AlertDialog.Builder(a)
                 .setTitle("Aprender un router nuevo")
+                .setView(box)
+                .setPositiveButton("Siguiente", (d, w) -> {
+                    String v = vendor.getText().toString().trim(), m = model.getText().toString().trim();
+                    if (v.isEmpty() || m.isEmpty()) {
+                        Toast.makeText(a, "Escribe al menos la marca y el modelo.", Toast.LENGTH_LONG).show();
+                        startLearning();
+                        return;
+                    }
+                    confirmLearning(c, v, m, isp.getText().toString().trim());
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void confirmLearning(RouterCredentials c, String vendor, String model, String isp) {
+        new AlertDialog.Builder(a)
+                .setTitle(vendor + " " + model)
                 .setMessage("Se abrirá el panel de tu router dentro de la app y te guiaré en 5 pasos: entrar, "
                         + "ver los aparatos, cortar Internet a uno, devolvérselo y salir.\n\n"
                         + "La app graba lo que hace el panel para poder escribir su receta. La contraseña y las "
                         + "claves WiFi se borran de la grabación. Nada se envía a ningún sitio hasta que tú decidas "
                         + "compartirla.\n\n"
-                        + "Hazlo conectado al WiFi de ese router.")
+                        + "Hazlo conectado al WiFi de ese router, y no cortes Internet a tu propio móvil.")
                 .setPositiveButton("Empezar", (d, w) -> {
                     Intent i = new Intent(a, LearnActivity.class);
                     i.putExtra(LearnActivity.EXTRA_HOST, c == null ? "192.168.1.1" : c.host);
                     if (c != null) i.putExtra(LearnActivity.EXTRA_PASSWORD, c.password);
+                    i.putExtra(LearnActivity.EXTRA_VENDOR, vendor);
+                    i.putExtra(LearnActivity.EXTRA_MODEL, model);
+                    i.putExtra(LearnActivity.EXTRA_ISP, isp);
                     a.startActivity(i);
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
+    }
+
+    private EditText field(LinearLayout box, String hint) {
+        EditText e = new EditText(a);
+        e.setHint(hint);
+        e.setInputType(InputType.TYPE_CLASS_TEXT);
+        box.addView(e);
+        return e;
     }
 
     // ================================================================== importar
@@ -352,11 +434,24 @@ final class RecipeFlows {
             b.setMessage(fin.displayName() + " ya se usa en esta ubicación.\n\n¿La compartes en el catálogo para que "
                     + "otros usuarios con este router puedan usarla?");
             b.setPositiveButton("Publicar", (d, w) -> publish(fin, rep));
+            b.setNeutralButton("Enviar archivo", (d, w) -> shareRecipe(fin));
             b.setNegativeButton("Ahora no", null);
         } else {
             b.setPositiveButton("Vale", null);
+            if (imported) b.setNeutralButton("Enviar archivo", (d, w) -> shareRecipe(fin));
         }
         b.show();
+    }
+
+    /** Envía la receta como archivo receta-<id>.json (a otra persona, a la IA para mejorarla…). */
+    private void shareRecipe(RecipeAdapter ad) {
+        String text = recipes.installedText(ad.recipe().id());
+        if (text == null) return;
+        try {
+            ShareProvider.shareText(a, "receta-" + ad.recipe().id() + ".json", text, null, "Enviar receta");
+        } catch (Exception e) {
+            info("Enviar receta", "⚠ " + e.getMessage());
+        }
     }
 
     // ================================================================== publicar
@@ -371,11 +466,14 @@ final class RecipeFlows {
         copy(text);
         new AlertDialog.Builder(a)
                 .setTitle("Publicar en el catálogo")
-                .setMessage("He copiado la receta. Se abrirá GitHub con el formulario ya preparado:\n\n"
-                        + "1. Inicia sesión en GitHub (o crea una cuenta gratis).\n"
+                .setMessage("He copiado la receta. Se abrirá GitHub con el formulario «Nueva receta» ya preparado "
+                        + "(título e informe de pruebas):\n\n"
+                        + "1. Inicia sesión en GitHub (o crea una cuenta gratis en github.com).\n"
                         + "2. Mantén pulsado el recuadro «Receta» y elige Pegar.\n"
-                        + "3. Pulsa «Create» o «Submit new issue».\n\n"
-                        + "El catálogo la validará solo y te avisará cuando esté publicada.")
+                        + "3. Marca la casilla de confirmación y pulsa «Create» (o «Submit new issue»).\n\n"
+                        + "En un par de minutos verás en esa misma página si la receta es válida. Cuando se apruebe, "
+                        + "aparecerá en el catálogo para todos los usuarios con un " + ad.recipe().displayName()
+                        + ".")
                 .setPositiveButton("Abrir GitHub", (d, w) ->
                         a.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Catalog.publishUrl(ad.recipe(), rep.text())))))
                 .setNegativeButton("Cancelar", null)

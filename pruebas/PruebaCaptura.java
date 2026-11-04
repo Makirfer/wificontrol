@@ -31,8 +31,16 @@ public class PruebaCaptura {
         ok(out.contains("doLogin") , "se conserva el script propio del panel");
         ok(!out.contains("libreria"), "no se graban librerías conocidas (jquery…)");
         ok(out.contains("\"step\":3"), "cada anotación lleva el paso en que se hizo");
-        String prompt = c.promptForAi("DOCS", "EJEMPLO");
+        c.setRouter("Askey", "RTF8316VW", "Movistar");
+        ok(c.fileName().startsWith("grabacion-askey-rtf8316vw-") && c.fileName().endsWith(".txt"),
+                "nombre del archivo con marca y modelo: " + c.fileName());
+        ok(Capture.slug("TP-Link Archer C6 (EU) v3.2").equals("tp-link-archer-c6-eu-v3-2") && Capture.slug("Zyxel Ñandú").equals("zyxel-nandu"),
+                "identificador limpio a partir de la marca y el modelo");
+                String prompt = c.promptForAi("DOCS", "EJEMPLO");
         ok(prompt.contains("wificasa-recipe/1") && prompt.endsWith("\n") && prompt.contains("DOCS"), "instrucciones para la IA preparadas");
+        ok(prompt.startsWith("====") && prompt.contains("PARA TI") && prompt.contains("PARA LA IA"), "el archivo explica qué hacer a la persona y a la IA");
+        ok(prompt.contains("receta-askey-rtf8316vw.json") && prompt.contains("\"id\": \"askey-rtf8316vw\""), "la IA debe nombrar la receta con el modelo");
+        ok(out.contains("\"model\":\"") || c.sanitizedJson().contains("\"model\":\"RTF8316VW\""), "la grabación incluye marca y modelo");
         System.out.println(f == 0 ? "TODO CORRECTO" : f + " FALLOS");
         System.exit(f);
     }

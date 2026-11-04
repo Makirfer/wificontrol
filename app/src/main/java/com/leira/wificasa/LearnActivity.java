@@ -40,6 +40,9 @@ public class LearnActivity extends Activity {
 
     public static final String EXTRA_HOST = "host";
     public static final String EXTRA_PASSWORD = "password";
+    public static final String EXTRA_VENDOR = "vendor";
+    public static final String EXTRA_MODEL = "model";
+    public static final String EXTRA_ISP = "isp";
 
     private static final int REQ_SAVE = 41;
     private static final int C_BAR = Color.parseColor("#1F1D1A");
@@ -70,6 +73,8 @@ public class LearnActivity extends Activity {
         host = host.trim();
         if (!host.startsWith("http://") && !host.startsWith("https://")) host = "http://" + host;
         capture = new Capture(host, getIntent().getStringExtra(EXTRA_PASSWORD));
+        capture.setRouter(getIntent().getStringExtra(EXTRA_VENDOR), getIntent().getStringExtra(EXTRA_MODEL),
+                getIntent().getStringExtra(EXTRA_ISP));
         recorderJs = asset("aprendizaje/grabador.js");
         buildUi();
         showStep();
@@ -227,13 +232,18 @@ public class LearnActivity extends Activity {
     private void finishRecording() {
         final String text = capture.promptForAi(asset("ia/RECETAS.md"), asset("recetas/zte-zxhn-f6640p.json"));
         new AlertDialog.Builder(this)
-                .setTitle("Grabación lista")
-                .setMessage(capture.count() + " anotaciones. Se han borrado la contraseña y los campos que parecen "
-                        + "claves; aun así, revisa el archivo antes de compartirlo.\n\n"
-                        + "Siguiente paso: pásale el archivo a Claude u otra IA y pídele la receta. Después, en "
-                        + "Ajustes → Modelo de router → Importar receta, pega lo que te devuelva.")
-                .setPositiveButton("Guardar archivo", (d, w) -> save(text))
-                .setNeutralButton("Compartir", (d, w) -> share(text))
+                .setTitle("Grabación lista · " + capture.routerTitle())
+                .setMessage(capture.count() + " anotaciones en «" + capture.fileName() + "». La contraseña del router "
+                        + "y las claves WiFi se han borrado.\n\n"
+                        + "Siguientes pasos:\n"
+                        + "1. Pulsa «Compartir con una IA» y elige Claude, ChatGPT o Gemini. El archivo ya lleva las "
+                        + "instrucciones; si te pide un mensaje, escribe: «Lee las instrucciones del archivo y hazme "
+                        + "la receta».\n"
+                        + "2. Guarda la receta que te devuelva (receta-" + capture.slug() + ".json) o copia su texto.\n"
+                        + "3. En WiFi Casa: Ajustes → Modelo de router → Mi router no está → Importar una receta.\n\n"
+                        + "También puedes guardar el archivo en el móvil para hacerlo más tarde.")
+                .setPositiveButton("Compartir con una IA", (d, w) -> share(text))
+                .setNeutralButton("Guardar en el móvil", (d, w) -> save(text))
                 .setNegativeButton("Seguir grabando", null)
                 .show();
     }
@@ -243,22 +253,20 @@ public class LearnActivity extends Activity {
         Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         i.addCategory(Intent.CATEGORY_OPENABLE);
         i.setType("text/plain");
-        i.putExtra(Intent.EXTRA_TITLE, "grabacion-router-wificasa.txt");
+        i.putExtra(Intent.EXTRA_TITLE, capture.fileName());
         startActivityForResult(i, REQ_SAVE);
     }
 
     private void share(String text) {
-        if (text.length() > 400_000) {
-            Toast.makeText(this, "La grabación es grande: guárdala como archivo y compártelo desde ahí.",
+        try {
+            ShareProvider.shareText(this, capture.fileName(), text,
+                    "Lee las instrucciones del archivo y hazme la receta de WiFi Casa para mi router "
+                            + capture.routerTitle() + ".", "Compartir con una IA");
+        } catch (Exception e) {
+            Toast.makeText(this, "⚠ No se pudo compartir (" + e.getMessage() + "). Guárdalo en el móvil.",
                     Toast.LENGTH_LONG).show();
             save(text);
-            return;
         }
-        Intent i = new Intent(Intent.ACTION_SEND);
-        i.setType("text/plain");
-        i.putExtra(Intent.EXTRA_SUBJECT, "Grabación del router para WiFi Casa");
-        i.putExtra(Intent.EXTRA_TEXT, text);
-        startActivity(Intent.createChooser(i, "Compartir grabación"));
     }
 
     @Override
