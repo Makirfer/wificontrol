@@ -1,0 +1,753 @@
+package com.leira.wificasa;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
+import android.text.InputType;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.leira.wificasa.core.AccessState;
+import com.leira.wificasa.core.AdapterRegistry;
+import com.leira.wificasa.core.Capability;
+import com.leira.wificasa.core.NetDevice;
+import com.leira.wificasa.core.RouterAdapter;
+import com.leira.wificasa.core.RouterCredentials;
+import com.leira.wificasa.core.RouterEngine;
+import com.leira.wificasa.core.SessionExpiredException;
+import com.leira.wificasa.data.Location;
+import com.leira.wificasa.data.LocationStore;
+import com.leira.wificasa.data.RecipeStore;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+/**
+ * Pantalla principal. Solo se ocupa de la interfaz: el acceso al router pasa por
+ * {@link RouterEngine} y el adaptador de cada ubicación; los datos, por {@link LocationStore}.
+ */
+public class MainActivity extends Activity {
+
+    private static final int C_BG = Color.parseColor("#F4F1EC");
+    private static final int C_CARD = Color.WHITE;
+    private static final int C_TEXT = Color.parseColor("#1F1D1A");
+    private static final int C_MUTED = Color.parseColor("#6B665E");
+    private static final int C_RED = Color.parseColor("#C0392B");
+    private static final int C_GREEN = Color.parseColor("#2E7D4F");
+    private static final int C_ACCENT = Color.parseColor("#E8590C");
+    private static final int C_CHIP = Color.parseColor("#E6E1D8");
+
+    private final ExecutorService worker = Executors.newSingleThreadExecutor();
+    private LocationStore store;
+    private Location loc;
+    private LinearLayout listBox;
+    private TextView statusView, hintView, groupInfoView;
+    private Button locationBtn, studyOnBtn, studyOffBtn, refreshBtn;
+    private List<NetDevice> devices = new ArrayList<>();
+    /** MAC de los dispositivos que el router ha listado en la última consulta correcta. */
+    private Set<String> present = new java.util.HashSet<>();
+    private boolean busy = false;
+    private RecipeFlows flows;
+
+    // ------------------------------------------------------------------ ciclo de vida
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        RecipeStore recipeStore = new RecipeStore(this);
+        recipeStore.registerAll();
+        store = new LocationStore(this);
+        flows = new RecipeFlows(this, new RecipeFlows.Host() {
+            @Override
+            public RouterCredentials credentials() {
+                return loc != null && store.hasPassword(loc) ? store.credentials(loc) : null;
+            }
+
+            @Override
+            public void useAdapter(String adapterId) {
+                Location l = store.get(loc.id);
+                l.adapterId = adapterId;
+                try {
+                    store.save(l, null);
+                } catch (Exception ignored) {
+                    // sin cambio de contraseña: no puede fallar el cifrado
+                }
+                switchTo(l);
+                refresh();
+            }
+        }, worker, recipeStore);
+        buildUi();
+        loc = store.current();
+        if (loc == null) {
+            loc = store.create("Casa");
+            store.setCurrent(loc.id);
+            onLocationChanged();
+            showSettings(true);
+        } else {
+            onLocationChanged();
+            if (!store.hasPassword(loc)) showSettings(true); else refresh();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        flows.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onDestroy() {
+        worker.shutdownNow();
+        super.onDestroy();
+    }
+
+    // ------------------------------------------------------------------ interfaz
+
+    private int dp(int v) {
+        return Math.round(v * getResources().getDisplayMetrics().density);
+    }
+
+    private GradientDrawable rounded(int color, int radiusDp) {
+        GradientDrawable g = new GradientDrawable();
+        g.setColor(color);
+        g.setCornerRadius(dp(radiusDp));
+        return g;
+    }
+
+    private Button bigButton(String text, int color) {
+        Button b = new Button(this);
+        b.setText(text);
+        b.setAllCaps(false);
+        b.setTextColor(Color.WHITE);
+        b.setTextSize(17);
+        b.setTypeface(Typeface.DEFAULT_BOLD);
+        b.setBackground(rounded(color, 14));
+        b.setPadding(dp(12), dp(16), dp(12), dp(16));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.topMargin = dp(10);
+        b.setLayoutParams(lp);
+        return b;
+    }
+
+    private Button smallButton(String text) {
+        Button b = new Button(this);
+        b.setText(text);
+        b.setAllCaps(false);
+        b.setTextColor(C_TEXT);
+        b.setBackground(rounded(C_CHIP, 10));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        lp.setMargins(dp(4), 0, dp(4), 0);
+        b.setLayoutParams(lp);
+        return b;
+    }
+
+    private void buildUi() {
+        ScrollView scroll = new ScrollView(this);
+        scroll.setBackgroundColor(C_BG);
+        scroll.setFillViewport(true);
+
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(dp(16), dp(24), dp(16), dp(24));
+        scroll.addView(root, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        LinearLayout header = new LinearLayout(this);
+        header.setOrientation(LinearLayout.HORIZONTAL);
+        header.setGravity(Gravity.CENTER_VERTICAL);
+        TextView title = new TextView(this);
+        title.setText("WiFi Casa");
+        title.setTextSize(28);
+        title.setTypeface(Typeface.DEFAULT_BOLD);
+        title.setTextColor(C_TEXT);
+        title.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        header.addView(title);
+        locationBtn = new Button(this);
+        locationBtn.setAllCaps(false);
+        locationBtn.setTextColor(C_TEXT);
+        locationBtn.setBackground(rounded(C_CHIP, 20));
+        locationBtn.setPadding(dp(14), dp(6), dp(14), dp(6));
+        locationBtn.setOnClickListener(v -> { if (!busy) chooseLocation(); });
+        header.addView(locationBtn);
+        root.addView(header);
+
+        statusView = new TextView(this);
+        statusView.setTextColor(C_MUTED);
+        statusView.setTextSize(14);
+        statusView.setPadding(0, dp(4), 0, dp(6));
+        root.addView(statusView);
+
+        studyOnBtn = bigButton("⏸  Pausar Internet", C_RED);
+        studyOnBtn.setOnClickListener(v -> applyStudy(true));
+        root.addView(studyOnBtn);
+
+        studyOffBtn = bigButton("▶  Reanudar Internet", C_GREEN);
+        studyOffBtn.setOnClickListener(v -> applyStudy(false));
+        root.addView(studyOffBtn);
+
+        groupInfoView = new TextView(this);
+        groupInfoView.setTextColor(C_MUTED);
+        groupInfoView.setTextSize(13);
+        groupInfoView.setGravity(Gravity.CENTER_HORIZONTAL);
+        groupInfoView.setPadding(0, dp(6), 0, 0);
+        root.addView(groupInfoView);
+
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setPadding(0, dp(14), 0, dp(6));
+        refreshBtn = smallButton("⟳  Actualizar");
+        refreshBtn.setOnClickListener(v -> refresh());
+        Button settingsBtn = smallButton("⚙  Ajustes");
+        settingsBtn.setOnClickListener(v -> { if (!busy) showSettings(false); });
+        row.addView(refreshBtn);
+        row.addView(settingsBtn);
+        root.addView(row);
+
+        hintView = new TextView(this);
+        hintView.setTextColor(C_MUTED);
+        hintView.setTextSize(13);
+        hintView.setPadding(dp(2), dp(6), dp(2), dp(4));
+        root.addView(hintView);
+
+        listBox = new LinearLayout(this);
+        listBox.setOrientation(LinearLayout.VERTICAL);
+        root.addView(listBox);
+
+        setContentView(scroll);
+    }
+
+    private void setBusy(boolean b, String msg) {
+        busy = b;
+        if (msg != null) statusView.setText(msg);
+        studyOnBtn.setEnabled(!b);
+        studyOffBtn.setEnabled(!b);
+        refreshBtn.setEnabled(!b);
+        locationBtn.setEnabled(!b);
+        studyOnBtn.setAlpha(b ? 0.5f : 1f);
+        studyOffBtn.setAlpha(b ? 0.5f : 1f);
+        for (int i = 0; i < listBox.getChildCount(); i++) {
+            listBox.getChildAt(i).setEnabled(!b);
+        }
+    }
+
+    /** Ajusta la pantalla a la ubicación actual y a lo que su router permite. */
+    private void onLocationChanged() {
+        locationBtn.setText("📍 " + loc.name + "  ▾");
+        boolean canSwitch = canSwitch();
+        studyOnBtn.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
+        studyOffBtn.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
+        groupInfoView.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
+        String g = store.groupName(loc);
+        studyOnBtn.setText(g.isEmpty() ? "⏸  Pausar Internet" : "⏸  Pausar: " + g);
+        studyOffBtn.setText(g.isEmpty() ? "▶  Reanudar Internet" : "▶  Reanudar: " + g);
+        hintView.setText(canSwitch
+                ? "Toca un dispositivo para ponerle nombre e incluirlo en la pausa."
+                : "Este router solo permite consultar los dispositivos.");
+        // Se muestran enseguida los dispositivos recordados; Actualizar trae el estado real.
+        devices = store.knownDevices(loc);
+        present = new java.util.HashSet<>();
+        statusView.setText(devices.isEmpty() ? adapter().displayName()
+                : "Último estado conocido · pulsa Actualizar para comprobarlo");
+        renderList();
+    }
+
+    // ------------------------------------------------------------------ datos
+
+    private RouterAdapter adapter() { return AdapterRegistry.get(loc.adapterId); }
+
+    private boolean canSwitch() {
+        Set<Capability> c = adapter().capabilities();
+        return c.contains(Capability.BLOCK) && c.contains(Capability.UNBLOCK);
+    }
+
+    private String alias(NetDevice d) { return store.alias(loc, d.mac); }
+
+    private String displayName(NetDevice d) {
+        String a = alias(d);
+        return a.isEmpty() ? (d.hostName.isEmpty() ? d.mac : d.hostName) : a;
+    }
+
+    // ------------------------------------------------------------------ acciones
+
+    /**
+     * Ejecuta un trabajo en segundo plano y después lee el estado de todos los dispositivos.
+     *
+     * Si el trabajo cambia algo en el router ({@code writes}), la lista se lee en una sesión
+     * NUEVA: el ZTE responde "SessionTimeout" al listar en la misma sesión después de guardar
+     * un cambio. Si solo falla esa lectura final, el cambio ya está hecho y así se indica.
+     */
+    private void runJob(String workingMsg, boolean writes, RouterEngine.Job<String> job) {
+        if (busy) return;
+        setBusy(true, workingMsg);
+        final Location jobLoc = loc;
+        final RouterEngine engine = new RouterEngine(adapter(), store.credentials(jobLoc));
+        worker.execute(() -> {
+            String result;
+            List<NetDevice> fresh = null;
+            try {
+                if (writes) {
+                    result = engine.run(job);
+                    try {
+                        fresh = engine.run(ops -> ops.listarConEstado());
+                    } catch (Exception e) {
+                        result += "\n(El cambio está hecho, pero no se pudo refrescar la lista: pulsa Actualizar.)";
+                    }
+                } else {
+                    final List<NetDevice> holder = new ArrayList<>();
+                    result = engine.run(ops -> {
+                        String r = job.run(ops);
+                        holder.addAll(ops.listarConEstado());
+                        return r;
+                    });
+                    fresh = holder;
+                }
+            } catch (Exception e) {
+                result = "⚠ " + e.getMessage();
+            }
+            final String msg = result;
+            final List<NetDevice> list = fresh;
+            runOnUiThread(() -> {
+                if (isFinishing()) return;
+                if (list != null) store.rememberDevices(jobLoc, list, System.currentTimeMillis());
+                if (list != null && jobLoc.id.equals(loc.id)) {
+                    present = new java.util.HashSet<>();
+                    for (NetDevice d : list) present.add(d.mac);
+                    devices = merge(list, store.knownDevices(jobLoc));
+                }
+                setBusy(false, msg);
+                renderList();
+                if (msg != null && msg.startsWith("⚠")) {
+                    Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+                }
+            });
+        });
+    }
+
+    private void refresh() {
+        runJob("Conectando con el router de " + loc.name + "…", false, ops -> "Actualizado: " + nowText());
+    }
+
+    private void applyStudy(boolean block) {
+        final Set<String> study = store.studySet(loc);
+        if (study.isEmpty()) {
+            Toast.makeText(this, "Primero toca los dispositivos que quieras y márcalos con «Incluir en la pausa».",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        runJob(block ? "Cortando Internet a los dispositivos marcados…" : "Devolviendo Internet…", true, ops -> {
+            int n = 0;
+            List<String> errors = new ArrayList<>();
+            final String[] firstError = new String[1];
+            // Se lista una sola vez: tras guardar un cambio, el ZTE no deja listar en la misma sesión.
+            Set<String> listed = new java.util.HashSet<>();
+            for (NetDevice d : ops.listarDispositivos()) {
+                listed.add(d.mac);
+                if (!study.contains(d.mac)) continue;
+                try {
+                    if (block) ops.bloquearDispositivo(d); else ops.desbloquearDispositivo(d);
+                    n++;
+                } catch (SessionExpiredException e) {
+                    throw e; // el motor inicia sesión de nuevo y repite toda la pausa
+                } catch (Exception e) {
+                    errors.add(displayName(d));
+                    if (firstError[0] == null) firstError[0] = e.getMessage();
+                }
+            }
+            if (!errors.isEmpty()) {
+                throw new Exception("No se pudo cambiar: " + String.join(", ", errors) + " (" + firstError[0] + ")");
+            }
+            if (n == 0) return "Ningún dispositivo marcado está en la lista del router ahora mismo.";
+            int skipped = 0;
+            for (String mac : study) if (!listed.contains(mac)) skipped++;
+            return (block ? "⏸ Internet pausado (" : "▶ Internet reanudado (") + n + " dispositivo"
+                    + (n == 1 ? "" : "s") + ") · " + nowText()
+                    + (skipped > 0 ? "\n" + skipped + " marcado(s) no aparecen ahora en el router y no se han tocado." : "");
+        });
+    }
+
+    private void toggleDevice(NetDevice target, boolean block) {
+        runJob((block ? "Cortando Internet a " : "Devolviendo Internet a ") + displayName(target) + "…", true, ops -> {
+            NetDevice d = ops.buscar(target.mac);
+            // Si ya no aparece en la lista, se intenta igualmente con los datos que teníamos.
+            if (d == null) d = target;
+            if (block) ops.bloquearDispositivo(d); else ops.desbloquearDispositivo(d);
+            return displayName(d) + (block ? ": sin Internet" : ": con Internet") + " · " + nowText();
+        });
+    }
+
+    /** Lista del router + los recordados que el router ya no muestra. */
+    private static List<NetDevice> merge(List<NetDevice> fromRouter, List<NetDevice> known) {
+        List<NetDevice> out = new ArrayList<>(fromRouter);
+        Set<String> macs = new java.util.HashSet<>();
+        for (NetDevice d : fromRouter) macs.add(d.mac);
+        for (NetDevice d : known) if (!macs.contains(d.mac)) out.add(d);
+        return out;
+    }
+
+    private boolean isPresent(NetDevice d) { return present.contains(d.mac); }
+
+    private String lastSeenText(NetDevice d) {
+        if (d.lastSeenMs <= 0) return "sin datos";
+        java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("dd/MM HH:mm", java.util.Locale.getDefault());
+        return "visto por última vez " + f.format(new java.util.Date(d.lastSeenMs));
+    }
+
+    private String nowText() {
+        java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault());
+        return f.format(new java.util.Date());
+    }
+
+    // ------------------------------------------------------------------ lista
+
+    private void renderList() {
+        listBox.removeAllViews();
+        List<NetDevice> sorted = new ArrayList<>(devices);
+        final Set<String> study = store.studySet(loc);
+        int nStudy = study.size();
+        groupInfoView.setText(nStudy == 0 ? "Aún no hay dispositivos en la pausa: tócalos en la lista para añadirlos."
+                : "Afecta a " + nStudy + " dispositivo" + (nStudy == 1 ? "" : "s") + " marcado" + (nStudy == 1 ? "" : "s"));
+        Collections.sort(sorted, new Comparator<NetDevice>() {
+            @Override
+            public int compare(NetDevice a, NetDevice b) {
+                int sa = study.contains(a.mac) ? 0 : 1, sb = study.contains(b.mac) ? 0 : 1;
+                if (sa != sb) return sa - sb;
+                int pa = isPresent(a) ? 0 : 1, pb = isPresent(b) ? 0 : 1;
+                if (pa != pb) return pa - pb;
+                int aa = a.active ? 0 : 1, ab = b.active ? 0 : 1;
+                if (aa != ab) return aa - ab;
+                return displayName(a).compareToIgnoreCase(displayName(b));
+            }
+        });
+        if (sorted.isEmpty()) {
+            TextView empty = new TextView(this);
+            empty.setText("Sin datos todavía. Pulsa Actualizar estando conectado al WiFi de " + loc.name + ".");
+            empty.setTextColor(C_MUTED);
+            empty.setPadding(dp(4), dp(16), dp(4), dp(16));
+            listBox.addView(empty);
+            return;
+        }
+        boolean canSwitch = canSwitch();
+        for (NetDevice d : sorted) listBox.addView(deviceCard(d, study.contains(d.mac), canSwitch));
+    }
+
+    private View deviceCard(final NetDevice d, boolean marked, boolean canSwitch) {
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.HORIZONTAL);
+        card.setGravity(Gravity.CENTER_VERTICAL);
+        card.setPadding(dp(14), dp(12), dp(10), dp(12));
+        GradientDrawable bg = rounded(C_CARD, 14);
+        if (marked) bg.setStroke(dp(2), C_ACCENT);
+        card.setBackground(bg);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.topMargin = dp(8);
+        card.setLayoutParams(lp);
+
+        LinearLayout texts = new LinearLayout(this);
+        texts.setOrientation(LinearLayout.VERTICAL);
+        texts.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
+        TextView name = new TextView(this);
+        name.setText((marked ? "⏸ " : "") + displayName(d));
+        name.setTextSize(17);
+        name.setTypeface(Typeface.DEFAULT_BOLD);
+        name.setTextColor(C_TEXT);
+        texts.addView(name);
+
+        TextView sub = new TextView(this);
+        String host = alias(d).isEmpty() ? "" : d.hostName + " · ";
+        if (isPresent(d)) {
+            sub.setText(host + d.ip + (d.active ? " · conectado" : " · no conectado"));
+        } else {
+            sub.setText(host + (d.ip.isEmpty() ? "" : d.ip + " · ") + lastSeenText(d));
+        }
+        sub.setTextSize(12);
+        sub.setTextColor(C_MUTED);
+        texts.addView(sub);
+
+        TextView state = new TextView(this);
+        boolean blocked = d.isBlocked();
+        if (d.access == AccessState.SCHEDULED) {
+            state.setText("Con horario programado en el router");
+            state.setTextColor(C_ACCENT);
+        } else if (d.access == AccessState.UNKNOWN) {
+            state.setText("Estado desconocido");
+            state.setTextColor(C_MUTED);
+        } else {
+            state.setText(blocked ? "Sin Internet" : "Con Internet");
+            state.setTextColor(blocked ? C_RED : C_GREEN);
+        }
+        if (!isPresent(d) && d.access != AccessState.UNKNOWN) {
+            state.setText("Último estado: " + state.getText());
+            state.setAlpha(0.7f);
+        }
+        state.setTextSize(14);
+        state.setTypeface(Typeface.DEFAULT_BOLD);
+        state.setPadding(0, dp(4), 0, 0);
+        texts.addView(state);
+
+        card.addView(texts);
+
+        if (canSwitch) {
+            Switch sw = new Switch(this);
+            sw.setChecked(!blocked);
+            sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (busy) {
+                        buttonView.setOnCheckedChangeListener(null);
+                        buttonView.setChecked(!isChecked);
+                        buttonView.setOnCheckedChangeListener(this);
+                        return;
+                    }
+                    toggleDevice(d, !isChecked);
+                }
+            });
+            card.addView(sw);
+        }
+
+        card.setOnClickListener(v -> { if (!busy) editDevice(d); });
+        return card;
+    }
+
+    // ------------------------------------------------------------------ diálogos
+
+    private LinearLayout dialogBox() {
+        LinearLayout box = new LinearLayout(this);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.setPadding(dp(20), dp(8), dp(20), 0);
+        return box;
+    }
+
+    private TextView label(String text) {
+        TextView t = new TextView(this);
+        t.setText(text);
+        t.setTextColor(C_MUTED);
+        t.setPadding(0, dp(10), 0, 0);
+        return t;
+    }
+
+    private void editDevice(final NetDevice d) {
+        LinearLayout box = dialogBox();
+
+        TextView info = new TextView(this);
+        info.setText("Nombre en el router: " + (d.hostName.isEmpty() ? "—" : d.hostName)
+                + "\nIP: " + d.ip + "\nMAC: " + d.mac
+                + (isPresent(d) ? "" : "\n" + lastSeenText(d) + " (el router no lo muestra ahora)"));
+        info.setTextColor(C_MUTED);
+        box.addView(info);
+
+        final EditText name = new EditText(this);
+        name.setHint("Nombre (p. ej. Portátil del cole)");
+        name.setText(alias(d));
+        name.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        box.addView(name);
+
+        final CheckBox study = new CheckBox(this);
+        String g = store.groupName(loc);
+        study.setText(g.isEmpty() ? "Incluir en la pausa" : "Incluir en la pausa «" + g + "»");
+        study.setChecked(store.studySet(loc).contains(d.mac));
+        if (canSwitch()) box.addView(study);
+
+        AlertDialog.Builder b = new AlertDialog.Builder(this)
+                .setTitle("Dispositivo")
+                .setView(box)
+                .setPositiveButton("Guardar", (dialog, which) -> {
+                    store.saveDevice(loc, d.mac, name.getText().toString().trim(), study.isChecked());
+                    renderList();
+                })
+                .setNegativeButton("Cancelar", null);
+        if (!isPresent(d)) {
+            // Solo se pueden olvidar los que el router no está mostrando ahora.
+            b.setNeutralButton("Olvidar", (dialog, which) -> {
+                store.forgetDevice(loc, d.mac);
+                List<NetDevice> rest = new ArrayList<>();
+                for (NetDevice x : devices) if (!x.mac.equals(d.mac)) rest.add(x);
+                devices = rest;
+                renderList();
+            });
+        }
+        b.show();
+    }
+
+    /** Elegir ubicación (casa, segunda residencia…) o crear una nueva. */
+    private void chooseLocation() {
+        final List<Location> all = store.all();
+        String[] items = new String[all.size() + 1];
+        int checked = 0;
+        for (int i = 0; i < all.size(); i++) {
+            items[i] = all.get(i).name;
+            if (all.get(i).id.equals(loc.id)) checked = i;
+        }
+        items[all.size()] = "＋ Nueva ubicación";
+        new AlertDialog.Builder(this)
+                .setTitle("Ubicación")
+                .setSingleChoiceItems(items, checked, (dialog, which) -> {
+                    dialog.dismiss();
+                    if (which == all.size()) {
+                        askNewLocation();
+                    } else {
+                        switchTo(all.get(which));
+                        if (store.hasPassword(loc)) refresh(); else showSettings(true);
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void askNewLocation() {
+        LinearLayout box = dialogBox();
+        final EditText name = new EditText(this);
+        name.setHint("Nombre (p. ej. Segunda residencia)");
+        name.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        box.addView(name);
+        new AlertDialog.Builder(this)
+                .setTitle("Nueva ubicación")
+                .setView(box)
+                .setPositiveButton("Crear", (dialog, which) -> {
+                    String n = name.getText().toString().trim();
+                    switchTo(store.create(n.isEmpty() ? "Ubicación " + (store.all().size() + 1) : n));
+                    showSettings(true);
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void switchTo(Location l) {
+        loc = l;
+        store.setCurrent(l.id);
+        onLocationChanged();
+    }
+
+    private void showSettings(final boolean firstTime) {
+        final Location editing = store.get(loc.id);
+        LinearLayout box = dialogBox();
+
+        TextView info = new TextView(this);
+        info.setText("Datos de acceso al router de esta ubicación. La contraseña se guarda cifrada "
+                + "y solo en este móvil.");
+        info.setTextColor(C_MUTED);
+        box.addView(info);
+
+        box.addView(label("Nombre de la ubicación"));
+        final EditText name = new EditText(this);
+        name.setText(editing.name);
+        name.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        box.addView(name);
+
+        box.addView(label("Modelo de router"));
+        final List<RouterAdapter> adapters = AdapterRegistry.all();
+        final AlertDialog[] settingsDlg = new AlertDialog[1];
+        final Button model = new Button(this);
+        model.setAllCaps(false);
+        model.setText(AdapterRegistry.get(editing.adapterId).displayName() + "  ▾");
+        model.setOnClickListener(v -> {
+            String[] names = new String[adapters.size() + 1];
+            for (int i = 0; i < adapters.size(); i++) names[i] = adapters.get(i).displayName();
+            names[adapters.size()] = "＋ Mi router no está: buscar, aprender o importar…";
+            new AlertDialog.Builder(this).setTitle("Modelo de router")
+                    .setItems(names, (dlg, which) -> {
+                        if (which == adapters.size()) {
+                            if (settingsDlg[0] != null) settingsDlg[0].dismiss();
+                            flows.showAddRouterMenu();
+                            return;
+                        }
+                        editing.adapterId = adapters.get(which).id();
+                        model.setText(names[which] + "  ▾");
+                    }).show();
+        });
+        box.addView(model);
+
+        box.addView(label("Nombre de la pausa (opcional)"));
+        final EditText group = new EditText(this);
+        group.setText(store.groupName(editing));
+        group.setHint("p. ej. Deberes, Hora de cenar");
+        group.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        box.addView(group);
+
+        box.addView(label("Dirección del router"));
+        final EditText host = new EditText(this);
+        host.setText(editing.host);
+        host.setHint(AdapterRegistry.get(editing.adapterId).defaultHost());
+        host.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        box.addView(host);
+
+        box.addView(label("Usuario"));
+        final EditText user = new EditText(this);
+        user.setText(editing.user);
+        user.setHint(AdapterRegistry.get(editing.adapterId).defaultUser());
+        user.setInputType(InputType.TYPE_CLASS_TEXT);
+        box.addView(user);
+
+        box.addView(label("Contraseña del router"));
+        final EditText pass = new EditText(this);
+        final boolean hasPass = store.hasPassword(editing);
+        pass.setHint(hasPass ? "•••••• (guardada; déjalo vacío para no cambiarla)" : "Contraseña");
+        pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        box.addView(pass);
+
+        AlertDialog.Builder b = new AlertDialog.Builder(this)
+                .setTitle(firstTime ? "Configurar router" : "Ajustes de " + editing.name)
+                .setView(box)
+                .setPositiveButton("Guardar", (dialog, which) -> {
+                    RouterAdapter a = AdapterRegistry.get(editing.adapterId);
+                    String n = name.getText().toString().trim();
+                    editing.name = n.isEmpty() ? "Casa" : n;
+                    String h = host.getText().toString().trim();
+                    editing.host = h.isEmpty() ? a.defaultHost() : h;
+                    String u = user.getText().toString().trim();
+                    editing.user = u.isEmpty() ? a.defaultUser() : u;
+                    String p = pass.getText().toString();
+                    try {
+                        store.save(editing, p.isEmpty() && hasPass ? null : p);
+                    } catch (Exception e) {
+                        Toast.makeText(this, "⚠ No se pudo guardar la contraseña cifrada: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    store.setGroupName(editing, group.getText().toString());
+                    switchTo(editing);
+                    refresh();
+                });
+        if (!firstTime) b.setNegativeButton("Cancelar", null);
+        if (store.all().size() > 1) {
+            b.setNeutralButton("Eliminar", (dialog, which) -> confirmDelete(editing));
+        }
+        b.setCancelable(!firstTime);
+        settingsDlg[0] = b.show();
+    }
+
+    private void confirmDelete(final Location l) {
+        new AlertDialog.Builder(this)
+                .setTitle("Eliminar " + l.name)
+                .setMessage("Se borrarán los datos del router, los nombres y la pausa de esta ubicación. "
+                        + "No cambia nada en el router.")
+                .setPositiveButton("Eliminar", (dialog, which) -> {
+                    store.delete(l.id);
+                    switchTo(store.current());
+                    if (store.hasPassword(loc)) refresh();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+}

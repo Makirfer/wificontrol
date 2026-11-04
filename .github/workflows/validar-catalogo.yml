@@ -1,0 +1,26 @@
+name: Validar catálogo
+
+on:
+  pull_request:
+    paths: ["catalogo/**", "docs/receta.schema.json", "app/src/main/java/com/leira/wificasa/core/**"]
+  push:
+    branches: [main]
+    paths: ["catalogo/**", "docs/receta.schema.json"]
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - run: pip install jsonschema
+      - name: Esquema e índice al día
+        run: python3 catalogo/herramientas/generar_indice.py --comprobar
+      - name: Validador de la app
+        run: catalogo/herramientas/validar_java.sh

@@ -1,0 +1,54 @@
+name: Receta desde issue
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  procesar:
+    if: contains(github.event.issue.labels.*.name, 'nueva-receta')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - run: pip install jsonschema
+      - name: Validar la receta del issue
+        id: prep
+        env:
+          CUERPO: ${{ github.event.issue.body }}
+        run: python3 catalogo/herramientas/procesar_issue.py >> "$GITHUB_OUTPUT"
+      - name: Avisar del error
+        if: steps.prep.outputs.ok != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue comment "${{ github.event.issue.number }}" --body-file resultado.md
+      - name: Proponer la incorporación (pull request)
+        if: steps.prep.outputs.ok == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RID: ${{ steps.prep.outputs.id }}
+          VER: ${{ steps.prep.outputs.version }}
+          NUM: ${{ github.event.issue.number }}
+        run: |
+          rama="receta/${RID}-${VER}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$rama"
+          git add catalogo
+          git commit -m "Receta ${RID} ${VER} (#${NUM})"
+          git push -f origin "$rama"
+          gh pr create --title "Receta ${RID} ${VER}" --head "$rama" \
+            --body "Propuesta en #${NUM}. La validación automática es correcta. Al aprobarla, quedará en el catálogo." \
+            || echo "La pull request ya existía; se ha actualizado."
+          gh issue comment "$NUM" --body-file resultado.md

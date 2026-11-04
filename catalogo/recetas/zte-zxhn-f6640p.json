@@ -1,0 +1,473 @@
+{
+  "format": "wificasa-recipe/1",
+  "id": "zte-zxhn-f6640p",
+  "version": "1.0.1",
+  "minEngine": 1,
+  "router": {
+    "vendor": "ZTE",
+    "model": "ZXHN F6640P",
+    "commercialName": "Livebox 6s",
+    "isps": [
+      "Parlem",
+      "Orange"
+    ],
+    "firmware": [
+      "*"
+    ]
+  },
+  "defaults": {
+    "host": "192.168.1.1",
+    "user": "admin"
+  },
+  "capabilities": [
+    "LIST_DEVICES",
+    "READ_ACCESS",
+    "BLOCK",
+    "UNBLOCK"
+  ],
+  "limitations": [
+    "El bloqueo es por MAC: si el dispositivo usa MAC aleatoria, el router lo ve como otro aparato.",
+    "Solo funciona desde la red local del router.",
+    "Escribir el bloqueo sustituye cualquier horario programado en el router para ese dispositivo."
+  ],
+  "validation": {
+    "date": "2026-10-31",
+    "status": "tested-device",
+    "notes": "Probada en un ZTE Livebox 6s real de Parlem: listar, leer estado, cortar y devolver Internet. Antes: produce exactamente las mismas peticiones que el adaptador nativo en el simulador."
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-28",
+      "changes": "Primera versión, equivalente al adaptador nativo de WiFi Casa 1.0."
+    },
+    {
+      "version": "1.0.1",
+      "date": "2026-10-31",
+      "changes": "Validada en un router real (sin cambios en las operaciones)."
+    }
+  ],
+  "http": {
+    "sessionCookie": "SID",
+    "fixedCookies": "_TESTCOOKIESUPPORT=1",
+    "headers": {
+      "X-Requested-With": "XMLHttpRequest",
+      "Referer": "${base}/"
+    }
+  },
+  "keys": {
+    "router": "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAwlo/vZBnSJ2MyJ0dbNcw\nDvzPqBN+O/BPvLX93GIJVSZmquJHD9X6Xn6VYeM9mRKzjEbXPlv73Dj/gjjtNj9j\nTq2QVyW2Sd4ZkY9e3h1ALCCCfkbjnmSqedyrcvXriTeW+J65jhBje6lTJbafmC5q\nbGiItjt0OeOkT+Vb4S7hYPSWIjeYYBh+7Y/fg25Rt2a+RgC8dahvJ3ttB1LHXADr\noCm6q7G+lpbRAlpC8jjc0rZdS0c6HcBoYgzW8vxjj2fTuFy3CZZTrpPyTv/C8K6B\nhjTnjRe6ocgFVyQ0RIYfx2hxSJcuauR57OzfMzlgFQv3RAXguDZtuVUFLO2sAiwL\nELph3Acfy9Eh58SHcswZvsOSXY0JNb0XeRM9gxpntLRfM6TB7f9hYtYTDw5oKdyN\nBY+nnEa/IpBUjndGDrSs3Z4BxRbYcJEwkKQZkvw/5TpQYbkD6sTRVSlZPaXSjeCl\n0hsLCttqwJqRZcjbWXrINBYFw8PYE14Xr9BCyPgqocdQh7FgvasVgG6u5mLR1PBZ\no4EFF/LdY0yvMG5rl9egBk1XD/UMayhRtmSQEUzYt3eEWLBbqJB6MbVJ2ygcv5EL\nReDY0SWXw1PIEbHeP51A/MyB6kwSgZwdoQW3JiaPnGHMaE0NqfAYPNiGJLMsmvT/\nrNUI/8iSCW+WvSzx9tByUxsCAwEAAQ==\n-----END PUBLIC KEY-----"
+  },
+  "operations": {
+    "login": {
+      "steps": [
+        {
+          "request": {
+            "method": "GET",
+            "path": "/"
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "path": "/?_type=loginData&_tag=login_entry",
+            "save": "entry"
+          }
+        },
+        {
+          "fail": {
+            "from": "entry",
+            "regex": "\"lockingTime\"\\s*:\\s*\"?([1-9][0-9]*)",
+            "error": "El router ha bloqueado el acceso temporalmente por demasiados intentos fallidos. Espera ${match} segundos."
+          }
+        },
+        {
+          "extract": {
+            "from": "entry",
+            "regex": "\"sess_token\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"",
+            "save": "formToken",
+            "error": "Respuesta inesperada del router (login_entry)."
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "path": "/?_type=loginData&_tag=login_token&_=${counter}",
+            "save": "tokenXml"
+          }
+        },
+        {
+          "extract": {
+            "from": "tokenXml",
+            "regex": "\\A\\s*(?:<ajax_response_xml_root>)?\\s*(.*?)\\s*(?:</ajax_response_xml_root>)?\\s*\\z",
+            "save": "loginToken"
+          }
+        },
+        {
+          "compute": {
+            "fn": "sha256Hex",
+            "args": [
+              "${cred.password}${loginToken}"
+            ],
+            "save": "passwordHash"
+          }
+        },
+        {
+          "request": {
+            "method": "POST",
+            "path": "/?_type=loginData&_tag=login_entry",
+            "form": [
+              [
+                "action",
+                "login"
+              ],
+              [
+                "Password",
+                "${passwordHash}"
+              ],
+              [
+                "Username",
+                "${cred.user}"
+              ],
+              [
+                "_sessionTOKEN",
+                "${formToken}"
+              ]
+            ],
+            "save": "loginResp"
+          }
+        },
+        {
+          "extract": {
+            "from": "loginResp",
+            "regex": "\"loginErrMsg\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"",
+            "save": "loginErr",
+            "required": false
+          }
+        },
+        {
+          "extract": {
+            "from": "loginResp",
+            "regex": "\"promptMsg\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"",
+            "save": "promptMsg",
+            "required": false
+          }
+        },
+        {
+          "choose": {
+            "if": "loginErr",
+            "equals": "",
+            "then": "${promptMsg|or:usuario o contraseña incorrectos}",
+            "else": "${loginErr}",
+            "save": "loginErrText"
+          }
+        },
+        {
+          "require": {
+            "from": "loginResp",
+            "regex": "\"login_need_refresh\":true",
+            "error": "No se pudo iniciar sesión en el router: ${loginErrText}"
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "path": "/",
+            "save": "home"
+          }
+        },
+        {
+          "extract": {
+            "from": "home",
+            "regex": "_sessionTmpToken\\s*=\\s*\"((?:\\\\x[0-9a-fA-F]{2})+)\"",
+            "occurrence": "last",
+            "transform": [
+              "hexEscapeDecode"
+            ],
+            "save": "sessionToken",
+            "error": "Sesión no válida: el router ha pedido volver a iniciar sesión."
+          }
+        }
+      ]
+    },
+    "logout": {
+      "steps": [
+        {
+          "request": {
+            "method": "POST",
+            "path": "/?_type=loginData&_tag=logout_entry",
+            "form": [
+              [
+                "IF_LogOff",
+                "1"
+              ],
+              [
+                "_sessionTOKEN",
+                "${sessionToken|or:}"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "listDevices": {
+      "steps": [
+        {
+          "request": {
+            "method": "GET",
+            "path": "/?_type=menuData&_tag=osp_home_lua.lua&_=${counter}",
+            "save": "devXml"
+          }
+        },
+        {
+          "fail": {
+            "from": "devXml",
+            "regex": "<IF_ERRORSTR>(?!SUCC</IF_ERRORSTR>)(.*?)</IF_ERRORSTR>",
+            "error": "El router ha respondido con error: ${match}"
+          }
+        },
+        {
+          "fail": {
+            "from": "devXml",
+            "regex": "\\A(?![\\s\\S]*<IF_ERRORSTR>)[\\s\\S]*?(login_entry|Frm_Password)",
+            "error": "Sesión caducada en el router."
+          }
+        }
+      ],
+      "devices": {
+        "from": "devXml",
+        "within": {
+          "regex": "<OBJ_ACCESSDEVEXT_ID>(.*?)</OBJ_ACCESSDEVEXT_ID>",
+          "error": "El router no ha devuelto la lista de dispositivos (¿sesión caducada?)."
+        },
+        "each": "<Instance>(.*?)</Instance>",
+        "fields": {
+          "hostName": {
+            "regex": "<ParaName>HostName</ParaName>\\s*<ParaValue>([^<]*)</ParaValue>",
+            "transform": [
+              "xmlUnescape"
+            ]
+          },
+          "mac": {
+            "regex": "<ParaName>MACAddress</ParaName>\\s*<ParaValue>([^<]*)</ParaValue>",
+            "transform": [
+              "xmlUnescape",
+              "lower"
+            ]
+          },
+          "ip": {
+            "regex": "<ParaName>IPAddress</ParaName>\\s*<ParaValue>([^<]*)</ParaValue>",
+            "transform": [
+              "xmlUnescape"
+            ]
+          },
+          "active": {
+            "regex": "<ParaName>Active</ParaName>\\s*<ParaValue>([^<]*)</ParaValue>",
+            "trueIf": "1"
+          },
+          "extra.devType": {
+            "regex": "<ParaName>DevType</ParaName>\\s*<ParaValue>([^<]*)</ParaValue>",
+            "transform": [
+              "xmlUnescape"
+            ],
+            "default": "1"
+          }
+        }
+      }
+    },
+    "readAccess": {
+      "steps": [
+        {
+          "request": {
+            "method": "GET",
+            "path": "/?_type=menuView&_tag=vmenu-TimeControl&Mac=${device.mac}&DevType=${device.extra.devType|or:1|url}&DevName=${device.hostName|url}&_=${counter}",
+            "save": "rulePage"
+          }
+        },
+        {
+          "extract": {
+            "from": "rulePage",
+            "regex": "_sessionTmpToken\\s*=\\s*\"((?:\\\\x[0-9a-fA-F]{2})+)\"",
+            "occurrence": "last",
+            "transform": [
+              "hexEscapeDecode"
+            ],
+            "save": "sessionToken",
+            "error": "Sesión no válida: el router ha pedido volver a iniciar sesión."
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "path": "/?_type=menuData&_tag=osp_access_restriction_lua.lua&Mac=${device.mac}&_=${counter}",
+            "save": "ruleXml"
+          }
+        },
+        {
+          "fail": {
+            "from": "ruleXml",
+            "regex": "<IF_ERRORSTR>(?!SUCC</IF_ERRORSTR>)(.*?)</IF_ERRORSTR>",
+            "error": "El router ha respondido con error: ${match}"
+          }
+        },
+        {
+          "fail": {
+            "from": "ruleXml",
+            "regex": "\\A(?![\\s\\S]*<IF_ERRORSTR>)[\\s\\S]*?(login_entry|Frm_Password)",
+            "error": "Sesión caducada en el router."
+          }
+        },
+        {
+          "extract": {
+            "from": "ruleXml",
+            "regex": "<OBJ_FWTIME_ID>(.*?)</OBJ_FWTIME_ID>",
+            "save": "ruleSection",
+            "error": "El router no ha devuelto la regla de ${device.hostName}."
+          }
+        },
+        {
+          "extract": {
+            "from": "ruleSection",
+            "regex": "<Instance>(.*?)</Instance>",
+            "save": "rule",
+            "error": "Regla vacía para ${device.hostName}."
+          }
+        },
+        {
+          "extract": {
+            "from": "rule",
+            "regex": "<ParaName>_InstID</ParaName>\\s*<ParaValue>([^<]*)</ParaValue>",
+            "transform": [
+              "xmlUnescape"
+            ],
+            "save": "ruleInstId",
+            "required": false
+          }
+        },
+        {
+          "extract": {
+            "from": "rule",
+            "regex": "<ParaName>DeviceName</ParaName>\\s*<ParaValue>([^<]*)</ParaValue>",
+            "transform": [
+              "xmlUnescape"
+            ],
+            "save": "ruleDeviceName",
+            "required": false
+          }
+        },
+        {
+          "extract": {
+            "from": "rule",
+            "regex": "<ParaName>Enable</ParaName>\\s*<ParaValue>([^<]+)</ParaValue>",
+            "transform": [
+              "xmlUnescape"
+            ],
+            "save": "ruleEnable",
+            "default": "0"
+          }
+        }
+      ],
+      "state": {
+        "from": "rule",
+        "regex": "<ParaName>Mode</ParaName>\\s*<ParaValue>\\s*([^<]*?)\\s*</ParaValue>",
+        "map": {
+          "0": "ALLOWED",
+          "1": "BLOCKED",
+          "2": "SCHEDULED"
+        },
+        "default": "ALLOWED"
+      }
+    },
+    "setBlocked": {
+      "steps": [
+        {
+          "call": "readAccess"
+        },
+        {
+          "choose": {
+            "if": "blocked",
+            "then": "1",
+            "else": "0",
+            "save": "mode"
+          }
+        },
+        {
+          "compute": {
+            "fn": "repeat",
+            "args": [
+              "${mode}",
+              "168"
+            ],
+            "save": "policy"
+          }
+        },
+        {
+          "request": {
+            "method": "POST",
+            "path": "/?_type=menuData&_tag=osp_access_restriction_lua.lua&Mac=${device.mac}",
+            "form": [
+              [
+                "IF_ACTION",
+                "Apply"
+              ],
+              [
+                "DeviceName",
+                "${ruleDeviceName}"
+              ],
+              [
+                "Mac",
+                "${device.mac}"
+              ],
+              [
+                "TimePolicy",
+                "${policy}"
+              ],
+              [
+                "Enable",
+                "${ruleEnable}"
+              ],
+              [
+                "_InstID",
+                "${ruleInstId}"
+              ],
+              [
+                "Mode",
+                "${mode}"
+              ],
+              [
+                "bt_cancel",
+                ""
+              ],
+              [
+                "bt_save",
+                ""
+              ],
+              [
+                "_sessionTOKEN",
+                "${sessionToken}"
+              ]
+            ],
+            "headers": {
+              "Check": "${body|sha256Hex|rsa:router}"
+            },
+            "save": "applyResp"
+          }
+        },
+        {
+          "fail": {
+            "from": "applyResp",
+            "regex": "<IF_ERRORSTR>(?!SUCC</IF_ERRORSTR>)(.*?)</IF_ERRORSTR>",
+            "error": "El router ha respondido con error: ${match}"
+          }
+        },
+        {
+          "fail": {
+            "from": "applyResp",
+            "regex": "\\A(?![\\s\\S]*<IF_ERRORSTR>)[\\s\\S]*?(login_entry|Frm_Password)",
+            "error": "Sesión caducada en el router."
+          }
+        }
+      ]
+    }
+  }
+}

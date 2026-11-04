@@ -1,0 +1,286 @@
+package com.leira.wificasa;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Bundle;
+import android.text.InputType;
+import android.view.ViewGroup;
+import android.webkit.HttpAuthHandler;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.leira.wificasa.core.learn.Capture;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+
+/**
+ * Modo aprendizaje: abre el panel web del router dentro de la app, guía al usuario por los
+ * pasos necesarios y graba lo que el panel envía y recibe. Al terminar, la grabación saneada
+ * (junto con las instrucciones para la IA) se guarda en un archivo o se comparte.
+ */
+public class LearnActivity extends Activity {
+
+    public static final String EXTRA_HOST = "host";
+    public static final String EXTRA_PASSWORD = "password";
+
+    private static final int REQ_SAVE = 41;
+    private static final int C_BAR = Color.parseColor("#1F1D1A");
+    private static final int C_ACCENT = Color.parseColor("#E8590C");
+
+    private Capture capture;
+    private WebView web;
+    private TextView stepTitle, stepHelp, counter;
+    private Button nextBtn;
+    private String recorderJs = "";
+    private String pendingText;
+
+    private static final String[] HELP = {
+            "Escribe el usuario y la contraseña del router como siempre y entra.",
+            "Busca la página donde salen los aparatos conectados. Suele llamarse Red local, Clientes, "
+                    + "Dispositivos o DHCP.",
+            "Elige un aparato que no moleste y córtale Internet: busca Control parental, Control de acceso, "
+                    + "Bloquear o Filtro MAC, y guarda.",
+            "Deshaz lo del paso anterior para devolverle Internet, y guarda.",
+            "Pulsa Salir o Cerrar sesión en el panel. Luego pulsa Terminar."
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        String host = getIntent().getStringExtra(EXTRA_HOST);
+        if (host == null || host.trim().isEmpty()) host = "192.168.1.1";
+        host = host.trim();
+        if (!host.startsWith("http://") && !host.startsWith("https://")) host = "http://" + host;
+        capture = new Capture(host, getIntent().getStringExtra(EXTRA_PASSWORD));
+        recorderJs = asset("aprendizaje/grabador.js");
+        buildUi();
+        showStep();
+        web.loadUrl(host + "/");
+    }
+
+    private int dp(int v) { return Math.round(v * getResources().getDisplayMetrics().density); }
+
+    @SuppressWarnings("SetJavaScriptEnabled")
+    private void buildUi() {
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout bar = new LinearLayout(this);
+        bar.setOrientation(LinearLayout.VERTICAL);
+        bar.setBackgroundColor(C_BAR);
+        bar.setPadding(dp(14), dp(12), dp(14), dp(10));
+
+        stepTitle = new TextView(this);
+        stepTitle.setTextColor(Color.WHITE);
+        stepTitle.setTextSize(17);
+        stepTitle.setTypeface(Typeface.DEFAULT_BOLD);
+        bar.addView(stepTitle);
+
+        stepHelp = new TextView(this);
+        stepHelp.setTextColor(Color.parseColor("#D8D2C8"));
+        stepHelp.setTextSize(13);
+        stepHelp.setPadding(0, dp(4), 0, dp(8));
+        bar.addView(stepHelp);
+
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        counter = new TextView(this);
+        counter.setTextColor(Color.parseColor("#D8D2C8"));
+        counter.setTextSize(12);
+        counter.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        row.addView(counter);
+        Button cancel = new Button(this);
+        cancel.setAllCaps(false);
+        cancel.setText("Cancelar");
+        cancel.setOnClickListener(v -> confirmExit());
+        row.addView(cancel);
+        nextBtn = new Button(this);
+        nextBtn.setAllCaps(false);
+        nextBtn.setTextColor(Color.WHITE);
+        nextBtn.setBackgroundColor(C_ACCENT);
+        nextBtn.setOnClickListener(v -> nextStep());
+        row.addView(nextBtn);
+        bar.addView(row);
+        root.addView(bar);
+
+        web = new WebView(this);
+        WebSettings s = web.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setBuiltInZoomControls(true);
+        s.setDisplayZoomControls(false);
+        s.setUseWideViewPort(true);
+        s.setLoadWithOverviewMode(true);
+        web.addJavascriptInterface(new Bridge(), "WifiCasaRec");
+        web.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                view.evaluateJavascript(recorderJs, null);
+                runOnUiThread(() -> updateCounter());
+            }
+
+            @Override
+            public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String h, String realm) {
+                capture.record("{\"type\":\"basic-auth\",\"realm\":" + quote(realm) + "}");
+                askBasicAuth(handler, realm);
+            }
+        });
+        web.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+        root.addView(web);
+        setContentView(root);
+    }
+
+    /** Puente que usa el grabador. Se llama desde un hilo del WebView. */
+    public final class Bridge {
+        @JavascriptInterface
+        public void record(String json) {
+            capture.record(json);
+            runOnUiThread(() -> updateCounter());
+        }
+    }
+
+    private void showStep() {
+        int i = capture.step();
+        stepTitle.setText("Paso " + (i + 1) + " de " + Capture.STEPS.length + " · " + Capture.STEPS[i]);
+        stepHelp.setText(HELP[i]);
+        nextBtn.setText(i == Capture.STEPS.length - 1 ? "Terminar" : "Hecho ▶");
+        updateCounter();
+    }
+
+    private void updateCounter() {
+        counter.setText("● Grabando · " + capture.count() + " anotaciones" + (capture.isFull() ? " (límite alcanzado)" : ""));
+    }
+
+    private void nextStep() {
+        int i = capture.step();
+        if (i < Capture.STEPS.length - 1) {
+            capture.setStep(i + 1);
+            showStep();
+        } else {
+            finishRecording();
+        }
+    }
+
+    private void finishRecording() {
+        final String text = capture.promptForAi(asset("ia/RECETAS.md"), asset("recetas/zte-zxhn-f6640p.json"));
+        new AlertDialog.Builder(this)
+                .setTitle("Grabación lista")
+                .setMessage(capture.count() + " anotaciones. Se han borrado la contraseña y los campos que parecen "
+                        + "claves; aun así, revisa el archivo antes de compartirlo.\n\n"
+                        + "Siguiente paso: pásale el archivo a Claude u otra IA y pídele la receta. Después, en "
+                        + "Ajustes → Modelo de router → Importar receta, pega lo que te devuelva.")
+                .setPositiveButton("Guardar archivo", (d, w) -> save(text))
+                .setNeutralButton("Compartir", (d, w) -> share(text))
+                .setNegativeButton("Seguir grabando", null)
+                .show();
+    }
+
+    private void save(String text) {
+        pendingText = text;
+        Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("text/plain");
+        i.putExtra(Intent.EXTRA_TITLE, "grabacion-router-wificasa.txt");
+        startActivityForResult(i, REQ_SAVE);
+    }
+
+    private void share(String text) {
+        if (text.length() > 400_000) {
+            Toast.makeText(this, "La grabación es grande: guárdala como archivo y compártelo desde ahí.",
+                    Toast.LENGTH_LONG).show();
+            save(text);
+            return;
+        }
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("text/plain");
+        i.putExtra(Intent.EXTRA_SUBJECT, "Grabación del router para WiFi Casa");
+        i.putExtra(Intent.EXTRA_TEXT, text);
+        startActivity(Intent.createChooser(i, "Compartir grabación"));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != REQ_SAVE || resultCode != RESULT_OK || data == null || pendingText == null) return;
+        Uri uri = data.getData();
+        try (OutputStream out = getContentResolver().openOutputStream(uri)) {
+            out.write(pendingText.getBytes(StandardCharsets.UTF_8));
+            Toast.makeText(this, "Grabación guardada.", Toast.LENGTH_LONG).show();
+            finish();
+        } catch (Exception e) {
+            Toast.makeText(this, "⚠ No se pudo guardar: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void askBasicAuth(final HttpAuthHandler handler, String realm) {
+        LinearLayout box = new LinearLayout(this);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.setPadding(dp(20), dp(8), dp(20), 0);
+        final EditText user = new EditText(this);
+        user.setHint("Usuario");
+        box.addView(user);
+        final EditText pass = new EditText(this);
+        pass.setHint("Contraseña");
+        pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        box.addView(pass);
+        new AlertDialog.Builder(this)
+                .setTitle("El router pide usuario y contraseña" + (realm == null ? "" : " (" + realm + ")"))
+                .setView(box)
+                .setPositiveButton("Entrar", (d, w) -> {
+                    capture.addSecret(pass.getText().toString());
+                    handler.proceed(user.getText().toString(), pass.getText().toString());
+                })
+                .setNegativeButton("Cancelar", (d, w) -> handler.cancel())
+                .show();
+    }
+
+    private void confirmExit() {
+        new AlertDialog.Builder(this)
+                .setTitle("¿Salir sin guardar?")
+                .setMessage("Se perderá lo grabado.")
+                .setPositiveButton("Salir", (d, w) -> finish())
+                .setNegativeButton("Seguir", null)
+                .show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (web.canGoBack()) web.goBack(); else confirmExit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (web != null) web.destroy();
+        super.onDestroy();
+    }
+
+    private String asset(String path) {
+        try (InputStream in = getAssets().open(path)) {
+            ByteArrayOutputStream bo = new ByteArrayOutputStream();
+            byte[] buf = new byte[8192];
+            int n;
+            while ((n = in.read(buf)) > 0) bo.write(buf, 0, n);
+            return bo.toString("UTF-8");
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    private static String quote(String s) {
+        return s == null ? "null" : "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+    }
+}

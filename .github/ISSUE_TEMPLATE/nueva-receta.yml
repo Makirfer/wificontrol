@@ -1,0 +1,31 @@
+name: Nueva receta de router
+description: Propón una receta para que otros usuarios de WiFi Casa puedan usar su router.
+title: "Receta: "
+labels: ["nueva-receta"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por compartir tu receta. La app WiFi Casa rellena este formulario y copia la receta al portapapeles:
+        solo tienes que pegarla en el recuadro **Receta** y enviar. Una validación automática la revisará y,
+        si es correcta, preparará su incorporación al catálogo.
+  - type: textarea
+    id: receta
+    attributes:
+      label: Receta
+      description: Mantén pulsado aquí y elige Pegar.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: informe
+    attributes:
+      label: Informe de pruebas
+      description: Lo rellena la app con el resultado de las pruebas en tu router.
+  - type: checkboxes
+    id: confirmacion
+    attributes:
+      label: Confirmación
+      options:
+        - label: He probado la receta en mi router y no contiene contraseñas ni datos personales.
+          required: true

@@ -1,0 +1,26 @@
+{
+  "format": "wificasa-catalog/1",
+  "recipes": [
+    {
+      "id": "zte-zxhn-f6640p",
+      "version": "1.0.1",
+      "vendor": "ZTE",
+      "model": "ZXHN F6640P",
+      "commercialName": "Livebox 6s",
+      "isps": [
+        "Parlem",
+        "Orange"
+      ],
+      "detect": [],
+      "capabilities": [
+        "LIST_DEVICES",
+        "READ_ACCESS",
+        "BLOCK",
+        "UNBLOCK"
+      ],
+      "status": "tested-device",
+      "sha256": "61f43e5849f4654e7408959261ad76bfb0094c29ee784cdd830f400d7b887eac",
+      "path": "recetas/zte-zxhn-f6640p.json"
+    }
+  ]
+}

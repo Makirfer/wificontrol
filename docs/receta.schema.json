@@ -1,0 +1,800 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wificasa.example/schemas/wificasa-recipe-1.json",
+  "title": "Receta de router para WiFi Casa (formato wificasa-recipe/1)",
+  "description": "Describe cómo hablar con el panel web de un modelo de router usando solo pasos declarativos. La app aplica además reglas que el esquema no puede expresar (contraseña solo en formularios y funciones, claves RSA definidas, minEngine, tamaño máximo). Ver docs/RECETAS.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "id",
+    "version",
+    "minEngine",
+    "router",
+    "capabilities",
+    "operations"
+  ],
+  "properties": {
+    "format": {
+      "const": "wificasa-recipe/1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}$"
+    },
+    "minEngine": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "router": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "vendor": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "commercialName": {
+          "type": "string"
+        },
+        "isps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "firmware": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "detect": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "description": "Expresiones regulares que reconocen la página de inicio del router (sin iniciar sesión)."
+        }
+      },
+      "required": [
+        "vendor",
+        "model"
+      ]
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "LIST_DEVICES",
+          "READ_ACCESS",
+          "BLOCK",
+          "UNBLOCK"
+        ]
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "status": {
+          "enum": [
+            "untested",
+            "simulator",
+            "tested-device",
+            "community-verified"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    "changelog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "changes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "changes"
+        ]
+      }
+    },
+    "http": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sessionCookie": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,40}$"
+        },
+        "fixedCookies": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_=; -]{0,200}$"
+        },
+        "headers": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[A-Za-z][A-Za-z0-9-]{0,40}$",
+            "not": {
+              "pattern": "^([Hh][Oo][Ss][Tt]|[Cc][Oo][Oo][Kk][Ii][Ee]|[Cc]ontent-[Ll]ength|[Pp]roxy-.*)$"
+            }
+          },
+          "additionalProperties": {
+            "type": "string",
+            "description": "Texto con variables ${nombre|filtro}. Ver docs/RECETAS.md."
+          }
+        }
+      },
+      "required": []
+    },
+    "keys": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[A-Za-z0-9_]{1,40}$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "BEGIN PUBLIC KEY"
+      }
+    },
+    "operations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "login"
+      ],
+      "properties": {
+        "login": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "steps": {
+              "type": "array",
+              "maxItems": 60,
+              "items": {
+                "$ref": "#/$defs/step"
+              }
+            }
+          },
+          "required": [
+            "steps"
+          ]
+        },
+        "logout": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "steps": {
+              "type": "array",
+              "maxItems": 60,
+              "items": {
+                "$ref": "#/$defs/step"
+              }
+            }
+          },
+          "required": [
+            "steps"
+          ]
+        },
+        "listDevices": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "steps": {
+              "type": "array",
+              "maxItems": 60,
+              "items": {
+                "$ref": "#/$defs/step"
+              }
+            },
+            "devices": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,40}$"
+                },
+                "within": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "regex": {
+                      "type": "string",
+                      "maxLength": 500
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Texto con variables ${nombre|filtro}. Ver docs/RECETAS.md."
+                    }
+                  },
+                  "required": [
+                    "regex",
+                    "error"
+                  ]
+                },
+                "each": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "fields": {
+                  "type": "object",
+                  "required": [
+                    "mac"
+                  ],
+                  "propertyNames": {
+                    "pattern": "^(mac|hostName|ip|active|extra\\.[A-Za-z0-9_.]{1,40})$"
+                  },
+                  "additionalProperties": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "regex": {
+                        "type": "string",
+                        "maxLength": 500
+                      },
+                      "group": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9
+                      },
+                      "transform": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "xmlUnescape",
+                            "hexEscapeDecode",
+                            "lower",
+                            "upper",
+                            "trim"
+                          ]
+                        }
+                      },
+                      "default": {
+                        "type": "string"
+                      },
+                      "trueIf": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "regex"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "from",
+                "each",
+                "fields"
+              ]
+            }
+          },
+          "required": [
+            "steps",
+            "devices"
+          ]
+        },
+        "readAccess": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "steps": {
+              "type": "array",
+              "maxItems": 60,
+              "items": {
+                "$ref": "#/$defs/step"
+              }
+            },
+            "state": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,40}$"
+                },
+                "regex": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "group": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9
+                },
+                "map": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "enum": [
+                      "ALLOWED",
+                      "BLOCKED",
+                      "SCHEDULED",
+                      "UNKNOWN"
+                    ]
+                  }
+                },
+                "default": {
+                  "enum": [
+                    "ALLOWED",
+                    "BLOCKED",
+                    "SCHEDULED",
+                    "UNKNOWN"
+                  ]
+                }
+              },
+              "required": [
+                "from",
+                "regex",
+                "map"
+              ]
+            }
+          },
+          "required": [
+            "steps",
+            "state"
+          ]
+        },
+        "setBlocked": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "steps": {
+              "type": "array",
+              "maxItems": 60,
+              "items": {
+                "$ref": "#/$defs/step"
+              }
+            }
+          },
+          "required": [
+            "steps"
+          ]
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "capabilities": {
+            "contains": {
+              "const": "LIST_DEVICES"
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "operations": {
+            "required": [
+              "listDevices"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilities": {
+            "contains": {
+              "const": "READ_ACCESS"
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "operations": {
+            "required": [
+              "readAccess"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilities": {
+            "contains": {
+              "enum": [
+                "BLOCK",
+                "UNBLOCK"
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "operations": {
+            "required": [
+              "setBlocked"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "step": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "request": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "method": {
+                  "enum": [
+                    "GET",
+                    "POST"
+                  ]
+                },
+                "path": {
+                  "type": "string",
+                  "pattern": "^/(?!/)[^\\\\@]*$",
+                  "not": {
+                    "pattern": "://"
+                  }
+                },
+                "form": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ],
+                    "minItems": 2,
+                    "maxItems": 2
+                  }
+                },
+                "headers": {
+                  "type": "object",
+                  "propertyNames": {
+                    "pattern": "^[A-Za-z][A-Za-z0-9-]{0,40}$",
+                    "not": {
+                      "pattern": "^([Hh][Oo][Ss][Tt]|[Cc][Oo][Oo][Kk][Ii][Ee]|[Cc]ontent-[Ll]ength|[Pp]roxy-.*)$"
+                    }
+                  },
+                  "additionalProperties": {
+                    "type": "string",
+                    "description": "Texto con variables ${nombre|filtro}. Ver docs/RECETAS.md."
+                  }
+                },
+                "save": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,40}$"
+                },
+                "expectStatus": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "method",
+                "path"
+              ]
+            }
+          },
+          "required": [
+            "request"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "extract": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,40}$"
+                },
+                "regex": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "group": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9
+                },
+                "occurrence": {
+                  "enum": [
+                    "first",
+                    "last"
+                  ]
+                },
+                "save": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,40}$"
+                },
+                "transform": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "xmlUnescape",
+                      "hexEscapeDecode",
+                      "lower",
+                      "upper",
+                      "trim"
+                    ]
+                  }
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "default": {
+                  "type": "string",
+                  "description": "Texto con variables ${nombre|filtro}. Ver docs/RECETAS.md."
+                },
+                "error": {
+                  "type": "string",
+                  "description": "Texto con variables ${nombre|filtro}. Ver docs/RECETAS.md."
+                }
+              },
+              "required": [
+                "from",
+                "regex",
+                "save"
+              ]
+            }
+          },
+          "required": [
+            "extract"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "fail": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,40}$"
+                },
+                "regex": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "error": {
+                  "type": "string",
+                  "description": "Texto con variables ${nombre|filtro}. Ver docs/RECETAS.md."
+                }
+              },
+              "required": [
+                "from",
+                "regex",
+                "error"
+              ]
+            }
+          },
+          "required": [
+            "fail"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "require": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,40}$"
+                },
+                "regex": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "error": {
+                  "type": "string",
+                  "description": "Texto con variables ${nombre|filtro}. Ver docs/RECETAS.md."
+                }
+              },
+              "required": [
+                "from",
+                "regex",
+                "error"
+              ]
+            }
+          },
+          "required": [
+            "require"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "set": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "save": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,40}$"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Texto con variables ${nombre|filtro}. Ver docs/RECETAS.md."
+                }
+              },
+              "required": [
+                "save",
+                "value"
+              ]
+            }
+          },
+          "required": [
+            "set"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "compute": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "fn": {
+                  "enum": [
+                    "sha256Hex",
+                    "sha1Hex",
+                    "md5Hex",
+                    "base64",
+                    "rsaPkcs1Base64",
+                    "hexEscapeDecode",
+                    "xmlUnescape",
+                    "lower",
+                    "upper",
+                    "repeat"
+                  ]
+                },
+                "args": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "maxItems": 2
+                },
+                "save": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,40}$"
+                }
+              },
+              "required": [
+                "fn",
+                "args",
+                "save"
+              ]
+            }
+          },
+          "required": [
+            "compute"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "choose": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "if": {
+                  "type": "string"
+                },
+                "equals": {
+                  "type": "string"
+                },
+                "then": {
+                  "type": "string",
+                  "description": "Texto con variables ${nombre|filtro}. Ver docs/RECETAS.md."
+                },
+                "else": {
+                  "type": "string",
+                  "description": "Texto con variables ${nombre|filtro}. Ver docs/RECETAS.md."
+                },
+                "save": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,40}$"
+                }
+              },
+              "required": [
+                "if",
+                "then",
+                "else",
+                "save"
+              ]
+            }
+          },
+          "required": [
+            "choose"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "call": {
+              "enum": [
+                "readAccess",
+                "listDevices"
+              ]
+            }
+          },
+          "required": [
+            "call"
+          ]
+        }
+      ]
+    }
+  }
+}

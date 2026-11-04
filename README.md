@@ -1,0 +1,25 @@
+# WiFi Casa
+
+App Android para **pausar y reanudar Internet a dispositivos concretos** de casa desde el móvil,
+sin cortar el WiFi a todos, hablando directamente con el router.
+
+- Funciona hoy con el **ZTE Livebox 6s (ZXHN F6640P)** de Parlem/Orange.
+- Es **universal por diseño**: cada modelo de router se describe con una *receta* (un JSON
+  declarativo y validado, sin código). Si tu router no está, la app **graba su panel web**,
+  te ayuda a obtener la receta con una IA, **la prueba en tu router** y te deja **publicarla**
+  en este catálogo para el resto de usuarios.
+- Varias ubicaciones (casa, segunda residencia…), contraseñas cifradas con el Android Keystore,
+  recuerda todos los dispositivos que han pasado por la red.
+
+| Carpeta | Qué hay |
+|---|---|
+| `app/` | La app Android (Java, sin dependencias externas) |
+| `catalogo/` | Catálogo público de recetas: `index.json`, `recetas/`, herramientas de validación |
+| `docs/` | [Formato de recetas](docs/RECETAS.md), [cómo funciona el catálogo](docs/CATALOGO.md) y el esquema JSON |
+| `pruebas/` | Simuladores de router y pruebas que se ejecutan en un ordenador |
+| `.github/` | Formulario **Nueva receta** y validación automática con GitHub Actions |
+
+¿Tienes un router que no está en el catálogo? Abre la app → ⚙ Ajustes → Modelo de router →
+**Mi router no está** → *Aprender un router nuevo*.
+
+Instrucciones para generar el APK e instalarlo: [LEEME.md](LEEME.md).
