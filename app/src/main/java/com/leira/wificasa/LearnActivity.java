@@ -11,6 +11,8 @@ import android.text.InputType;
 import android.view.ViewGroup;
 import android.webkit.HttpAuthHandler;
 import android.webkit.JavascriptInterface;
+import android.webkit.JsResult;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -125,7 +127,34 @@ public class LearnActivity extends Activity {
         s.setDisplayZoomControls(false);
         s.setUseWideViewPort(true);
         s.setLoadWithOverviewMode(true);
+        s.setJavaScriptCanOpenWindowsAutomatically(true);
+        s.setSupportMultipleWindows(false); // las ventanas nuevas del panel se abren aquí mismo
         web.addJavascriptInterface(new Bridge(), "WifiCasaRec");
+        // Sin esto, los avisos del panel ("¿Seguro que quieres guardar?") se responderían
+        // solos como Cancelar y el cambio no se aplicaría.
+        web.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+                capture.record("{\"type\":\"dialog\",\"kind\":\"alert\",\"message\":" + quote(message) + "}");
+                new AlertDialog.Builder(LearnActivity.this).setMessage(message)
+                        .setPositiveButton("Aceptar", (d, w) -> result.confirm())
+                        .setOnCancelListener(d -> result.confirm()).show();
+                return true;
+            }
+
+            @Override
+            public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {
+                new AlertDialog.Builder(LearnActivity.this).setMessage(message)
+                        .setPositiveButton("Aceptar", (d, w) -> {
+                            capture.record("{\"type\":\"dialog\",\"kind\":\"confirm\",\"answer\":true,\"message\":"
+                                    + quote(message) + "}");
+                            result.confirm();
+                        })
+                        .setNegativeButton("Cancelar", (d, w) -> result.cancel())
+                        .setOnCancelListener(d -> result.cancel()).show();
+                return true;
+            }
+        });
         web.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {

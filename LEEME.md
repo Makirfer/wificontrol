@@ -1,4 +1,9 @@
-# WiFi Casa 2.4
+# WiFi Casa 2.4.1
+
+## Novedades de la 2.4.1
+
+- Modo aprendizaje: se muestran los avisos del panel del router ("¿Seguro que quieres aplicar
+  los cambios?"). Antes se respondían solos como Cancelar y el cambio no llegaba a guardarse.
 
 ## Novedades de la 2.4
 
