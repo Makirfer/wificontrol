@@ -539,16 +539,22 @@
         "passwordHint": "Usuario y contraseña de la pegatina del router (si no, prueba 192.168.1.1)."
       },
       "block": {
-        "support": "unknown",
-        "scope": "unknown",
-        "how": "Vodafone lo incluye en su lista de routers de ayuda, pero no se ha encontrado cómo bloquear un aparato concreto.",
-        "notes": "En el Sercomm H500-s de Vodafone el «Filtrado MAC» (Modo experto → Wi-Fi) es una lista de PERMITIDOS: si este modelo tiene lo mismo, no sirve para pausar a un solo aparato sin riesgo. Si encuentras el bloqueo, grábalo con la app; si no existe, pulsa «No lo encuentro» y avisa."
+        "support": "panel",
+        "scope": "wifi-only",
+        "where": [
+          "Arriba a la derecha: cambia a Modo experto",
+          "Menú superior WLAN (Wi-Fi)",
+          "Menú izquierdo: Filtro MAC → añadir la MAC del aparato"
+        ],
+        "how": "El filtro MAC (solo visible en Modo experto) impide que los aparatos de la lista se conecten al WiFi. No afecta a los que van por cable. El panel no tiene control parental por aparato.",
+        "notes": "Deducido: se informa de que usa el mismo panel Vodafone Station que el Technicolor CGA6444VFES; ruta tomada del manual alemán del CGA6444VF. Falta comprobar si el filtro es lista de bloqueados o de permitidos: si al añadir uno se desconectan todos los demás, quítalo enseguida y avisa con «No lo encuentro». Fuente: manual de usuario CGA6444VF (DMS3-CTC-25-593 v2.0, Vodafone Alemania), aportado por un usuario."
       },
       "avoid": [
-        "Filtrado MAC en modo lista de permitidos: deja sin WiFi a todos los aparatos que no estén en la lista.",
-        "Programar el WiFi: lo apaga para toda la casa."
+        "Filtro MAC en modo lista de permitidos: deja sin WiFi a todos los aparatos que no estén en la lista.",
+        "WLAN → Zeitschaltung / Programación del WiFi: apaga el WiFi a toda la casa.",
+        "Internet → Firewall: no desactivarlo."
       ],
-      "confidence": "web",
+      "confidence": "probable",
       "updated": "2026-11-05"
     },
     {
@@ -628,16 +634,22 @@
         "passwordHint": "Usuario y contraseña de la pegatina del router (si no, prueba 192.168.1.1)."
       },
       "block": {
-        "support": "unknown",
-        "scope": "unknown",
-        "how": "Vodafone lo incluye en su lista de routers de ayuda, pero no se ha encontrado cómo bloquear un aparato concreto.",
-        "notes": "Router de fibra con ONT integrada que Vodafone ofrece como WiFi 6 Station. Si encuentras el bloqueo, grábalo con la app; si no existe, pulsa «No lo encuentro» y avisa."
+        "support": "panel",
+        "scope": "wifi-only",
+        "where": [
+          "Arriba a la derecha: cambia a Modo experto",
+          "Menú superior WLAN (Wi-Fi)",
+          "Menú izquierdo: Filtro MAC → añadir la MAC del aparato"
+        ],
+        "how": "El filtro MAC (solo visible en Modo experto) impide que los aparatos de la lista se conecten al WiFi. No afecta a los que van por cable. El panel no tiene control parental por aparato.",
+        "notes": "Ruta tomada del manual oficial de la versión alemana (CGA6444VF, Vodafone Alemania, 2021); la alemana es de cable (DOCSIS) y la española de fibra, aunque comparten el panel Vodafone Station, así que puede variar. Falta comprobar si el filtro es lista de bloqueados o de permitidos: si al añadir uno se desconectan todos los demás, quítalo enseguida y avisa con «No lo encuentro». Fuente: manual de usuario CGA6444VF (DMS3-CTC-25-593 v2.0, Vodafone Alemania), aportado por un usuario."
       },
       "avoid": [
-        "Filtrado MAC en modo lista de permitidos: deja sin WiFi a todos los aparatos que no estén en la lista.",
-        "Programar el WiFi: lo apaga para toda la casa."
+        "Filtro MAC en modo lista de permitidos: deja sin WiFi a todos los aparatos que no estén en la lista.",
+        "WLAN → Zeitschaltung / Programación del WiFi: apaga el WiFi a toda la casa.",
+        "Internet → Firewall: no desactivarlo."
       ],
-      "confidence": "web",
+      "confidence": "probable",
       "updated": "2026-11-05"
     },
     {
