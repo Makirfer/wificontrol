@@ -25,3 +25,14 @@ sin cortar el WiFi a todos, hablando directamente con el router.
 **Mi router no está** → *Aprender un router nuevo*.
 
 Instrucciones para generar el APK e instalarlo: [LEEME.md](LEEME.md).
+
+## Licencia
+
+Copyright (C) 2026 Makirfer.
+
+Este programa es software libre: puedes redistribuirlo y modificarlo según los términos de la
+[GNU General Public License versión 3](LICENSE) o posterior. Quien publique una versión modificada
+debe publicar también su código con la misma licencia.
+
+La licencia cubre el código y el catálogo. **No** cubre el nombre ni el logotipo de la app:
+las copias o versiones modificadas deben publicarse con otro nombre.
