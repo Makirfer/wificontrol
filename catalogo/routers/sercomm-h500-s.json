@@ -9,7 +9,8 @@
   ],
   "aliases": [
     "VFH500-S",
-    "H500s"
+    "H500s",
+    "Sercomm VFH500-S"
   ],
   "login": {
     "address": "192.168.0.1",

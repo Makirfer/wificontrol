@@ -26,6 +26,34 @@
   "routers": [
     {
       "format": "wificasa-router/1",
+      "id": "adoc-r45",
+      "vendor": "ADOC",
+      "model": "R45",
+      "isps": [
+        "Vodafone"
+      ],
+      "aliases": [
+        "R45"
+      ],
+      "login": {
+        "address": "192.168.0.1",
+        "passwordHint": "Usuario y contraseña de la pegatina del router (si no, prueba 192.168.1.1)."
+      },
+      "block": {
+        "support": "unknown",
+        "scope": "unknown",
+        "how": "Vodafone lo incluye en su lista de routers de ayuda, pero no se ha encontrado cómo bloquear un aparato concreto.",
+        "notes": "Router 4G/5G de Vodafone (Internet por red móvil). Si encuentras el bloqueo, grábalo con la app; si no existe, pulsa «No lo encuentro» y avisa."
+      },
+      "avoid": [
+        "Filtrado MAC en modo lista de permitidos: deja sin WiFi a todos los aparatos que no estén en la lista.",
+        "Programar el WiFi: lo apaga para toda la casa."
+      ],
+      "confidence": "web",
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
       "id": "arcadyan-arltfibra6",
       "vendor": "Arcadyan",
       "model": "ARLTFIBRA6",
@@ -202,6 +230,42 @@
         "DMZ: expone un aparato a Internet; no lo bloquea."
       ],
       "confidence": "web",
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "huawei-b311",
+      "vendor": "Huawei",
+      "model": "B311",
+      "isps": [
+        "Vodafone"
+      ],
+      "aliases": [
+        "B311n",
+        "4G Router B311",
+        "HUAWEI 4G Router B311n"
+      ],
+      "login": {
+        "address": "192.168.8.1",
+        "passwordHint": "La contraseña de la pegatina o la que pusiste al configurarlo."
+      },
+      "block": {
+        "support": "panel",
+        "scope": "wifi-only",
+        "where": [
+          "Avanzado (Advanced) → Wi-Fi → Filtro MAC Wi-Fi",
+          "Activa el filtro, elige el modo «Bloquear» (lista de bloqueados) y añade el aparato → Guardar"
+        ],
+        "how": "Los routers 4G (CPE) de Huawei tienen una lista de bloqueados para el WiFi: los aparatos de la lista no pueden conectarse. Máximo 32 aparatos.",
+        "notes": "Instrucciones genéricas de Huawei para sus CPE; la página no nombra el B311 expresamente."
+      },
+      "avoid": [
+        "Modo «Permitir» (lista de confianza): solo se conectan los aparatos de la lista."
+      ],
+      "confidence": "probable",
+      "sources": [
+        "https://consumer.huawei.com/en/support/content/en-us00761358"
+      ],
       "updated": "2026-11-05"
     },
     {
@@ -431,7 +495,8 @@
       ],
       "aliases": [
         "VFH500-S",
-        "H500s"
+        "H500s",
+        "Sercomm VFH500-S"
       ],
       "login": {
         "address": "192.168.0.1",
@@ -450,6 +515,153 @@
       "sources": [
         "https://www.adslzone.net/operadores/routers/configurar-router-vodafone-fibra-optica/"
       ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "sercomm-rhg3006",
+      "vendor": "Sercomm",
+      "model": "RHG3006",
+      "isps": [
+        "Vodafone"
+      ],
+      "aliases": [
+        "Vodafone Wi-Fi 6 Station",
+        "WiFi 6 Station",
+        "RHG3006"
+      ],
+      "login": {
+        "address": "192.168.0.1",
+        "passwordHint": "Usuario y contraseña de la pegatina del router (si no, prueba 192.168.1.1)."
+      },
+      "block": {
+        "support": "unknown",
+        "scope": "unknown",
+        "how": "Vodafone lo incluye en su lista de routers de ayuda, pero no se ha encontrado cómo bloquear un aparato concreto.",
+        "notes": "En el Sercomm H500-s de Vodafone el «Filtrado MAC» (Modo experto → Wi-Fi) es una lista de PERMITIDOS: si este modelo tiene lo mismo, no sirve para pausar a un solo aparato sin riesgo. Si encuentras el bloqueo, grábalo con la app; si no existe, pulsa «No lo encuentro» y avisa."
+      },
+      "avoid": [
+        "Filtrado MAC en modo lista de permitidos: deja sin WiFi a todos los aparatos que no estén en la lista.",
+        "Programar el WiFi: lo apaga para toda la casa."
+      ],
+      "confidence": "web",
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "sercomm-vox-2-5",
+      "vendor": "Sercomm",
+      "model": "VOX 2.5",
+      "isps": [
+        "Vodafone"
+      ],
+      "aliases": [
+        "VOX 2.5 avanzado DSL",
+        "Vodafone VOX 2.5",
+        "VOX25"
+      ],
+      "login": {
+        "address": "192.168.0.1",
+        "passwordHint": "Usuario y contraseña de la pegatina del router (si no, prueba 192.168.1.1)."
+      },
+      "block": {
+        "support": "unknown",
+        "scope": "unknown",
+        "how": "Vodafone lo incluye en su lista de routers de ayuda, pero no se ha encontrado cómo bloquear un aparato concreto.",
+        "notes": "Router ADSL/VDSL de Vodafone. En el Sercomm H500-s de Vodafone el «Filtrado MAC» (Modo experto → Wi-Fi) es una lista de PERMITIDOS: si este modelo tiene lo mismo, no sirve para pausar a un solo aparato sin riesgo. Si encuentras el bloqueo, grábalo con la app; si no existe, pulsa «No lo encuentro» y avisa."
+      },
+      "avoid": [
+        "Filtrado MAC en modo lista de permitidos: deja sin WiFi a todos los aparatos que no estén en la lista.",
+        "Programar el WiFi: lo apaga para toda la casa."
+      ],
+      "confidence": "web",
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "technicolor-cga4233",
+      "vendor": "Technicolor",
+      "model": "CGA4233",
+      "isps": [
+        "Vodafone"
+      ],
+      "aliases": [
+        "CGA4233VDF",
+        "CGA4233EU"
+      ],
+      "login": {
+        "address": "192.168.0.1",
+        "passwordHint": "Usuario y contraseña de la pegatina del router (si no, prueba 192.168.1.1)."
+      },
+      "block": {
+        "support": "unknown",
+        "scope": "unknown",
+        "how": "Vodafone lo incluye en su lista de routers de ayuda, pero no se ha encontrado cómo bloquear un aparato concreto.",
+        "notes": "Router de cable (HFC) de Vodafone. Si encuentras el bloqueo, grábalo con la app; si no existe, pulsa «No lo encuentro» y avisa."
+      },
+      "avoid": [
+        "Filtrado MAC en modo lista de permitidos: deja sin WiFi a todos los aparatos que no estén en la lista.",
+        "Programar el WiFi: lo apaga para toda la casa."
+      ],
+      "confidence": "web",
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "technicolor-cga6444vfes",
+      "vendor": "Technicolor",
+      "model": "CGA6444VFES",
+      "isps": [
+        "Vodafone"
+      ],
+      "aliases": [
+        "CGA6444VF",
+        "Vodafone WiFi 6 Station",
+        "Home Box"
+      ],
+      "login": {
+        "address": "192.168.0.1",
+        "passwordHint": "Usuario y contraseña de la pegatina del router (si no, prueba 192.168.1.1)."
+      },
+      "block": {
+        "support": "unknown",
+        "scope": "unknown",
+        "how": "Vodafone lo incluye en su lista de routers de ayuda, pero no se ha encontrado cómo bloquear un aparato concreto.",
+        "notes": "Router de fibra con ONT integrada que Vodafone ofrece como WiFi 6 Station. Si encuentras el bloqueo, grábalo con la app; si no existe, pulsa «No lo encuentro» y avisa."
+      },
+      "avoid": [
+        "Filtrado MAC en modo lista de permitidos: deja sin WiFi a todos los aparatos que no estén en la lista.",
+        "Programar el WiFi: lo apaga para toda la casa."
+      ],
+      "confidence": "web",
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "technicolor-tc7230",
+      "vendor": "Technicolor",
+      "model": "TC7230",
+      "isps": [
+        "Vodafone"
+      ],
+      "aliases": [
+        "TC7230"
+      ],
+      "login": {
+        "address": "192.168.0.1",
+        "passwordHint": "Usuario y contraseña de la pegatina del router (si no, prueba 192.168.1.1)."
+      },
+      "block": {
+        "support": "unknown",
+        "scope": "unknown",
+        "how": "Vodafone lo incluye en su lista de routers de ayuda, pero no se ha encontrado cómo bloquear un aparato concreto.",
+        "notes": "Router de cable (HFC) de Vodafone, modelo antiguo. Si encuentras el bloqueo, grábalo con la app; si no existe, pulsa «No lo encuentro» y avisa."
+      },
+      "avoid": [
+        "Filtrado MAC en modo lista de permitidos: deja sin WiFi a todos los aparatos que no estén en la lista.",
+        "Programar el WiFi: lo apaga para toda la casa."
+      ],
+      "confidence": "web",
       "updated": "2026-11-05"
     },
     {

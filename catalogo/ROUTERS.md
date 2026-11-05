@@ -22,6 +22,13 @@ Generado automáticamente a partir de `catalogo/routers/`. ¿Falta el tuyo o alg
 | Orange, Jazztel | Orange Livebox 7 (Livebox 7) | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Ayuda oficial |
 | Orange, Jazztel | ZTE ZXHN F8748 | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Ayuda oficial |
 | Parlem, Orange, Yoigo, MásMóvil, Pepephone | ZTE ZXHN F6640P (Livebox 6s) | ✅ Sí, desde el panel | Ya tiene receta probada en el catálogo: no hace falta grabarlo. | ✅ | Comprobado con la app |
+| Vodafone | ADOC R45 | ❔ Sin datos | — | — | Según Internet |
+| Vodafone | Huawei B311 | ✅ Sí, desde el panel | Avanzado (Advanced) → Wi-Fi → Filtro MAC Wi-Fi → Activa el filtro, elige el modo «Bloquear» (lista de bloqueados) y añade el aparato → Guardar | — | Deducido |
+| Vodafone | Sercomm RHG3006 | ❔ Sin datos | — | — | Según Internet |
+| Vodafone | Sercomm VOX 2.5 | ❔ Sin datos | — | — | Según Internet |
+| Vodafone | Technicolor CGA4233 | ❔ Sin datos | — | — | Según Internet |
+| Vodafone | Technicolor CGA6444VFES | ❔ Sin datos | — | — | Según Internet |
+| Vodafone | Technicolor TC7230 | ❔ Sin datos | — | — | Según Internet |
 | Vodafone, Lowi | Sercomm H500-s | ⛔ No | — | — | Según Internet |
 | Yoigo, MásMóvil, PCComponentes Fibra | ZTE ZXHN H367A | ✅ Sí, desde el panel | Internet (barra de arriba) → Parental Controls | — | Según Internet |
 | Yoigo, MásMóvil, Pepephone, PCComponentes Fibra | Comtrend GRG-4280us | ❔ Sin datos | — | — | Según Internet |

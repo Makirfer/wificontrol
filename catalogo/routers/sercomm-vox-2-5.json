@@ -1,0 +1,30 @@
+{
+  "format": "wificasa-router/1",
+  "id": "sercomm-vox-2-5",
+  "vendor": "Sercomm",
+  "model": "VOX 2.5",
+  "isps": [
+    "Vodafone"
+  ],
+  "aliases": [
+    "VOX 2.5 avanzado DSL",
+    "Vodafone VOX 2.5",
+    "VOX25"
+  ],
+  "login": {
+    "address": "192.168.0.1",
+    "passwordHint": "Usuario y contraseña de la pegatina del router (si no, prueba 192.168.1.1)."
+  },
+  "block": {
+    "support": "unknown",
+    "scope": "unknown",
+    "how": "Vodafone lo incluye en su lista de routers de ayuda, pero no se ha encontrado cómo bloquear un aparato concreto.",
+    "notes": "Router ADSL/VDSL de Vodafone. En el Sercomm H500-s de Vodafone el «Filtrado MAC» (Modo experto → Wi-Fi) es una lista de PERMITIDOS: si este modelo tiene lo mismo, no sirve para pausar a un solo aparato sin riesgo. Si encuentras el bloqueo, grábalo con la app; si no existe, pulsa «No lo encuentro» y avisa."
+  },
+  "avoid": [
+    "Filtrado MAC en modo lista de permitidos: deja sin WiFi a todos los aparatos que no estén en la lista.",
+    "Programar el WiFi: lo apaga para toda la casa."
+  ],
+  "confidence": "web",
+  "updated": "2026-11-05"
+}

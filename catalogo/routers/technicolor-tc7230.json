@@ -1,0 +1,28 @@
+{
+  "format": "wificasa-router/1",
+  "id": "technicolor-tc7230",
+  "vendor": "Technicolor",
+  "model": "TC7230",
+  "isps": [
+    "Vodafone"
+  ],
+  "aliases": [
+    "TC7230"
+  ],
+  "login": {
+    "address": "192.168.0.1",
+    "passwordHint": "Usuario y contraseña de la pegatina del router (si no, prueba 192.168.1.1)."
+  },
+  "block": {
+    "support": "unknown",
+    "scope": "unknown",
+    "how": "Vodafone lo incluye en su lista de routers de ayuda, pero no se ha encontrado cómo bloquear un aparato concreto.",
+    "notes": "Router de cable (HFC) de Vodafone, modelo antiguo. Si encuentras el bloqueo, grábalo con la app; si no existe, pulsa «No lo encuentro» y avisa."
+  },
+  "avoid": [
+    "Filtrado MAC en modo lista de permitidos: deja sin WiFi a todos los aparatos que no estén en la lista.",
+    "Programar el WiFi: lo apaga para toda la casa."
+  ],
+  "confidence": "web",
+  "updated": "2026-11-05"
+}
