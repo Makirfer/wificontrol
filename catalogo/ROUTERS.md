@@ -24,10 +24,10 @@ Generado automáticamente a partir de `catalogo/routers/`. ¿Falta el tuyo o alg
 | Parlem, Orange, Yoigo, MásMóvil, Pepephone | ZTE ZXHN F6640P (Livebox 6s) | ✅ Sí, desde el panel | Ya tiene receta probada en el catálogo: no hace falta grabarlo. | ✅ | Comprobado con la app |
 | Vodafone | ADOC R45 | ❔ Sin datos | — | — | Según Internet |
 | Vodafone | Huawei B311 | ✅ Sí, desde el panel | Avanzado (Advanced) → Wi-Fi → Filtro MAC Wi-Fi → Activa el filtro, elige el modo «Bloquear» (lista de bloqueados) y añade el aparato → Guardar | — | Deducido |
-| Vodafone | Sercomm RHG3006 | ✅ Sí, desde el panel | Arriba a la derecha: cambia a Modo experto → Menú superior WLAN (Wi-Fi) | — | Deducido |
+| Vodafone | Sercomm RHG3006 | ✅ Sí, desde el panel | Arriba del todo: cambia el modo de vista a Modo experto → Menú superior WLAN (Wi-Fi) | — | Deducido |
 | Vodafone | Sercomm VOX 2.5 | ❔ Sin datos | — | — | Según Internet |
 | Vodafone | Technicolor CGA4233 | ❔ Sin datos | — | — | Según Internet |
-| Vodafone | Technicolor CGA6444VFES | ✅ Sí, desde el panel | Arriba a la derecha: cambia a Modo experto → Menú superior WLAN (Wi-Fi) | — | Deducido |
+| Vodafone | Technicolor CGA6444VFES | ✅ Sí, desde el panel | Arriba del todo: cambia el modo de vista a Modo experto → Menú superior WLAN (Wi-Fi) | — | Deducido |
 | Vodafone | Technicolor TC7230 | ❔ Sin datos | — | — | Según Internet |
 | Vodafone, Lowi | Sercomm H500-s | ⛔ No | — | — | Según Internet |
 | Yoigo, MásMóvil, PCComponentes Fibra | ZTE ZXHN H367A | ✅ Sí, desde el panel | Internet (barra de arriba) → Parental Controls | — | Según Internet |

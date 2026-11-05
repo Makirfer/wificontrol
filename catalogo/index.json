@@ -542,7 +542,7 @@
         "support": "panel",
         "scope": "wifi-only",
         "where": [
-          "Arriba a la derecha: cambia a Modo experto",
+          "Arriba del todo: cambia el modo de vista a Modo experto",
           "Menú superior WLAN (Wi-Fi)",
           "Menú izquierdo: Filtro MAC → añadir la MAC del aparato"
         ],
@@ -637,7 +637,7 @@
         "support": "panel",
         "scope": "wifi-only",
         "where": [
-          "Arriba a la derecha: cambia a Modo experto",
+          "Arriba del todo: cambia el modo de vista a Modo experto",
           "Menú superior WLAN (Wi-Fi)",
           "Menú izquierdo: Filtro MAC → añadir la MAC del aparato"
         ],
