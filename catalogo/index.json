@@ -365,8 +365,8 @@
         "scope": "wifi-only",
         "where": [
           "Configuración avanzada (enlace al final del menú básico)",
-          "WiFi (2,4 GHz y 5 GHz)",
-          "Filtrado MAC → modo lista negra → añadir la MAC"
+          "Network Setting → Wireless 2,4 GHz y Wireless 5 GHz (el menú avanzado está en inglés)",
+          "Filtrado MAC (MAC Filter) → modo lista negra → añadir la MAC"
         ],
         "how": "El filtrado MAC del menú avanzado puede funcionar como lista blanca o como lista negra. En lista negra, los aparatos añadidos no pueden conectarse al WiFi (no afecta a los que van por cable). Movistar también permite pausar desde la app Smart WiFi.",
         "notes": "Corregido el 5/11/2026: antes se suponía que, como el Askey RTF8316VW, solo se podía desde la app."
@@ -377,7 +377,8 @@
       ],
       "confidence": "web",
       "sources": [
-        "https://www.redeszone.net/tutoriales/configuracion-routers/movistar-router-smart-wifi-6-manual/"
+        "https://www.redeszone.net/tutoriales/configuracion-routers/movistar-router-smart-wifi-6-manual/",
+        "https://www.adslzone.net/noticias/operadores/configurar-router-wifi-6-movistar-mejorar-funcionamiento/"
       ],
       "updated": "2026-11-05"
     },

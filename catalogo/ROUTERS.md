@@ -17,7 +17,7 @@ Generado automáticamente a partir de `catalogo/routers/`. ¿Falta el tuyo o alg
 | Movistar, O2 | Askey RTF8225VW (Smart WiFi 6 Go) | ❔ Sin datos | — | — | Deducido |
 | Movistar, O2 | MitraStar GPT-2541GNAC (Router Smart WiFi (HGU)) | ❔ Sin datos | — | — | Deducido |
 | Movistar, O2 | MitraStar GPT-2742GX4X5 (Smart WiFi 6 Go) | ❔ Sin datos | — | — | Deducido |
-| Movistar, O2 | MitraStar GPT-2841GX4X5 (Smart WiFi 6) | ✅ Sí, desde el panel | Configuración avanzada (enlace al final del menú básico) → WiFi (2,4 GHz y 5 GHz) | — | Según Internet |
+| Movistar, O2 | MitraStar GPT-2841GX4X5 (Smart WiFi 6) | ✅ Sí, desde el panel | Configuración avanzada (enlace al final del menú básico) → Network Setting → Wireless 2,4 GHz y Wireless 5 GHz (el menú avanzado está en inglés) | — | Según Internet |
 | Orange, Jazztel | Arcadyan ARLTFIBRA6 (Livebox 6 Fibra) | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Según Internet |
 | Orange, Jazztel | Orange Livebox 7 (Livebox 7) | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Ayuda oficial |
 | Orange, Jazztel | ZTE ZXHN F8748 | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Ayuda oficial |
