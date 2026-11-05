@@ -1,0 +1,32 @@
+{
+  "format": "wificasa-router/1",
+  "id": "zte-zxhn-h367a",
+  "vendor": "ZTE",
+  "model": "ZXHN H367A",
+  "isps": [
+    "Yoigo",
+    "MásMóvil",
+    "PCComponentes Fibra"
+  ],
+  "aliases": [
+    "H367A"
+  ],
+  "login": {
+    "address": "192.168.1.1",
+    "passwordHint": "Usuario y contraseña de la pegatina del router."
+  },
+  "block": {
+    "support": "panel",
+    "scope": "unknown",
+    "where": [
+      "Internet (barra de arriba)",
+      "Parental Controls"
+    ],
+    "how": "El menú Internet incluye un apartado Parental Controls. Falta el detalle de cómo se aplica a un aparato."
+  },
+  "avoid": [
+    "Internet → Security → Port Forwarding y DMZ: no bloquean; DMZ expone un aparato a Internet."
+  ],
+  "confidence": "web",
+  "updated": "2026-11-05"
+}

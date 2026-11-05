@@ -19,6 +19,8 @@ sin cortar el WiFi a todos, hablando directamente con el router.
 | `pruebas/` | Simuladores de router y pruebas que se ejecutan en un ordenador |
 | `.github/` | Formulario **Nueva receta** y validación automática con GitHub Actions |
 
+**[Ver todos los routers del catálogo](catalogo/ROUTERS.md)** (compañía, si se puede bloquear un aparato y dónde).
+
 ¿Tienes un router que no está en el catálogo? Abre la app → ⚙ Ajustes → Modelo de router →
 **Mi router no está** → *Aprender un router nuevo*.
 

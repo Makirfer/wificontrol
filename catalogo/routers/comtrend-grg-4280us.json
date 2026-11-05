@@ -1,0 +1,32 @@
+{
+  "format": "wificasa-router/1",
+  "id": "comtrend-grg-4280us",
+  "vendor": "Comtrend",
+  "model": "GRG-4280us",
+  "isps": [
+    "Yoigo",
+    "MásMóvil",
+    "Pepephone",
+    "PCComponentes Fibra"
+  ],
+  "aliases": [
+    "GRG-4280",
+    "GRG4280us"
+  ],
+  "login": {
+    "address": "192.168.1.1",
+    "passwordHint": "Usuario y contraseña de la etiqueta inferior del router."
+  },
+  "block": {
+    "support": "unknown",
+    "scope": "unknown",
+    "how": "La documentación consultada no describe control parental ni bloqueo por aparato. Menús conocidos: Status, LAN, WLAN, WAN, Services (DHCP, Firewall: filtrado IP/puerto, DMZ, UPnP), VoIP, Advanced, Diagnostics, Admin.",
+    "notes": "Si encuentras cómo bloquear un aparato, grábalo con la app; si no existe, pulsa «No lo encuentro» y avisa."
+  },
+  "avoid": [
+    "Factory Settings / Restore Factory Default: borra toda la configuración del router.",
+    "DMZ: expone un aparato a Internet; no lo bloquea."
+  ],
+  "confidence": "web",
+  "updated": "2026-11-05"
+}

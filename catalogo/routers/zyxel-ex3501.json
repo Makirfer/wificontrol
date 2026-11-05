@@ -1,0 +1,32 @@
+{
+  "format": "wificasa-router/1",
+  "id": "zyxel-ex3501",
+  "vendor": "Zyxel",
+  "model": "EX3501",
+  "isps": [
+    "Digi"
+  ],
+  "aliases": [
+    "EX3501-T0",
+    "EX3501-DIGI"
+  ],
+  "login": {
+    "address": "192.168.1.1",
+    "user": "user",
+    "passwordHint": "La contraseña de la etiqueta del router (el router pide cambiarla la primera vez)."
+  },
+  "block": {
+    "support": "panel",
+    "scope": "unknown",
+    "where": [
+      "Icono de la parte superior derecha del panel",
+      "Seguridad → Control parental → activa «Control parental»",
+      "Añadir más perfiles → activa el perfil, ponle nombre y elige la MAC del aparato",
+      "Elige días y horario → Guardar"
+    ],
+    "how": "Perfiles por MAC con hasta tres planes de días y horario cada uno.",
+    "notes": "Fuente: manual de usuario de Digi (aportado en PDF)."
+  },
+  "confidence": "official",
+  "updated": "2026-11-05"
+}

@@ -27,7 +27,7 @@
     ],
     "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Casa: «Bloquear Internet de forma permanente» y «Permitir Internet de forma permanente».",
     "scope": "unknown",
-    "notes": "El Livebox 7 existe en versión Arcadyan y ZTE; la ayuda de Orange describe el mismo panel para ambas."
+    "notes": "El Livebox 7 existe en versión Arcadyan y ZTE; la ayuda de Orange describe el mismo panel para ambas. Orange documenta el mismo procedimiento para su ZTE ZXHN F8748."
   },
   "avoid": [
     "«dispositivos desconectados» solo muestra el historial: no bloquea."

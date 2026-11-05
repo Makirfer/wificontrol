@@ -1,0 +1,32 @@
+{
+  "format": "wificasa-router/1",
+  "id": "tp-link-xgb430v",
+  "vendor": "TP-Link",
+  "model": "XGB430v",
+  "isps": [
+    "Digi"
+  ],
+  "aliases": [
+    "XGB430v Pro",
+    "430V",
+    "XGB430v-DIGI"
+  ],
+  "login": {
+    "address": "192.168.1.1",
+    "user": "user",
+    "passwordHint": "La contraseña de la etiqueta del router (el router pide cambiarla la primera vez)."
+  },
+  "block": {
+    "support": "panel",
+    "scope": "unknown",
+    "where": [
+      "Básico → Controles parentales (o Avanzado → Controles parentales)",
+      "«Agregar»: nombre del miembro de la familia y sus dispositivos → Siguiente",
+      "Elige el nivel de filtro y activa límites de tiempo u «Hora de acostarse»"
+    ],
+    "how": "Perfiles por persona con sus dispositivos: filtro de contenidos por edad, límite diario y franja «Hora de acostarse» sin Internet. El manual no describe un botón de pausa inmediata.",
+    "notes": "Fuente: manual de usuario de Digi (aportado en PDF)."
+  },
+  "confidence": "official",
+  "updated": "2026-11-05"
+}

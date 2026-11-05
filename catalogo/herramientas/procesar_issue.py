@@ -114,6 +114,7 @@ def main():
     ficha_ruta.write_text(json.dumps(ficha, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     (RAIZ / "catalogo" / "index.json").write_text(generar_indice.generar(), encoding="utf-8")
+    (RAIZ / "catalogo" / "ROUTERS.md").write_text(generar_indice.tabla(), encoding="utf-8")
     estado = r.get("validation", {}).get("status", "untested")
     terminar(True, f"✅ Receta **{rid} {version}** válida (estado: `{estado}`). He preparado su incorporación al "
                    "catálogo; estará disponible en la app en cuanto se apruebe.", rid, version)

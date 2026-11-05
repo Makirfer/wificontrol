@@ -174,6 +174,38 @@
     },
     {
       "format": "wificasa-router/1",
+      "id": "comtrend-grg-4280us",
+      "vendor": "Comtrend",
+      "model": "GRG-4280us",
+      "isps": [
+        "Yoigo",
+        "MásMóvil",
+        "Pepephone",
+        "PCComponentes Fibra"
+      ],
+      "aliases": [
+        "GRG-4280",
+        "GRG4280us"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "passwordHint": "Usuario y contraseña de la etiqueta inferior del router."
+      },
+      "block": {
+        "support": "unknown",
+        "scope": "unknown",
+        "how": "La documentación consultada no describe control parental ni bloqueo por aparato. Menús conocidos: Status, LAN, WLAN, WAN, Services (DHCP, Firewall: filtrado IP/puerto, DMZ, UPnP), VoIP, Advanced, Diagnostics, Admin.",
+        "notes": "Si encuentras cómo bloquear un aparato, grábalo con la app; si no existe, pulsa «No lo encuentro» y avisa."
+      },
+      "avoid": [
+        "Factory Settings / Restore Factory Default: borra toda la configuración del router.",
+        "DMZ: expone un aparato a Internet; no lo bloquea."
+      ],
+      "confidence": "web",
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
       "id": "mitrastar-gpt-2541gnac",
       "vendor": "MitraStar",
       "model": "GPT-2541GNAC",
@@ -261,18 +293,23 @@
         "passwordHint": "La contraseña de acceso de la pegatina del router."
       },
       "block": {
-        "support": "app-only",
-        "how": "Movistar gestiona el control parental y la pausa de dispositivos desde la app Smart WiFi (perfiles y horarios), no desde el panel web del router. Comprobado en el Askey RTF8316VW, que usa el mismo portal.",
-        "scope": "unknown"
+        "support": "panel",
+        "scope": "wifi-only",
+        "where": [
+          "Configuración avanzada (enlace al final del menú básico)",
+          "WiFi (2,4 GHz y 5 GHz)",
+          "Filtrado MAC → modo lista negra → añadir la MAC"
+        ],
+        "how": "El filtrado MAC del menú avanzado puede funcionar como lista blanca o como lista negra. En lista negra, los aparatos añadidos no pueden conectarse al WiFi (no afecta a los que van por cable). Movistar también permite pausar desde la app Smart WiFi.",
+        "notes": "Corregido el 5/11/2026: antes se suponía que, como el Askey RTF8316VW, solo se podía desde la app."
       },
       "avoid": [
-        "Configuración avanzada → Network Setting → Bridging → Filtering: no bloquea aparatos; reparte puertos entre Internet, Voz e IPTV.",
-        "Apagar el WiFi (Disable) en la configuración inalámbrica: corta a todos."
+        "Filtrado MAC en modo lista BLANCA: solo podrán conectarse los aparatos de la lista.",
+        "«Configurar cuándo funciona el WiFi» (programación inalámbrica): apaga el WiFi a todos."
       ],
-      "confidence": "probable",
+      "confidence": "web",
       "sources": [
-        "https://www.telefonica.com/es/sala-comunicacion/prensa/movistar-incorpora-el-control-parental-de-la-red-wifi-en-su-app-movil-smart-wifi/",
-        "https://www.adslzone.net/operadores/routers/routers-movistar-modelos/"
+        "https://www.redeszone.net/tutoriales/configuracion-routers/movistar-router-smart-wifi-6-manual/"
       ],
       "updated": "2026-11-05"
     },
@@ -339,7 +376,7 @@
         ],
         "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Casa: «Bloquear Internet de forma permanente» y «Permitir Internet de forma permanente».",
         "scope": "unknown",
-        "notes": "El Livebox 7 existe en versión Arcadyan y ZTE; la ayuda de Orange describe el mismo panel para ambas."
+        "notes": "El Livebox 7 existe en versión Arcadyan y ZTE; la ayuda de Orange describe el mismo panel para ambas. Orange documenta el mismo procedimiento para su ZTE ZXHN F8748."
       },
       "avoid": [
         "«dispositivos desconectados» solo muestra el historial: no bloquea."
@@ -348,6 +385,39 @@
       "sources": [
         "https://ayuda.orange.es/dispositivos-y-routers/manuales-y-especificaciones/router-livebox-7/"
       ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "sagemcom-fast-5670",
+      "vendor": "Sagemcom",
+      "model": "F@st 5670",
+      "isps": [
+        "Yoigo",
+        "MásMóvil",
+        "Pepephone",
+        "PCComponentes Fibra"
+      ],
+      "aliases": [
+        "Fast 5670",
+        "F@st 5670v2",
+        "5670"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "passwordHint": "Usuario y contraseña de la etiqueta inferior del router."
+      },
+      "block": {
+        "support": "unknown",
+        "scope": "unknown",
+        "how": "La documentación consultada no describe control parental ni bloqueo por aparato. Menús conocidos: Wi-Fi 2,4 GHz/5 GHz, Access Control (Port Forwarding, DMZ), Factory Settings.",
+        "notes": "Si encuentras cómo bloquear un aparato, grábalo con la app; si no existe, pulsa «No lo encuentro» y avisa."
+      },
+      "avoid": [
+        "Factory Settings / Restore Factory Default: borra toda la configuración del router.",
+        "DMZ: expone un aparato a Internet; no lo bloquea."
+      ],
+      "confidence": "web",
       "updated": "2026-11-05"
     },
     {
@@ -380,6 +450,38 @@
       "sources": [
         "https://www.adslzone.net/operadores/routers/configurar-router-vodafone-fibra-optica/"
       ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "tp-link-xgb430v",
+      "vendor": "TP-Link",
+      "model": "XGB430v",
+      "isps": [
+        "Digi"
+      ],
+      "aliases": [
+        "XGB430v Pro",
+        "430V",
+        "XGB430v-DIGI"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "user",
+        "passwordHint": "La contraseña de la etiqueta del router (el router pide cambiarla la primera vez)."
+      },
+      "block": {
+        "support": "panel",
+        "scope": "unknown",
+        "where": [
+          "Básico → Controles parentales (o Avanzado → Controles parentales)",
+          "«Agregar»: nombre del miembro de la familia y sus dispositivos → Siguiente",
+          "Elige el nivel de filtro y activa límites de tiempo u «Hora de acostarse»"
+        ],
+        "how": "Perfiles por persona con sus dispositivos: filtro de contenidos por edad, límite diario y franja «Hora de acostarse» sin Internet. El manual no describe un botón de pausa inmediata.",
+        "notes": "Fuente: manual de usuario de Digi (aportado en PDF)."
+      },
+      "confidence": "official",
       "updated": "2026-11-05"
     },
     {
@@ -452,6 +554,75 @@
     },
     {
       "format": "wificasa-router/1",
+      "id": "zte-zxhn-f6705",
+      "vendor": "ZTE",
+      "model": "ZXHN F6705",
+      "isps": [
+        "Digi"
+      ],
+      "aliases": [
+        "F6705",
+        "Digi WiFi 7"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "user",
+        "passwordHint": "La contraseña de la etiqueta del router (el router pide cambiarla la primera vez)."
+      },
+      "block": {
+        "support": "panel",
+        "scope": "unknown",
+        "where": [
+          "Internet (panel de arriba)",
+          "Controles Parentales (desplegable de la izquierda)",
+          "Abre el desplegable, pon el interruptor en Encendido, elige el aparato y la política de días y horas → «Prohibir el acceso completo a internet» → Aplicar"
+        ],
+        "how": "Control parental por dispositivo con política de días y horas: prohibir todo Internet, o listas blanca/negra de webs. Para la pausa de WiFi Casa, una política que cubra todo el día.",
+        "notes": "Fuente: manual de usuario de Digi (aportado en PDF)."
+      },
+      "avoid": [
+        "Abrir o cerrar puertos: no bloquea aparatos."
+      ],
+      "confidence": "official",
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "zte-zxhn-f8748",
+      "vendor": "ZTE",
+      "model": "ZXHN F8748",
+      "isps": [
+        "Orange",
+        "Jazztel"
+      ],
+      "aliases": [
+        "F8748",
+        "Livebox WiFi 7 ZTE"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "passwordHint": "La contraseña de administración de la pegatina del router."
+      },
+      "block": {
+        "support": "panel",
+        "scope": "unknown",
+        "where": [
+          "mi red local (pestaña de arriba)",
+          "dispositivos conectados (columna izquierda)",
+          "Pulsa el aparato → «Restricción de acceso a Internet»",
+          "Elige «Bloquear Internet de forma permanente» (o «Programar acceso») y pulsa «guardar»"
+        ],
+        "how": "Mismo panel de Orange que el Livebox 7: permitir siempre, bloquear siempre o programar por franjas y días.",
+        "notes": "Es la versión de Orange. Digi instala routers ZTE parecidos (F8748Q) con otro panel: no son la misma ficha."
+      },
+      "confidence": "official",
+      "sources": [
+        "https://ayuda.orange.es/dispositivos-y-routers/manuales-y-especificaciones/router-zte-zxhn-f8748/7613-ver-los-dispositivos-conectados-al-router-zte-zxhn-f8748-y-configurar-restricciones-de-acceso-a-internet"
+      ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
       "id": "zte-zxhn-h3600",
       "vendor": "ZTE",
       "model": "ZXHN H3600",
@@ -504,7 +675,8 @@
           "Controles Parentales (menú de la izquierda)"
         ],
         "how": "Se elige el dispositivo y se le aplica un horario por días: bloquear todo Internet, o solo una lista de webs. Para la pausa de WiFi Casa, un horario que bloquee todo el día.",
-        "scope": "unknown"
+        "scope": "unknown",
+        "notes": "El manual del ZTE F6705 de Digi describe el mismo menú."
       },
       "avoid": [
         "Internet → Seguridad → Port Forwarding: solo abre puertos, no bloquea."
@@ -514,6 +686,102 @@
         "https://www.digimobil.es/downloads/manual-zte-h3600p",
         "https://www.xatakamovil.com/tutoriales/controla-uso-que-hacen-ninos-internet-asi-puedes-configurar-control-parental-router"
       ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "zte-zxhn-h367a",
+      "vendor": "ZTE",
+      "model": "ZXHN H367A",
+      "isps": [
+        "Yoigo",
+        "MásMóvil",
+        "PCComponentes Fibra"
+      ],
+      "aliases": [
+        "H367A"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "passwordHint": "Usuario y contraseña de la pegatina del router."
+      },
+      "block": {
+        "support": "panel",
+        "scope": "unknown",
+        "where": [
+          "Internet (barra de arriba)",
+          "Parental Controls"
+        ],
+        "how": "El menú Internet incluye un apartado Parental Controls. Falta el detalle de cómo se aplica a un aparato."
+      },
+      "avoid": [
+        "Internet → Security → Port Forwarding y DMZ: no bloquean; DMZ expone un aparato a Internet."
+      ],
+      "confidence": "web",
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "zyxel-ex3301",
+      "vendor": "Zyxel",
+      "model": "EX3301",
+      "isps": [
+        "Digi"
+      ],
+      "aliases": [
+        "EX3301-T0",
+        "EX3301-DIGI"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "passwordHint": "Usuario y contraseña de la etiqueta de la parte trasera del router."
+      },
+      "block": {
+        "support": "panel",
+        "scope": "unknown",
+        "where": [
+          "Icono de menú → Seguridad → Filtro MAC (bloquear el tráfico de una MAC)",
+          "o Seguridad → Control Parental (días y horas, y webs concretas)"
+        ],
+        "how": "El Filtro MAC permite bloquear o permitir el tráfico de dispositivos concretos; el Control Parental define periodos sin Internet.",
+        "notes": "Fuente: manual de usuario de Digi (aportado en PDF)."
+      },
+      "avoid": [
+        "Configuración de red → WLAN → Autentificación MAC: si se usa como lista de permitidos, deja sin WiFi a todos los demás."
+      ],
+      "confidence": "official",
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "zyxel-ex3501",
+      "vendor": "Zyxel",
+      "model": "EX3501",
+      "isps": [
+        "Digi"
+      ],
+      "aliases": [
+        "EX3501-T0",
+        "EX3501-DIGI"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "user",
+        "passwordHint": "La contraseña de la etiqueta del router (el router pide cambiarla la primera vez)."
+      },
+      "block": {
+        "support": "panel",
+        "scope": "unknown",
+        "where": [
+          "Icono de la parte superior derecha del panel",
+          "Seguridad → Control parental → activa «Control parental»",
+          "Añadir más perfiles → activa el perfil, ponle nombre y elige la MAC del aparato",
+          "Elige días y horario → Guardar"
+        ],
+        "how": "Perfiles por MAC con hasta tres planes de días y horario cada uno.",
+        "notes": "Fuente: manual de usuario de Digi (aportado en PDF)."
+      },
+      "confidence": "official",
       "updated": "2026-11-05"
     }
   ]

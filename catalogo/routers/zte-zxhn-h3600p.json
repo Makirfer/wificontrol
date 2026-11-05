@@ -21,7 +21,8 @@
       "Controles Parentales (menú de la izquierda)"
     ],
     "how": "Se elige el dispositivo y se le aplica un horario por días: bloquear todo Internet, o solo una lista de webs. Para la pausa de WiFi Casa, un horario que bloquee todo el día.",
-    "scope": "unknown"
+    "scope": "unknown",
+    "notes": "El manual del ZTE F6705 de Digi describe el mismo menú."
   },
   "avoid": [
     "Internet → Seguridad → Port Forwarding: solo abre puertos, no bloquea."

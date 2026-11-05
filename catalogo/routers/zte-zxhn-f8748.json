@@ -1,0 +1,35 @@
+{
+  "format": "wificasa-router/1",
+  "id": "zte-zxhn-f8748",
+  "vendor": "ZTE",
+  "model": "ZXHN F8748",
+  "isps": [
+    "Orange",
+    "Jazztel"
+  ],
+  "aliases": [
+    "F8748",
+    "Livebox WiFi 7 ZTE"
+  ],
+  "login": {
+    "address": "192.168.1.1",
+    "passwordHint": "La contraseña de administración de la pegatina del router."
+  },
+  "block": {
+    "support": "panel",
+    "scope": "unknown",
+    "where": [
+      "mi red local (pestaña de arriba)",
+      "dispositivos conectados (columna izquierda)",
+      "Pulsa el aparato → «Restricción de acceso a Internet»",
+      "Elige «Bloquear Internet de forma permanente» (o «Programar acceso») y pulsa «guardar»"
+    ],
+    "how": "Mismo panel de Orange que el Livebox 7: permitir siempre, bloquear siempre o programar por franjas y días.",
+    "notes": "Es la versión de Orange. Digi instala routers ZTE parecidos (F8748Q) con otro panel: no son la misma ficha."
+  },
+  "confidence": "official",
+  "sources": [
+    "https://ayuda.orange.es/dispositivos-y-routers/manuales-y-especificaciones/router-zte-zxhn-f8748/7613-ver-los-dispositivos-conectados-al-router-zte-zxhn-f8748-y-configurar-restricciones-de-acceso-a-internet"
+  ],
+  "updated": "2026-11-05"
+}

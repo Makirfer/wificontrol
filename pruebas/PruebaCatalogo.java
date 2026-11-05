@@ -71,7 +71,12 @@ public class PruebaCatalogo {
         ok(fc.findSheet("TP-Link", "Archer C6") == null, "sin ficha para un router desconocido");
         ok(sh.confirmed(), "la ficha del Askey está comprobada");
         Catalog.Sheet mv = fc.findSheet("Movistar", "Smart WiFi 6");
-        ok(mv != null && !mv.confirmed() && "app-only".equals(mv.support), "Smart WiFi 6 de Movistar: probable, sin confirmar (" + (mv == null ? "-" : mv.id) + ")");
+        ok(mv != null && !mv.confirmed() && mv.canBlock() && "wifi-only".equals(mv.scope), "Smart WiFi 6 de Movistar: lista negra MAC en el menú avanzado (" + (mv == null ? "-" : mv.id) + ")");
+        ok(fc.findSheet("Digi", "XGB430v Pro") != null && fc.findSheet("Digi", "F6705").canBlock()
+                && fc.findSheet("Zyxel", "EX3501").where.size() == 4, "routers de Digi con su camino de menús");
+        ok(fc.findSheet("Orange", "ZXHN F8748") != null && "official".equals(fc.findSheet("Orange", "ZXHN F8748").confidence),
+                "ZTE F8748 de Orange: ayuda oficial");
+        ok("unknown".equals(fc.findSheet("Yoigo", "Fast 5670").support), "Sagemcom de MásMóvil: sin datos de bloqueo");
         Catalog.Sheet dg = fc.findSheet("ZTE", "H3600P");
         ok(dg != null && dg.canBlock() && dg.where.size() == 2 && !dg.sources.isEmpty(), "Digi H3600P: se puede, con camino de menús y fuente");
         ok(fc.findSheet("Yoigo", "Livebox 6s") != null && fc.findSheet("Yoigo", "Livebox 6s").recipe.equals("zte-zxhn-f6640p"),

@@ -17,18 +17,23 @@
     "passwordHint": "La contraseña de acceso de la pegatina del router."
   },
   "block": {
-    "support": "app-only",
-    "how": "Movistar gestiona el control parental y la pausa de dispositivos desde la app Smart WiFi (perfiles y horarios), no desde el panel web del router. Comprobado en el Askey RTF8316VW, que usa el mismo portal.",
-    "scope": "unknown"
+    "support": "panel",
+    "scope": "wifi-only",
+    "where": [
+      "Configuración avanzada (enlace al final del menú básico)",
+      "WiFi (2,4 GHz y 5 GHz)",
+      "Filtrado MAC → modo lista negra → añadir la MAC"
+    ],
+    "how": "El filtrado MAC del menú avanzado puede funcionar como lista blanca o como lista negra. En lista negra, los aparatos añadidos no pueden conectarse al WiFi (no afecta a los que van por cable). Movistar también permite pausar desde la app Smart WiFi.",
+    "notes": "Corregido el 5/11/2026: antes se suponía que, como el Askey RTF8316VW, solo se podía desde la app."
   },
   "avoid": [
-    "Configuración avanzada → Network Setting → Bridging → Filtering: no bloquea aparatos; reparte puertos entre Internet, Voz e IPTV.",
-    "Apagar el WiFi (Disable) en la configuración inalámbrica: corta a todos."
+    "Filtrado MAC en modo lista BLANCA: solo podrán conectarse los aparatos de la lista.",
+    "«Configurar cuándo funciona el WiFi» (programación inalámbrica): apaga el WiFi a todos."
   ],
-  "confidence": "probable",
+  "confidence": "web",
   "sources": [
-    "https://www.telefonica.com/es/sala-comunicacion/prensa/movistar-incorpora-el-control-parental-de-la-red-wifi-en-su-app-movil-smart-wifi/",
-    "https://www.adslzone.net/operadores/routers/routers-movistar-modelos/"
+    "https://www.redeszone.net/tutoriales/configuracion-routers/movistar-router-smart-wifi-6-manual/"
   ],
   "updated": "2026-11-05"
 }

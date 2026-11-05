@@ -1,0 +1,32 @@
+{
+  "format": "wificasa-router/1",
+  "id": "zyxel-ex3301",
+  "vendor": "Zyxel",
+  "model": "EX3301",
+  "isps": [
+    "Digi"
+  ],
+  "aliases": [
+    "EX3301-T0",
+    "EX3301-DIGI"
+  ],
+  "login": {
+    "address": "192.168.1.1",
+    "passwordHint": "Usuario y contraseña de la etiqueta de la parte trasera del router."
+  },
+  "block": {
+    "support": "panel",
+    "scope": "unknown",
+    "where": [
+      "Icono de menú → Seguridad → Filtro MAC (bloquear el tráfico de una MAC)",
+      "o Seguridad → Control Parental (días y horas, y webs concretas)"
+    ],
+    "how": "El Filtro MAC permite bloquear o permitir el tráfico de dispositivos concretos; el Control Parental define periodos sin Internet.",
+    "notes": "Fuente: manual de usuario de Digi (aportado en PDF)."
+  },
+  "avoid": [
+    "Configuración de red → WLAN → Autentificación MAC: si se usa como lista de permitidos, deja sin WiFi a todos los demás."
+  ],
+  "confidence": "official",
+  "updated": "2026-11-05"
+}

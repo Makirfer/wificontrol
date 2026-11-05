@@ -1,0 +1,34 @@
+{
+  "format": "wificasa-router/1",
+  "id": "zte-zxhn-f6705",
+  "vendor": "ZTE",
+  "model": "ZXHN F6705",
+  "isps": [
+    "Digi"
+  ],
+  "aliases": [
+    "F6705",
+    "Digi WiFi 7"
+  ],
+  "login": {
+    "address": "192.168.1.1",
+    "user": "user",
+    "passwordHint": "La contraseña de la etiqueta del router (el router pide cambiarla la primera vez)."
+  },
+  "block": {
+    "support": "panel",
+    "scope": "unknown",
+    "where": [
+      "Internet (panel de arriba)",
+      "Controles Parentales (desplegable de la izquierda)",
+      "Abre el desplegable, pon el interruptor en Encendido, elige el aparato y la política de días y horas → «Prohibir el acceso completo a internet» → Aplicar"
+    ],
+    "how": "Control parental por dispositivo con política de días y horas: prohibir todo Internet, o listas blanca/negra de webs. Para la pausa de WiFi Casa, una política que cubra todo el día.",
+    "notes": "Fuente: manual de usuario de Digi (aportado en PDF)."
+  },
+  "avoid": [
+    "Abrir o cerrar puertos: no bloquea aparatos."
+  ],
+  "confidence": "official",
+  "updated": "2026-11-05"
+}

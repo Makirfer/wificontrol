@@ -129,6 +129,7 @@ def main():
         terminar(False, f"❌ La ficha no es válida: {e.message}")
     destino.write_text(json.dumps(nueva, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (RAIZ / "catalogo" / "index.json").write_text(generar_indice.generar(), encoding="utf-8")
+    (RAIZ / "catalogo" / "ROUTERS.md").write_text(generar_indice.tabla(), encoding="utf-8")
     terminar(True, f"✅ Gracias. Ficha **{marca} {modelo}** preparada (bloqueo: `{nueva['block']['support']}`, "
                    f"{nueva.get('reports', 1)} confirmación(es)). Estará en la app cuando se apruebe." + aviso, fid)
 
