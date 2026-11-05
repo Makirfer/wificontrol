@@ -237,6 +237,10 @@
     <string name="notif_channel">Device connections</string>
     <string name="notif_title">%1$s just connected</string>
     <string name="notif_text">%1$s · %2$s</string>
+    <string name="notify_new_devices">🔔 Notify me when a new device connects</string>
+    <string name="notify_new_info">I\'ll notify you when a never-seen device appears on the WiFi at %1$s. It can take up to 15 minutes and only works with this phone on that WiFi.</string>
+    <string name="notif_new_title">New device at %1$s</string>
+    <string name="notif_new_text">%1$s connected for the first time. If you don\'t recognise it, change the WiFi password.</string>
     <string-array name="learn_steps">
         <item>Log in to the router panel</item>
         <item>Open the list of connected devices</item>

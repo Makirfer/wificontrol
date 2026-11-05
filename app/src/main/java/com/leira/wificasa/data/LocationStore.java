@@ -176,6 +176,11 @@ public final class LocationStore {
         p.edit().putStringSet(k(l.id, "notify"), s).apply();
     }
 
+    /** ¿Avisar cuando aparece en la red un aparato que nunca se había visto? */
+    public boolean notifyNew(Location l) { return p.getBoolean(k(l.id, "notify_new"), false); }
+
+    public void setNotifyNew(Location l, boolean on) { p.edit().putBoolean(k(l.id, "notify_new"), on).apply(); }
+
     /** Aparatos vigilados que estaban conectados en la última comprobación. */
     public Set<String> notifySeen(Location l) {
         return new HashSet<>(p.getStringSet(k(l.id, "notify_seen"), new HashSet<String>()));

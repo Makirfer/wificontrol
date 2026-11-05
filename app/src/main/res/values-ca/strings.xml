@@ -237,6 +237,10 @@
     <string name="notif_channel">Connexions d\'aparells</string>
     <string name="notif_title">%1$s s\'acaba de connectar</string>
     <string name="notif_text">%1$s · %2$s</string>
+    <string name="notify_new_devices">🔔 Avisa\'m si es connecta un aparell nou</string>
+    <string name="notify_new_info">T\'avisaré quan aparegui al WiFi de %1$s un aparell que no s\'havia vist mai. Pot trigar fins a 15 minuts i només funciona amb aquest mòbil en aquest WiFi.</string>
+    <string name="notif_new_title">Aparell nou a %1$s</string>
+    <string name="notif_new_text">%1$s s\'ha connectat per primera vegada. Si no el coneixes, canvia la clau del WiFi.</string>
     <string-array name="learn_steps">
         <item>Inicia sessió al panell del router</item>
         <item>Obre la llista de dispositius connectats</item>

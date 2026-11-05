@@ -194,7 +194,9 @@ usar (funcionaría con el móvil apagado o fuera de casa).
 
 En la ficha de cada aparato, **🔔 Avisarme cuando se conecte**. Cada 15 minutos (lo mínimo que
 Android permite en segundo plano) `AvisoJob` consulta el router y lanza una notificación con los
-aparatos vigilados que han pasado de desconectados a conectados. Solo funciona con el móvil en el
+aparatos vigilados que han pasado de desconectados a conectados. En Ajustes de cada ubicación,
+**Avisarme si se conecta un aparato nuevo** avisa de cualquier MAC que el router nunca había mostrado.
+Solo funciona con el móvil en el
 WiFi de esa ubicación.
 
 ## Hoja de ruta

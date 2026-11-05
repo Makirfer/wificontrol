@@ -238,6 +238,10 @@
     <string name="notif_channel">Conexiones de aparatos</string>
     <string name="notif_title">%1$s se acaba de conectar</string>
     <string name="notif_text">%1$s · %2$s</string>
+    <string name="notify_new_devices">🔔 Avisarme si se conecta un aparato nuevo</string>
+    <string name="notify_new_info">Te avisaré cuando aparezca en el WiFi de %1$s un aparato que nunca se había visto. Puede tardar hasta 15 minutos y solo funciona con este móvil en ese WiFi.</string>
+    <string name="notif_new_title">Aparato nuevo en %1$s</string>
+    <string name="notif_new_text">%1$s se ha conectado por primera vez. Si no lo conoces, cambia la clave del WiFi.</string>
     <string-array name="learn_steps">
         <item>Inicia sesión en el panel del router</item>
         <item>Abre la lista de dispositivos conectados</item>

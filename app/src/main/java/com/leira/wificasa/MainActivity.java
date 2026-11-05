@@ -762,6 +762,11 @@ public class MainActivity extends Activity {
         pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         box.addView(pass);
 
+        final CheckBox notifyNew = new CheckBox(this);
+        notifyNew.setText(t(R.string.notify_new_devices));
+        notifyNew.setChecked(store.notifyNew(editing));
+        box.addView(notifyNew);
+
         AlertDialog.Builder b = new AlertDialog.Builder(this)
                 .setTitle(firstTime ? t(R.string.setup_router) : t(R.string.settings_of, editing.name))
                 .setView(box)
@@ -781,6 +786,15 @@ public class MainActivity extends Activity {
                         return;
                     }
                     store.setGroupName(editing, group.getText().toString());
+                    if (notifyNew.isChecked() != store.notifyNew(editing)) {
+                        store.setNotifyNew(editing, notifyNew.isChecked());
+                        final android.content.Context app = getApplicationContext();
+                        worker.execute(() -> AvisoJob.reprogram(app));
+                        if (notifyNew.isChecked()) {
+                            askNotificationPermission();
+                            Toast.makeText(this, t(R.string.notify_new_info, editing.name), Toast.LENGTH_LONG).show();
+                        }
+                    }
                     switchTo(editing);
                     refresh();
                 });

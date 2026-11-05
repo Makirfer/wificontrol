@@ -40,7 +40,7 @@ public class AvisoJob extends JobService {
         if (js == null) return;
         LocationStore store = new LocationStore(ctx);
         boolean any = false;
-        for (Location l : store.all()) if (!store.notifySet(l).isEmpty()) any = true;
+        for (Location l : store.all()) if (!store.notifySet(l).isEmpty() || store.notifyNew(l)) any = true;
         if (!any) { js.cancel(JOB_ID); return; }
         js.schedule(new JobInfo.Builder(JOB_ID, new ComponentName(ctx, AvisoJob.class))
                 .setPeriodic(15 * 60 * 1000L)
@@ -70,13 +70,24 @@ public class AvisoJob extends JobService {
         LocationStore store = new LocationStore(ctx);
         for (Location l : store.all()) {
             Set<String> watch = store.notifySet(l);
-            if (watch.isEmpty() || !store.hasPassword(l)) continue;
+            boolean watchNew = store.notifyNew(l);
+            if ((watch.isEmpty() && !watchNew) || !store.hasPassword(l)) continue;
             RouterAdapter adapter = AdapterRegistry.get(l.adapterId);
             List<NetDevice> list;
             try {
                 list = new RouterEngine(adapter, store.credentials(l)).run(ops -> ops.listarDispositivos());
             } catch (Exception e) {
                 continue; // fuera de casa o router ocupado: sin avisos esta vez
+            }
+            if (watchNew) {
+                Set<String> before = new HashSet<>();
+                for (NetDevice d : store.knownDevices(l)) before.add(d.mac);
+                // Con la lista vacía (primera consulta) no se avisa: todos serían «nuevos».
+                if (!before.isEmpty()) {
+                    for (NetDevice d : list) {
+                        if (!d.mac.isEmpty() && !before.contains(d.mac)) notifyNew(ctx, l, d);
+                    }
+                }
             }
             store.rememberDevices(l, list, System.currentTimeMillis());
             Set<String> seen = store.notifySeen(l), checked = store.notifyChecked(l), nowOn = new HashSet<>();
@@ -92,22 +103,33 @@ public class AvisoJob extends JobService {
         }
     }
 
+    private static void notifyNew(Context ctx, Location l, NetDevice d) {
+        String name = !d.hostName.isEmpty() ? d.hostName + " · " + d.mac : d.mac;
+        post(ctx, l, (l.id + "new" + d.mac).hashCode(), ctx.getString(R.string.notif_new_title, l.name),
+                ctx.getString(R.string.notif_new_text, name));
+    }
+
     private static void notify(Context ctx, Location l, NetDevice d, String alias) {
+        String name = !alias.isEmpty() ? alias : !d.hostName.isEmpty() ? d.hostName : d.mac;
+        String hora = new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(new java.util.Date());
+        post(ctx, l, (l.id + d.mac).hashCode(), ctx.getString(R.string.notif_title, name),
+                ctx.getString(R.string.notif_text, l.name, hora));
+    }
+
+    private static void post(Context ctx, Location l, int id, String title, String text) {
         NotificationManager nm = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
         if (nm == null) return;
         nm.createNotificationChannel(new NotificationChannel(CHANNEL, ctx.getString(R.string.notif_channel),
                 NotificationManager.IMPORTANCE_DEFAULT));
-        String name = !alias.isEmpty() ? alias : !d.hostName.isEmpty() ? d.hostName : d.mac;
-        String hora = new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(new java.util.Date());
         PendingIntent open = PendingIntent.getActivity(ctx, 0, new Intent(ctx, MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         Notification n = new Notification.Builder(ctx, CHANNEL)
                 .setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle(ctx.getString(R.string.notif_title, name))
-                .setContentText(ctx.getString(R.string.notif_text, l.name, hora))
+                .setContentTitle(title)
+                .setContentText(text)
                 .setContentIntent(open)
                 .setAutoCancel(true)
                 .build();
-        nm.notify((l.id + d.mac).hashCode(), n);
+        nm.notify(id, n);
     }
 }
