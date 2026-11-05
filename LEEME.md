@@ -102,7 +102,7 @@ Solo funciona con el móvil conectado al WiFi de la ubicación que controlas.
   que el adaptador normal pero a través del motor de recetas. Pruébala cuando quieras; si algo
   falla, vuelve a elegir el modelo normal.
 
-## Cómo generar el APK (en el Dell, una sola vez)
+## Cómo generar el APK (en tu ordenador, una sola vez)
 
 1. Instala **Android Studio** desde https://developer.android.com/studio (opciones por defecto).
 2. Descomprime `WifiCasa.zip` en una carpeta, por ejemplo `Documentos\WifiCasa`.

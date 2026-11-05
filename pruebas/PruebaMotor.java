@@ -36,7 +36,7 @@ public class PruebaMotor {
         List<NetDevice> l = e.run(ops -> ops.listarConEstado());
         ok(l.size() == 3, "lista 3 dispositivos");
         ok(l.get(0).mac.equals("aa:bb:cc:00:00:01"), "MAC normalizada a minúsculas");
-        ok(l.get(0).hostName.equals("Portátil-Nil"), "nombre con acento decodificado: " + l.get(0).hostName);
+        ok(l.get(0).hostName.equals("Portátil-Salón"), "nombre con acento decodificado: " + l.get(0).hostName);
         ok(l.get(0).access == AccessState.ALLOWED, "dispositivo 1 con Internet");
         ok(l.get(2).access == AccessState.SCHEDULED, "dispositivo 3 con horario");
         ok(!l.get(2).active, "dispositivo 3 no conectado");

@@ -37,7 +37,7 @@ def fresh_state():
         "sessions": {},
         "log": [],
         "devices": [
-            {"HostName": "Port&#225;til-Nil", "MACAddress": "AA:BB:CC:00:00:01", "IPAddress": "192.168.1.34",
+            {"HostName": "Port&#225;til-Salón", "MACAddress": "AA:BB:CC:00:00:01", "IPAddress": "192.168.1.34",
              "Active": "1", "DevType": "1", "Mode": 0},
             {"HostName": "Movil-Marga", "MACAddress": "aa:bb:cc:00:00:02", "IPAddress": "192.168.1.35",
              "Active": "1", "DevType": "2", "Mode": 0},
