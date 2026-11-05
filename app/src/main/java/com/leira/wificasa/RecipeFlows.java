@@ -74,7 +74,7 @@ final class RecipeFlows {
         }
         String[] items = {
                 "📖  Cómo funciona (paso a paso)",
-                "🔎  Buscar mi router en el catálogo",
+                "🔎  Ver los routers del catálogo",
                 "🎓  Aprender un router nuevo (grabar su panel)",
                 "📥  Importar una receta"
         };
@@ -109,23 +109,66 @@ final class RecipeFlows {
         worker.execute(() -> {
             List<Catalog.Entry> detected = new ArrayList<>();
             List<Catalog.Entry> all;
+            List<Catalog.Sheet> sheets;
             String error = null;
             Catalog cat = new Catalog();
             try {
                 all = cat.entries();
+                sheets = cat.sheets();
                 if (c != null) detected = cat.detect(Catalog.probeRouter(c));
             } catch (Exception e) {
                 all = new ArrayList<>();
+                sheets = new ArrayList<>();
                 error = e.getMessage();
             }
             final List<Catalog.Entry> fAll = all, fDet = detected;
+            final List<Catalog.Sheet> fSheets = sheets;
             final String fErr = error;
             a.runOnUiThread(() -> {
                 wait.dismiss();
                 if (fErr != null) { info("Catálogo", "⚠ " + fErr); return; }
-                showCatalogList(cat, fDet, fAll);
+                if (fSheets.isEmpty()) showCatalogList(cat, fDet, fAll);
+                else showRouterList(cat, fSheets, fDet, fAll, c);
             });
         });
+    }
+
+    /** Todos los routers del catálogo (fichas), con su estado; al tocar uno se abre su ficha. */
+    private void showRouterList(Catalog cat, List<Catalog.Sheet> sheets, List<Catalog.Entry> detected,
+                                List<Catalog.Entry> all, RouterCredentials c) {
+        final List<Catalog.Sheet> list = new ArrayList<>(sheets);
+        final java.util.Set<String> det = new java.util.HashSet<>();
+        for (Catalog.Entry e : detected) det.add(e.id);
+        java.util.Collections.sort(list, (x, y) -> {
+            int dx = det.contains(x.recipe) ? 0 : 1, dy = det.contains(y.recipe) ? 0 : 1;
+            if (dx != dy) return dx - dy;
+            String ix = x.isps.isEmpty() ? "~" : x.isps.get(0), iy = y.isps.isEmpty() ? "~" : y.isps.get(0);
+            int k = ix.compareToIgnoreCase(iy);
+            return k != 0 ? k : x.title().compareToIgnoreCase(y.title());
+        });
+        String[] items = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            Catalog.Sheet sh = list.get(i);
+            String icon = !sh.recipe.isEmpty() ? "🧾" : sh.canBlock() ? "✅"
+                    : ("app-only".equals(sh.support) || "none".equals(sh.support)) ? "⛔" : "❔";
+            String sub = sh.isps.isEmpty() ? "" : android.text.TextUtils.join(", ", sh.isps);
+            if (!sh.recipe.isEmpty()) sub += (sub.isEmpty() ? "" : " · ") + "con receta";
+            items[i] = (det.contains(sh.recipe) ? "★ " : "") + icon + " " + sh.title() + (sub.isEmpty() ? "" : "\n" + sub);
+        }
+        new AlertDialog.Builder(a)
+                .setTitle("Routers del catálogo (" + list.size() + ")")
+                .setItems(items, (d, w) -> {
+                    Catalog.Sheet sh = list.get(w);
+                    Catalog.Entry recipe = null;
+                    for (Catalog.Entry e : all) if (e.id.equals(sh.recipe)) recipe = e;
+                    showSheet(cat, sh, recipe, c, sh.vendor, sh.model, sh.isps.isEmpty() ? "" : sh.isps.get(0));
+                })
+                .setNeutralButton("No está el mío", (d, w) -> startLearning())
+                .setNegativeButton("Cerrar", null)
+                .show();
+        if (list.size() > 0)
+            android.widget.Toast.makeText(a, "🧾 con receta · ✅ se puede bloquear · ⛔ no se puede · ❔ sin datos",
+                    android.widget.Toast.LENGTH_LONG).show();
     }
 
     private void showCatalogList(Catalog cat, List<Catalog.Entry> detected, List<Catalog.Entry> all) {
