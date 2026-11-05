@@ -190,6 +190,13 @@ corta o devuelve Internet. Si el móvil no está en el WiFi de esa ubicación, r
 mano entre medias se respeta. Pendiente: usar el horario propio del router cuando la receta lo sepa
 usar (funcionaría con el móvil apagado o fuera de casa).
 
+## Avisos de conexión
+
+En la ficha de cada aparato, **🔔 Avisarme cuando se conecte**. Cada 15 minutos (lo mínimo que
+Android permite en segundo plano) `AvisoJob` consulta el router y lanza una notificación con los
+aparatos vigilados que han pasado de desconectados a conectados. Solo funciona con el móvil en el
+WiFi de esa ubicación.
+
 ## Hoja de ruta
 
 | Fase | Estado |

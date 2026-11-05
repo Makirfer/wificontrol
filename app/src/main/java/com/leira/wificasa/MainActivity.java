@@ -105,7 +105,7 @@ public class MainActivity extends Activity {
         });
         // Las alarmas de los horarios se pierden al reinstalar: se vuelven a programar.
         final android.content.Context app = getApplicationContext();
-        worker.execute(() -> HorarioRunner.reprogram(app));
+        worker.execute(() -> { HorarioRunner.reprogram(app); AvisoJob.reprogram(app); });
         buildUi();
         loc = store.current();
         if (loc == null) {
@@ -603,11 +603,26 @@ public class MainActivity extends Activity {
         study.setChecked(store.studySet(loc).contains(d.mac));
         if (canSwitch()) box.addView(study);
 
+        final CheckBox notify = new CheckBox(this);
+        notify.setText(t(R.string.notify_on_connect));
+        notify.setChecked(store.notifySet(loc).contains(d.mac));
+        box.addView(notify);
+
         AlertDialog.Builder b = new AlertDialog.Builder(this)
                 .setTitle(t(R.string.device))
                 .setView(box)
                 .setPositiveButton(t(R.string.save), (dialog, which) -> {
                     store.saveDevice(loc, d.mac, name.getText().toString().trim(), study.isChecked());
+                    boolean wasOn = store.notifySet(loc).contains(d.mac);
+                    store.setNotify(loc, d.mac, notify.isChecked());
+                    if (notify.isChecked() != wasOn) {
+                        final android.content.Context app = getApplicationContext();
+                        worker.execute(() -> AvisoJob.reprogram(app));
+                        if (notify.isChecked()) {
+                            askNotificationPermission();
+                            Toast.makeText(this, t(R.string.notify_info, loc.name), Toast.LENGTH_LONG).show();
+                        }
+                    }
                     renderList();
                 })
                 .setNegativeButton(t(R.string.cancel), null);
@@ -622,6 +637,14 @@ public class MainActivity extends Activity {
             });
         }
         b.show();
+    }
+
+    /** Android 13+ pide permiso para enseñar notificaciones. */
+    private void askNotificationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= 33
+                && checkSelfPermission("android.permission.POST_NOTIFICATIONS") != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 61);
+        }
     }
 
     /** Elegir ubicación (casa, segunda residencia…) o crear una nueva. */

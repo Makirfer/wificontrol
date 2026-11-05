@@ -163,6 +163,33 @@ public final class LocationStore {
 
     public void setScheduleResult(Location l, String text) { p.edit().putString(k(l.id, "sched_result"), text).apply(); }
 
+    // ------------------------------------------------------------------ avisos de conexión
+
+    /** Aparatos de los que se avisa cuando se conectan. */
+    public Set<String> notifySet(Location l) {
+        return new HashSet<>(p.getStringSet(k(l.id, "notify"), new HashSet<String>()));
+    }
+
+    public void setNotify(Location l, String mac, boolean on) {
+        Set<String> s = notifySet(l);
+        if (on) s.add(mac); else s.remove(mac);
+        p.edit().putStringSet(k(l.id, "notify"), s).apply();
+    }
+
+    /** Aparatos vigilados que estaban conectados en la última comprobación. */
+    public Set<String> notifySeen(Location l) {
+        return new HashSet<>(p.getStringSet(k(l.id, "notify_seen"), new HashSet<String>()));
+    }
+
+    /** Aparatos vigilados que ya se han comprobado alguna vez (para no avisar de golpe al activar). */
+    public Set<String> notifyChecked(Location l) {
+        return new HashSet<>(p.getStringSet(k(l.id, "notify_checked"), new HashSet<String>()));
+    }
+
+    public void setNotifyState(Location l, Set<String> seen, Set<String> checked) {
+        p.edit().putStringSet(k(l.id, "notify_seen"), seen).putStringSet(k(l.id, "notify_checked"), checked).apply();
+    }
+
     // ------------------------------------------------------------------ dispositivos recordados
 
     private static final String SEP = "\u001F", EXTRA_SEP = "\u001E";

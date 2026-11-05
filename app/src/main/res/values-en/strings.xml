@@ -232,6 +232,11 @@
     <string name="sched_off">off</string>
     <string name="sched_result_ok">✓ Schedule applied at %1$s (%2$d devices).</string>
     <string name="sched_result_fail">⚠ At %1$s the schedule could not be applied: %2$s. It will retry when the phone is on WiFi.</string>
+    <string name="notify_on_connect">🔔 Notify me when it connects</string>
+    <string name="notify_info">I\'ll notify you when it connects. It can take up to 15 minutes and only works with this phone on the WiFi at %1$s.</string>
+    <string name="notif_channel">Device connections</string>
+    <string name="notif_title">%1$s just connected</string>
+    <string name="notif_text">%1$s · %2$s</string>
     <string-array name="learn_steps">
         <item>Log in to the router panel</item>
         <item>Open the list of connected devices</item>

@@ -233,6 +233,11 @@
     <string name="sched_off">desactivado</string>
     <string name="sched_result_ok">✓ Horario aplicado a las %1$s (%2$d aparatos).</string>
     <string name="sched_result_fail">⚠ A las %1$s no se pudo aplicar el horario: %2$s. Se reintentará cuando el móvil esté en un WiFi.</string>
+    <string name="notify_on_connect">🔔 Avisarme cuando se conecte</string>
+    <string name="notify_info">Te avisaré cuando se conecte. Puede tardar hasta 15 minutos y solo funciona con este móvil en el WiFi de %1$s.</string>
+    <string name="notif_channel">Conexiones de aparatos</string>
+    <string name="notif_title">%1$s se acaba de conectar</string>
+    <string name="notif_text">%1$s · %2$s</string>
     <string-array name="learn_steps">
         <item>Inicia sesión en el panel del router</item>
         <item>Abre la lista de dispositivos conectados</item>
