@@ -207,6 +207,31 @@
     <string name="guide_back">Enrere</string>
     <string name="record_my_router">Grava el meu router</string>
     <string name="find_my_router">Cerca el meu router</string>
+    <string name="schedules">⏰  Horaris</string>
+    <string name="sched_title">Horaris · %1$s</string>
+    <string name="sched_info">A l\'hora indicada, aquest mòbil entra al router i talla o torna Internet als aparells de l\'horari. Per això, el mòbil ha d\'estar connectat al WiFi d\'aquesta ubicació; si no ho està, ho reintenta cada 5 minuts fins a la franja següent.\n\nSi entremig talles o tornes Internet a mà, es respecta fins al canvi següent.</string>
+    <string name="sched_allow_exact">⚠ Permet avisos a l\'hora exacta (si no, poden arribar uns minuts tard)</string>
+    <string name="sched_new">＋ Nou horari</string>
+    <string name="sched_new_title">Nou horari</string>
+    <string name="sched_edit_title">Edita l\'horari</string>
+    <string name="sched_name_hint">Nom (p. ex. Nit, Deures)</string>
+    <string name="sched_pick_devices">📱 Tria aparells  ▾</string>
+    <string name="sched_devices_title">Aparells sense Internet en aquesta franja</string>
+    <string name="sched_no_devices">Encara no hi ha aparells: prem Actualitza a la pantalla principal.</string>
+    <string name="sched_days">Dies</string>
+    <string name="sched_from">Des de %1$s</string>
+    <string name="sched_to">Fins a %1$s</string>
+    <string name="sched_time_note">Pot passar la mitjanit (21:00–08:00 talla tota la nit). Si comença i acaba a la mateixa hora, dura tot el dia.</string>
+    <string name="sched_enabled">Actiu</string>
+    <string name="sched_need_devices_days">Tria almenys un aparell i un dia.</string>
+    <string name="sched_saved">Horari desat.</string>
+    <string name="sched_every_day">cada dia</string>
+    <string name="sched_weekdays">de dilluns a divendres</string>
+    <string name="sched_weekend">caps de setmana</string>
+    <string name="sched_all_day">tot el dia</string>
+    <string name="sched_off">desactivat</string>
+    <string name="sched_result_ok">✓ Horari aplicat a les %1$s (%2$d aparells).</string>
+    <string name="sched_result_fail">⚠ A les %1$s no s\'ha pogut aplicar l\'horari: %2$s. Es reintentarà quan el mòbil sigui en un WiFi.</string>
     <string-array name="learn_steps">
         <item>Inicia sessió al panell del router</item>
         <item>Obre la llista de dispositius connectats</item>
@@ -237,6 +262,10 @@
         <item>Importa-la: l\'app llegeix i talla Internet uns segons per comprovar-la.</item>
         <item>Publica-la i la tindrà qualsevol amb el mateix router.</item>
     </string-array>
+    <plurals name="sched_devices">
+        <item quantity="one">%1$d aparell</item>
+        <item quantity="other">%1$d aparells</item>
+    </plurals>
     <plurals name="paused">
         <item quantity="one">⏸ Internet pausat (%1$d dispositiu) · %2$s</item>
         <item quantity="other">⏸ Internet pausat (%1$d dispositius) · %2$s</item>

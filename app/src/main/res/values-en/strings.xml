@@ -207,6 +207,31 @@
     <string name="guide_back">Back</string>
     <string name="record_my_router">Record my router</string>
     <string name="find_my_router">Find my router</string>
+    <string name="schedules">⏰  Schedules</string>
+    <string name="sched_title">Schedules · %1$s</string>
+    <string name="sched_info">At the set time, this phone logs into the router and cuts or restores Internet for the devices in the schedule. For that, the phone must be connected to this location\'s WiFi; if it isn\'t, it retries every 5 minutes until the next change.\n\nIf you cut or restore Internet by hand in between, that is kept until the next change.</string>
+    <string name="sched_allow_exact">⚠ Allow exact-time alarms (otherwise they may arrive a few minutes late)</string>
+    <string name="sched_new">＋ New schedule</string>
+    <string name="sched_new_title">New schedule</string>
+    <string name="sched_edit_title">Edit schedule</string>
+    <string name="sched_name_hint">Name (e.g. Night, Homework)</string>
+    <string name="sched_pick_devices">📱 Choose devices  ▾</string>
+    <string name="sched_devices_title">Devices without Internet in this slot</string>
+    <string name="sched_no_devices">No devices yet: tap Refresh on the main screen.</string>
+    <string name="sched_days">Days</string>
+    <string name="sched_from">From %1$s</string>
+    <string name="sched_to">Until %1$s</string>
+    <string name="sched_time_note">It can go past midnight (21:00–08:00 cuts all night). If it starts and ends at the same time, it lasts all day.</string>
+    <string name="sched_enabled">Enabled</string>
+    <string name="sched_need_devices_days">Choose at least one device and one day.</string>
+    <string name="sched_saved">Schedule saved.</string>
+    <string name="sched_every_day">every day</string>
+    <string name="sched_weekdays">Monday to Friday</string>
+    <string name="sched_weekend">weekends</string>
+    <string name="sched_all_day">all day</string>
+    <string name="sched_off">off</string>
+    <string name="sched_result_ok">✓ Schedule applied at %1$s (%2$d devices).</string>
+    <string name="sched_result_fail">⚠ At %1$s the schedule could not be applied: %2$s. It will retry when the phone is on WiFi.</string>
     <string-array name="learn_steps">
         <item>Log in to the router panel</item>
         <item>Open the list of connected devices</item>
@@ -237,6 +262,10 @@
         <item>Import it: the app reads and cuts Internet for a few seconds to check it.</item>
         <item>Publish it and anyone with the same router will have it.</item>
     </string-array>
+    <plurals name="sched_devices">
+        <item quantity="one">%1$d device</item>
+        <item quantity="other">%1$d devices</item>
+    </plurals>
     <plurals name="paused">
         <item quantity="one">⏸ Internet paused (%1$d device) · %2$s</item>
         <item quantity="other">⏸ Internet paused (%1$d devices) · %2$s</item>

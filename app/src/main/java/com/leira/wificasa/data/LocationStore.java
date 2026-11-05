@@ -131,6 +131,38 @@ public final class LocationStore {
         p.edit().putString(k(l.id, "alias." + mac), alias).putStringSet(k(l.id, "study"), s).apply();
     }
 
+    // ------------------------------------------------------------------ horarios
+
+    public List<com.leira.wificasa.core.Horario> schedules(Location l) {
+        List<com.leira.wificasa.core.Horario> out = new ArrayList<>();
+        String prefix = k(l.id, "sched.");
+        for (Map.Entry<String, ?> en : p.getAll().entrySet()) {
+            if (!en.getKey().startsWith(prefix) || !(en.getValue() instanceof String)) continue;
+            com.leira.wificasa.core.Horario h = com.leira.wificasa.core.Horario.decode(
+                    en.getKey().substring(prefix.length()), (String) en.getValue());
+            if (h != null) out.add(h);
+        }
+        java.util.Collections.sort(out, (a, b) -> a.start != b.start ? a.start - b.start : a.name.compareTo(b.name));
+        return out;
+    }
+
+    public void saveSchedule(Location l, com.leira.wificasa.core.Horario h) {
+        if (h.id.isEmpty()) h.id = UUID.randomUUID().toString().substring(0, 8);
+        p.edit().putString(k(l.id, "sched." + h.id), h.encode()).apply();
+    }
+
+    public void deleteSchedule(Location l, String id) { p.edit().remove(k(l.id, "sched." + id)).apply(); }
+
+    /** Cuándo se aplicó por última vez el horario en el router (ms). */
+    public long scheduleApplied(Location l) { return p.getLong(k(l.id, "sched_applied"), 0); }
+
+    public void setScheduleApplied(Location l, long ms) { p.edit().putLong(k(l.id, "sched_applied"), ms).apply(); }
+
+    /** Resultado del último intento de aplicar el horario, para enseñarlo en la app. */
+    public String scheduleResult(Location l) { return p.getString(k(l.id, "sched_result"), ""); }
+
+    public void setScheduleResult(Location l, String text) { p.edit().putString(k(l.id, "sched_result"), text).apply(); }
+
     // ------------------------------------------------------------------ dispositivos recordados
 
     private static final String SEP = "\u001F", EXTRA_SEP = "\u001E";

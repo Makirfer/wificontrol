@@ -67,6 +67,8 @@ public class MainActivity extends Activity {
     private Set<String> present = new java.util.HashSet<>();
     private boolean busy = false;
     private RecipeFlows flows;
+    private HorarioUi horarios;
+    private Button scheduleBtn;
 
     // ------------------------------------------------------------------ ciclo de vida
 
@@ -95,6 +97,15 @@ public class MainActivity extends Activity {
                 refresh();
             }
         }, worker, recipeStore);
+        horarios = new HorarioUi(this, store, new HorarioUi.Host() {
+            @Override public Location location() { return loc; }
+            @Override public List<NetDevice> devices() { return devices; }
+            @Override public String name(NetDevice d) { return displayName(d); }
+            @Override public void applyNow(Set<String> macs, boolean block) { applyMacs(macs, block); }
+        });
+        // Las alarmas de los horarios se pierden al reinstalar: se vuelven a programar.
+        final android.content.Context app = getApplicationContext();
+        worker.execute(() -> HorarioRunner.reprogram(app));
         buildUi();
         loc = store.current();
         if (loc == null) {
@@ -224,7 +235,10 @@ public class MainActivity extends Activity {
         refreshBtn.setOnClickListener(v -> refresh());
         Button settingsBtn = smallButton(t(R.string.settings));
         settingsBtn.setOnClickListener(v -> { if (!busy) showSettings(false); });
+        scheduleBtn = smallButton(t(R.string.schedules));
+        scheduleBtn.setOnClickListener(v -> { if (!busy) horarios.showList(); });
         row.addView(refreshBtn);
+        row.addView(scheduleBtn);
         row.addView(settingsBtn);
         root.addView(row);
 
@@ -262,6 +276,7 @@ public class MainActivity extends Activity {
         studyOnBtn.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
         studyOffBtn.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
         groupInfoView.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
+        scheduleBtn.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
         String g = store.groupName(loc);
         studyOnBtn.setText(g.isEmpty() ? t(R.string.pause) : t(R.string.pause_group, g));
         studyOffBtn.setText(g.isEmpty() ? t(R.string.resume) : t(R.string.resume_group, g));
@@ -385,6 +400,24 @@ public class MainActivity extends Activity {
             for (String mac : study) if (!listed.contains(mac)) skipped++;
             return q(block ? R.plurals.paused : R.plurals.resumed, n, n, nowText())
                     + (skipped > 0 ? "\n" + q(R.plurals.skipped, skipped, skipped) : "");
+        });
+    }
+
+    /** Corta o devuelve Internet a varios aparatos (lo usan los horarios al guardarlos). */
+    private void applyMacs(final Set<String> macs, final boolean block) {
+        final List<NetDevice> knownList = new ArrayList<>(devices);
+        runJob(block ? t(R.string.cutting_marked) : t(R.string.restoring), true, ops -> {
+            java.util.Map<String, NetDevice> byMac = new java.util.HashMap<>();
+            for (NetDevice d : knownList) byMac.put(d.mac, d);
+            for (NetDevice d : ops.listarDispositivos()) byMac.put(d.mac, d);
+            int n = 0;
+            for (String mac : macs) {
+                NetDevice d = byMac.get(mac);
+                if (d == null) continue;
+                if (block) ops.bloquearDispositivo(d); else ops.desbloquearDispositivo(d);
+                n++;
+            }
+            return q(block ? R.plurals.paused : R.plurals.resumed, n, n, nowText());
         });
     }
 

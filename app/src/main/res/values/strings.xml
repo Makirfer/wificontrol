@@ -208,6 +208,31 @@
     <string name="guide_back">Atrás</string>
     <string name="record_my_router">Grabar mi router</string>
     <string name="find_my_router">Buscar mi router</string>
+    <string name="schedules">⏰  Horarios</string>
+    <string name="sched_title">Horarios · %1$s</string>
+    <string name="sched_info">A la hora indicada, este móvil entra en el router y corta o devuelve Internet a los aparatos del horario. Para eso, el móvil tiene que estar conectado al WiFi de esta ubicación; si no lo está, lo reintenta cada 5 minutos hasta la siguiente franja.\n\nSi entre medias cortas o devuelves Internet a mano, se respeta hasta el siguiente cambio.</string>
+    <string name="sched_allow_exact">⚠ Permitir avisos a la hora exacta (si no, pueden llegar unos minutos tarde)</string>
+    <string name="sched_new">＋ Nuevo horario</string>
+    <string name="sched_new_title">Nuevo horario</string>
+    <string name="sched_edit_title">Editar horario</string>
+    <string name="sched_name_hint">Nombre (p. ej. Noche, Deberes)</string>
+    <string name="sched_pick_devices">📱 Elegir aparatos  ▾</string>
+    <string name="sched_devices_title">Aparatos sin Internet en esta franja</string>
+    <string name="sched_no_devices">Todavía no hay aparatos: pulsa Actualizar en la pantalla principal.</string>
+    <string name="sched_days">Días</string>
+    <string name="sched_from">Desde %1$s</string>
+    <string name="sched_to">Hasta %1$s</string>
+    <string name="sched_time_note">Puede pasar la medianoche (21:00–08:00 corta toda la noche). Si empieza y acaba a la misma hora, dura todo el día.</string>
+    <string name="sched_enabled">Activo</string>
+    <string name="sched_need_devices_days">Elige al menos un aparato y un día.</string>
+    <string name="sched_saved">Horario guardado.</string>
+    <string name="sched_every_day">todos los días</string>
+    <string name="sched_weekdays">de lunes a viernes</string>
+    <string name="sched_weekend">fines de semana</string>
+    <string name="sched_all_day">todo el día</string>
+    <string name="sched_off">desactivado</string>
+    <string name="sched_result_ok">✓ Horario aplicado a las %1$s (%2$d aparatos).</string>
+    <string name="sched_result_fail">⚠ A las %1$s no se pudo aplicar el horario: %2$s. Se reintentará cuando el móvil esté en un WiFi.</string>
     <string-array name="learn_steps">
         <item>Inicia sesión en el panel del router</item>
         <item>Abre la lista de dispositivos conectados</item>
@@ -238,6 +263,10 @@
         <item>Impórtala: la app lee y corta Internet unos segundos para comprobarla.</item>
         <item>Publícala y la tendrá cualquiera con tu mismo router.</item>
     </string-array>
+    <plurals name="sched_devices">
+        <item quantity="one">%1$d aparato</item>
+        <item quantity="other">%1$d aparatos</item>
+    </plurals>
     <plurals name="paused">
         <item quantity="one">⏸ Internet pausado (%1$d dispositivo) · %2$s</item>
         <item quantity="other">⏸ Internet pausado (%1$d dispositivos) · %2$s</item>

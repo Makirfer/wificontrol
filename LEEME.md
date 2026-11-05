@@ -176,9 +176,19 @@ java -cp /tmp/wc PruebaMotor http://127.0.0.1:8765 app/src/main/assets/recetas/z
 java -cp /tmp/wc PruebaRecetas app/src/main/assets/recetas/zte-zxhn-f6640p.json      # validador
 java -cp /tmp/wc PruebaCatalogo catalogo http://127.0.0.1:8765                       # catálogo y pruebas de recetas
 java -cp /tmp/wc PruebaCaptura pruebas/panel_falso/eventos_grabados.txt              # saneado de grabaciones
+java -cp /tmp/wc PruebaHorario                                                       # horarios
 ```
 
 El simulador imita el panel del ZTE; no sustituye a probar con el router real.
+
+## Horarios
+
+Botón **⏰ Horarios**: por ubicación, franjas con aparatos, días y horas (pueden cruzar la
+medianoche). Los ejecuta el móvil (`HorarioRunner`): a la hora de cada cambio entra en el router y
+corta o devuelve Internet. Si el móvil no está en el WiFi de esa ubicación, reintenta cada 5 minutos
+(con WiFi) hasta el siguiente cambio. Solo actúa en los cambios de franja, así que lo que se haga a
+mano entre medias se respeta. Pendiente: usar el horario propio del router cuando la receta lo sepa
+usar (funcionaría con el móvil apagado o fuera de casa).
 
 ## Hoja de ruta
 
