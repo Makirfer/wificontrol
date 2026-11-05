@@ -9,13 +9,15 @@
     "Orange",
     "Yoigo",
     "MásMóvil",
-    "Pepephone"
+    "Pepephone",
+    "Mundo R"
   ],
   "aliases": [
     "Livebox 6s",
     "F6640P",
     "F6640",
-    "ZXHN F6640"
+    "ZXHN F6640",
+    "Livebox 6s ZTE"
   ],
   "login": {
     "address": "192.168.1.1",
@@ -29,13 +31,14 @@
     ],
     "how": "Restricción de acceso por dispositivo (bloqueo total o por horario).",
     "scope": "wifi-and-cable",
-    "notes": "Receta probada en un Livebox 6s de Parlem. MasOrange instala el mismo modelo en Yoigo, MásMóvil y Pepephone desde diciembre de 2025; su firmware podría variar."
+    "notes": "Receta probada en un Livebox 6s de Parlem. MasOrange instala el mismo modelo en Yoigo, MásMóvil y Pepephone desde diciembre de 2025; su firmware podría variar. La ayuda de Mundo R para el Livebox 6s (ZTE) documenta el mismo camino."
   },
   "recipe": "zte-zxhn-f6640p",
   "reports": 1,
   "updated": "2026-11-05",
   "confidence": "confirmed",
   "sources": [
-    "https://roams.es/actualidad/telefonia/masorange-renueva-el-router-livebox-6s-de-yoigo-masmovil-y-pepephone-llega-el-zte-f6640-con-buenas-noticias/"
+    "https://roams.es/actualidad/telefonia/masorange-renueva-el-router-livebox-6s-de-yoigo-masmovil-y-pepephone-llega-el-zte-f6640-con-buenas-noticias/",
+    "https://s.orsac.net/p/ayuda/resources/mundor/8/9/1889_ayuda-livebox-6s-zte-v0-01-1-pdf.pdf"
   ]
 }

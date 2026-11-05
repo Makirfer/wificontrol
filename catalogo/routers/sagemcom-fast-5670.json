@@ -7,12 +7,14 @@
     "Yoigo",
     "MásMóvil",
     "Pepephone",
-    "PCComponentes Fibra"
+    "PCComponentes Fibra",
+    "Mundo R"
   ],
   "aliases": [
     "Fast 5670",
     "F@st 5670v2",
-    "5670"
+    "5670",
+    "F@st5670ETH"
   ],
   "login": {
     "address": "192.168.1.1",

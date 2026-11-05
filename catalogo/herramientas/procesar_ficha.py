@@ -24,7 +24,7 @@ SOPORTES = {"panel", "app-only", "none", "unknown"}
 NO_RESPUESTA = {"", "_no response_", "_sin respuesta_"}
 # Webs de ayuda de compañías y fabricantes: lo que documentan cuenta como información oficial.
 OFICIALES = ("ayuda.orange.es", "movistar.es", "vodafone.es", "digimobil.es", "masmovil.es", "yoigo.com",
-             "pepephone.com", "lowi.es", "o2online.es", "parlem.com", "avatel.es", "finetwork.com",
+             "pepephone.com", "lowi.es", "o2online.es", "parlem.com", "mundo-r.com", "s.orsac.net", "avatel.es", "finetwork.com",
              "tp-link.com", "asus.com", "fritz.com", "avm.de", "zyxel.com", "mi.com", "netgear.com", "huawei.com")
 
 

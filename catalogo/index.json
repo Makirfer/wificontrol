@@ -92,6 +92,50 @@
     },
     {
       "format": "wificasa-router/1",
+      "id": "arcadyan-livebox-6s",
+      "vendor": "Arcadyan",
+      "model": "Livebox 6s",
+      "commercialName": "Livebox 6s",
+      "isps": [
+        "Orange",
+        "Jazztel",
+        "Mundo R"
+      ],
+      "aliases": [
+        "Livebox 6s Arcadyan",
+        "Livebox 6s ARC"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "admin",
+        "passwordHint": "La clave WiFi de la pegatina del router (también vale http://livebox)."
+      },
+      "block": {
+        "support": "panel",
+        "scope": "unknown",
+        "where": [
+          "mi red local (pestaña de arriba)",
+          "dispositivos conectados (columna izquierda)",
+          "Pulsa el aparato → «Restricción de acceso a Internet»",
+          "Elige «Bloquear Internet de forma permanente» (o «Programar acceso» por franjas) y pulsa «guardar»"
+        ],
+        "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Casa: «Bloquear de forma permanente» y «Permitir de forma permanente».",
+        "notes": "Según la ayuda de Mundo R para el Livebox 6s (Arcadyan): mismo panel de Orange que el Livebox 7 y el Livebox 6s de ZTE. La lista de equipos WiFi guarda como máximo 50 aparatos."
+      },
+      "avoid": [
+        "«dispositivos desconectados» solo muestra el historial: no bloquea.",
+        "Wi-Fi → «definir programación horaria del Wi-Fi»: apaga el WiFi a toda la casa."
+      ],
+      "confidence": "official",
+      "sources": [
+        "https://s.orsac.net/p/ayuda/resources/mundor/0/7/1907_ayuda-livebox-6s-arc-v0-02-1-pdf.pdf",
+        "https://mundo-r.com/es/ayuda-clientes/configurar-router"
+      ],
+      "updated": "2026-11-05",
+      "reports": 1
+    },
+    {
+      "format": "wificasa-router/1",
       "id": "askey-rtf3505vw",
       "vendor": "Askey",
       "model": "RTF3505VW",
@@ -418,13 +462,57 @@
     },
     {
       "format": "wificasa-router/1",
+      "id": "orange-livebox-6-plus",
+      "vendor": "Orange",
+      "model": "Livebox 6+",
+      "commercialName": "Livebox 6+",
+      "isps": [
+        "Orange",
+        "Jazztel",
+        "Mundo R"
+      ],
+      "aliases": [
+        "Livebox 6 Plus",
+        "Livebox 6+ WiFi 6"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "passwordHint": "La de la pegatina del router o la que pusiste al cambiarla (también vale http://livebox)."
+      },
+      "block": {
+        "support": "panel",
+        "scope": "unknown",
+        "where": [
+          "mi red local (pestaña de arriba)",
+          "dispositivos conectados (columna izquierda)",
+          "Pulsa el aparato → «Restricción de acceso a Internet»",
+          "Elige «Bloquear Internet de forma permanente» (o «Programar acceso» por franjas) y pulsa «guardar»"
+        ],
+        "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Casa: «Bloquear de forma permanente» y «Permitir de forma permanente».",
+        "notes": "Según la ayuda de Mundo R para el Livebox 6+ (WiFi 6, puerto WAN 2,5 GbE). El fabricante no se indica. Sale también en «mi red local» un aparato conectado por cable, así que probablemente sirva para WiFi y cable."
+      },
+      "avoid": [
+        "«dispositivos desconectados» solo muestra el historial: no bloquea.",
+        "Wi-Fi → «definir programación horaria del Wi-Fi»: apaga el WiFi a toda la casa."
+      ],
+      "confidence": "official",
+      "sources": [
+        "https://s.orsac.net/p/ayuda/resources/mundor/5/6/1956_faqs-ayuda-para-livebox-6-plus-krt.pdf",
+        "https://mundo-r.com/es/ayuda-clientes/configurar-router"
+      ],
+      "updated": "2026-11-05",
+      "reports": 1
+    },
+    {
+      "format": "wificasa-router/1",
       "id": "orange-livebox-7",
       "vendor": "Orange",
       "model": "Livebox 7",
       "commercialName": "Livebox 7",
       "isps": [
         "Orange",
-        "Jazztel"
+        "Jazztel",
+        "Mundo R"
       ],
       "aliases": [
         "Livebox 7 Arcadyan",
@@ -448,11 +536,13 @@
         "notes": "El Livebox 7 existe en versión Arcadyan y ZTE; la ayuda de Orange describe el mismo panel para ambas. Orange documenta el mismo procedimiento para su ZTE ZXHN F8748."
       },
       "avoid": [
-        "«dispositivos desconectados» solo muestra el historial: no bloquea."
+        "«dispositivos desconectados» solo muestra el historial: no bloquea.",
+        "Wi-Fi → «definir programación horaria del Wi-Fi»: apaga el WiFi a toda la casa."
       ],
       "confidence": "official",
       "sources": [
-        "https://ayuda.orange.es/dispositivos-y-routers/manuales-y-especificaciones/router-livebox-7/"
+        "https://ayuda.orange.es/dispositivos-y-routers/manuales-y-especificaciones/router-livebox-7/",
+        "https://s.orsac.net/p/ayuda/resources/mundor/0/8/1908_ayuda-livebox-7-v0-03-pdf.pdf"
       ],
       "updated": "2026-11-05"
     },
@@ -465,12 +555,14 @@
         "Yoigo",
         "MásMóvil",
         "Pepephone",
-        "PCComponentes Fibra"
+        "PCComponentes Fibra",
+        "Mundo R"
       ],
       "aliases": [
         "Fast 5670",
         "F@st 5670v2",
-        "5670"
+        "5670",
+        "F@st5670ETH"
       ],
       "login": {
         "address": "192.168.1.1",
@@ -751,13 +843,15 @@
         "Orange",
         "Yoigo",
         "MásMóvil",
-        "Pepephone"
+        "Pepephone",
+        "Mundo R"
       ],
       "aliases": [
         "Livebox 6s",
         "F6640P",
         "F6640",
-        "ZXHN F6640"
+        "ZXHN F6640",
+        "Livebox 6s ZTE"
       ],
       "login": {
         "address": "192.168.1.1",
@@ -771,14 +865,15 @@
         ],
         "how": "Restricción de acceso por dispositivo (bloqueo total o por horario).",
         "scope": "wifi-and-cable",
-        "notes": "Receta probada en un Livebox 6s de Parlem. MasOrange instala el mismo modelo en Yoigo, MásMóvil y Pepephone desde diciembre de 2025; su firmware podría variar."
+        "notes": "Receta probada en un Livebox 6s de Parlem. MasOrange instala el mismo modelo en Yoigo, MásMóvil y Pepephone desde diciembre de 2025; su firmware podría variar. La ayuda de Mundo R para el Livebox 6s (ZTE) documenta el mismo camino."
       },
       "recipe": "zte-zxhn-f6640p",
       "reports": 1,
       "updated": "2026-11-05",
       "confidence": "confirmed",
       "sources": [
-        "https://roams.es/actualidad/telefonia/masorange-renueva-el-router-livebox-6s-de-yoigo-masmovil-y-pepephone-llega-el-zte-f6640-con-buenas-noticias/"
+        "https://roams.es/actualidad/telefonia/masorange-renueva-el-router-livebox-6s-de-yoigo-masmovil-y-pepephone-llega-el-zte-f6640-con-buenas-noticias/",
+        "https://s.orsac.net/p/ayuda/resources/mundor/8/9/1889_ayuda-livebox-6s-zte-v0-01-1-pdf.pdf"
       ]
     },
     {

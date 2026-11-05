@@ -19,9 +19,11 @@ Generado automáticamente a partir de `catalogo/routers/`. ¿Falta el tuyo o alg
 | Movistar, O2 | MitraStar GPT-2742GX4X5 (Smart WiFi 6 Go) | ❔ Sin datos | — | — | Deducido |
 | Movistar, O2 | MitraStar GPT-2841GX4X5 (Smart WiFi 6) | ✅ Sí, desde el panel | Configuración avanzada (enlace al final del menú básico) → Network Setting → Wireless 2,4 GHz y Wireless 5 GHz (el menú avanzado está en inglés) | — | Según Internet |
 | Orange, Jazztel | Arcadyan ARLTFIBRA6 (Livebox 6 Fibra) | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Según Internet |
-| Orange, Jazztel | Orange Livebox 7 (Livebox 7) | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Ayuda oficial |
 | Orange, Jazztel | ZTE ZXHN F8748 | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Ayuda oficial |
-| Parlem, Orange, Yoigo, MásMóvil, Pepephone | ZTE ZXHN F6640P (Livebox 6s) | ✅ Sí, desde el panel | Ya tiene receta probada en el catálogo: no hace falta grabarlo. | ✅ | Comprobado con la app |
+| Orange, Jazztel, Mundo R | Arcadyan Livebox 6s (Livebox 6s) | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Ayuda oficial |
+| Orange, Jazztel, Mundo R | Orange Livebox 6+ (Livebox 6+) | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Ayuda oficial |
+| Orange, Jazztel, Mundo R | Orange Livebox 7 (Livebox 7) | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Ayuda oficial |
+| Parlem, Orange, Yoigo, MásMóvil, Pepephone, Mundo R | ZTE ZXHN F6640P (Livebox 6s) | ✅ Sí, desde el panel | Ya tiene receta probada en el catálogo: no hace falta grabarlo. | ✅ | Comprobado con la app |
 | Vodafone | ADOC R45 | ❔ Sin datos | — | — | Según Internet |
 | Vodafone | Huawei B311 | ✅ Sí, desde el panel | Avanzado (Advanced) → Wi-Fi → Filtro MAC Wi-Fi → Activa el filtro, elige el modo «Bloquear» (lista de bloqueados) y añade el aparato → Guardar | — | Deducido |
 | Vodafone | Sercomm RHG3006 | ✅ Sí, desde el panel | Arriba del todo: cambia el modo de vista a Modo experto → Menú superior WLAN (Wi-Fi) | — | Deducido |
@@ -32,4 +34,4 @@ Generado automáticamente a partir de `catalogo/routers/`. ¿Falta el tuyo o alg
 | Vodafone, Lowi | Sercomm H500-s | ⛔ No | — | — | Según Internet |
 | Yoigo, MásMóvil, PCComponentes Fibra | ZTE ZXHN H367A | ✅ Sí, desde el panel | Internet (barra de arriba) → Parental Controls | — | Según Internet |
 | Yoigo, MásMóvil, Pepephone, PCComponentes Fibra | Comtrend GRG-4280us | ❔ Sin datos | — | — | Según Internet |
-| Yoigo, MásMóvil, Pepephone, PCComponentes Fibra | Sagemcom F@st 5670 | ❔ Sin datos | — | — | Según Internet |
+| Yoigo, MásMóvil, Pepephone, PCComponentes Fibra, Mundo R | Sagemcom F@st 5670 | ❔ Sin datos | — | — | Según Internet |

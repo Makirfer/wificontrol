@@ -6,7 +6,8 @@
   "commercialName": "Livebox 7",
   "isps": [
     "Orange",
-    "Jazztel"
+    "Jazztel",
+    "Mundo R"
   ],
   "aliases": [
     "Livebox 7 Arcadyan",
@@ -30,11 +31,13 @@
     "notes": "El Livebox 7 existe en versión Arcadyan y ZTE; la ayuda de Orange describe el mismo panel para ambas. Orange documenta el mismo procedimiento para su ZTE ZXHN F8748."
   },
   "avoid": [
-    "«dispositivos desconectados» solo muestra el historial: no bloquea."
+    "«dispositivos desconectados» solo muestra el historial: no bloquea.",
+    "Wi-Fi → «definir programación horaria del Wi-Fi»: apaga el WiFi a toda la casa."
   ],
   "confidence": "official",
   "sources": [
-    "https://ayuda.orange.es/dispositivos-y-routers/manuales-y-especificaciones/router-livebox-7/"
+    "https://ayuda.orange.es/dispositivos-y-routers/manuales-y-especificaciones/router-livebox-7/",
+    "https://s.orsac.net/p/ayuda/resources/mundor/0/8/1908_ayuda-livebox-7-v0-03-pdf.pdf"
   ],
   "updated": "2026-11-05"
 }
