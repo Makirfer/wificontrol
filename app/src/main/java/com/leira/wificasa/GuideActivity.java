@@ -36,18 +36,8 @@ public class GuideActivity extends Activity {
             R.drawable.guia_1, R.drawable.guia_2, R.drawable.guia_3,
             R.drawable.guia_4, R.drawable.guia_5, R.drawable.guia_6
     };
-    private static final String[] TITLES = {
-            "¿Tu router no está?", "Mira su ficha", "Graba su panel",
-            "Pásalo a una IA", "Pruébala", "Compártela"
-    };
-    private static final String[] TEXTS = {
-            "Añádelo tú en unos 15 minutos y compártelo con todos.",
-            "Escribe la marca y el modelo de la pegatina. La app te dice si se puede bloquear y dónde.",
-            "Sigue los 5 pasos de la barra de arriba. Tus contraseñas se borran solas.",
-            "Compártelo con Claude, ChatGPT o Gemini. Te devolverá la receta.",
-            "Impórtala: la app lee y corta Internet unos segundos para comprobarla.",
-            "Publícala y la tendrá cualquiera con tu mismo router."
-    };
+    /** Título y frase de cada tarjeta, en el idioma del móvil (res/values/strings.xml y sus traducciones). */
+    private String[] titles, texts;
 
     private int page = 0;
     private ImageView image;
@@ -61,13 +51,15 @@ public class GuideActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        titles = getResources().getStringArray(R.array.guide_titles);
+        texts = getResources().getStringArray(R.array.guide_texts);
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(C_BG);
         root.setPadding(dp(24), dp(16), dp(24), dp(24));
 
         TextView skip = new TextView(this);
-        skip.setText("Saltar");
+        skip.setText(getString(R.string.skip));
         skip.setTextColor(C_MUTED);
         skip.setTextSize(15);
         skip.setGravity(Gravity.END);
@@ -103,9 +95,9 @@ public class GuideActivity extends Activity {
 
         LinearLayout row = new LinearLayout(this);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        back = button("Atrás", false);
+        back = button(getString(R.string.guide_back), false);
         back.setOnClickListener(v -> go(page - 1));
-        next = button("Siguiente", true);
+        next = button(getString(R.string.next), true);
         next.setOnClickListener(v -> {
             if (page < IMAGES.length - 1) go(page + 1); else done(ACTION_SEARCH);
         });
@@ -113,7 +105,7 @@ public class GuideActivity extends Activity {
         row.addView(next);
         root.addView(row);
 
-        second = button("Grabar mi router", false);
+        second = button(getString(R.string.record_my_router), false);
         second.setOnClickListener(v -> done(ACTION_LEARN));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -157,11 +149,11 @@ public class GuideActivity extends Activity {
         if (p < 0 || p >= IMAGES.length) return;
         page = p;
         image.setImageResource(IMAGES[p]);
-        title.setText(TITLES[p]);
-        text.setText(TEXTS[p]);
+        title.setText(titles[p]);
+        text.setText(texts[p]);
         boolean last = p == IMAGES.length - 1;
         back.setVisibility(p == 0 ? View.INVISIBLE : View.VISIBLE);
-        next.setText(last ? "Buscar mi router" : "Siguiente");
+        next.setText(getString(last ? R.string.find_my_router : R.string.next));
         second.setVisibility(last ? View.VISIBLE : View.GONE);
         dots.removeAllViews();
         for (int i = 0; i < IMAGES.length; i++) {

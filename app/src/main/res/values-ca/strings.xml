@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Traducción. Las claves y los %1$s / %2$d no se traducen. -->
+<resources>
+    <string name="ok">D\'acord</string>
+    <string name="cancel">Cancel·la</string>
+    <string name="close">Tanca</string>
+    <string name="save">Desa</string>
+    <string name="delete">Elimina</string>
+    <string name="next">Següent</string>
+    <string name="accept">Accepta</string>
+    <string name="copied">Copiat</string>
+    <string name="not_now">Ara no</string>
+    <string name="loc_default">Casa</string>
+    <string name="loc_numbered">Ubicació %1$d</string>
+    <string name="pause">⏸  Pausa Internet</string>
+    <string name="resume">▶  Reprèn Internet</string>
+    <string name="pause_group">⏸  Pausa: %1$s</string>
+    <string name="resume_group">▶  Reprèn: %1$s</string>
+    <string name="refresh">⟳  Actualitza</string>
+    <string name="settings">⚙  Configuració</string>
+    <string name="hint_can_switch">Toca un dispositiu per posar-li nom i incloure\'l a la pausa.</string>
+    <string name="hint_list_only">Aquest router només permet consultar els dispositius.</string>
+    <string name="last_known">Últim estat conegut · prem Actualitza per comprovar-ho</string>
+    <string name="done_no_refresh">(El canvi està fet, però no s\'ha pogut actualitzar la llista: prem Actualitza.)</string>
+    <string name="connecting">Connectant amb el router de %1$s…</string>
+    <string name="updated_at">Actualitzat: %1$s</string>
+    <string name="need_marked">Primer toca els dispositius que vulguis i marca\'ls amb «Inclou a la pausa».</string>
+    <string name="cutting_marked">Tallant Internet als dispositius marcats…</string>
+    <string name="restoring">Retornant Internet…</string>
+    <string name="could_not_change">No s\'ha pogut canviar: %1$s (%2$s)</string>
+    <string name="none_marked_present">Cap dispositiu marcat no és a la llista del router ara mateix.</string>
+    <string name="cutting_one">Tallant Internet a %1$s…</string>
+    <string name="restoring_one">Retornant Internet a %1$s…</string>
+    <string name="result_off">%1$s: sense Internet · %2$s</string>
+    <string name="result_on">%1$s: amb Internet · %2$s</string>
+    <string name="no_data">sense dades</string>
+    <string name="last_seen">vist per última vegada %1$s</string>
+    <string name="group_empty">Encara no hi ha dispositius a la pausa: toca\'ls a la llista per afegir-los.</string>
+    <string name="empty_list">Encara no hi ha dades. Prem Actualitza connectat al WiFi de %1$s.</string>
+    <string name="connected">connectat</string>
+    <string name="not_connected">no connectat</string>
+    <string name="state_scheduled">Amb horari programat al router</string>
+    <string name="state_unknown">Estat desconegut</string>
+    <string name="state_off">Sense Internet</string>
+    <string name="state_on">Amb Internet</string>
+    <string name="last_state">Últim estat: %1$s</string>
+    <string name="device_info">Nom al router: %1$s\nIP: %2$s\nMAC: %3$s</string>
+    <string name="not_shown_now">%1$s (el router no el mostra ara)</string>
+    <string name="device_name_hint">Nom (p. ex. Portàtil de l\'escola)</string>
+    <string name="include_pause">Inclou a la pausa</string>
+    <string name="include_pause_named">Inclou a la pausa «%1$s»</string>
+    <string name="device">Dispositiu</string>
+    <string name="forget">Oblida</string>
+    <string name="new_location_item">＋ Nova ubicació</string>
+    <string name="location">Ubicació</string>
+    <string name="new_location">Nova ubicació</string>
+    <string name="new_location_hint">Nom (p. ex. Segona residència)</string>
+    <string name="create">Crea</string>
+    <string name="settings_info">Dades d\'accés al router d\'aquesta ubicació. La contrasenya es desa xifrada i només en aquest mòbil.</string>
+    <string name="label_location_name">Nom de la ubicació</string>
+    <string name="label_router_model">Model de router</string>
+    <string name="router_not_listed">＋ El meu router no hi és: cercar, aprendre o importar…</string>
+    <string name="label_group">Nom de la pausa (opcional)</string>
+    <string name="group_hint">p. ex. Deures, Hora de sopar</string>
+    <string name="label_host">Adreça del router</string>
+    <string name="label_user">Usuari</string>
+    <string name="label_password">Contrasenya del router</string>
+    <string name="password">Contrasenya</string>
+    <string name="password_saved_hint">•••••• (desada; deixa-ho buit per no canviar-la)</string>
+    <string name="setup_router">Configura el router</string>
+    <string name="settings_of">Configuració de %1$s</string>
+    <string name="password_save_error">⚠ No s\'ha pogut desar la contrasenya xifrada: %1$s</string>
+    <string name="delete_location">Elimina %1$s</string>
+    <string name="delete_location_msg">S\'esborraran les dades del router, els noms i la pausa d\'aquesta ubicació. No canvia res al router.</string>
+    <string name="menu_guide">📖  Com funciona (pas a pas)</string>
+    <string name="menu_catalog">🔎  Veure els routers del catàleg</string>
+    <string name="menu_learn">🎓  Aprendre un router nou (gravar-ne el panell)</string>
+    <string name="menu_import">📥  Importar una recepta</string>
+    <string name="add_router_title">Afegir un model de router</string>
+    <string name="catalog">Catàleg</string>
+    <string name="catalog_not_configured">El catàleg públic encara no està configurat en aquesta versió de l\'app.</string>
+    <string name="catalog_loading">Consultant el catàleg…</string>
+    <string name="with_recipe">amb recepta</string>
+    <string name="catalog_routers">Routers del catàleg (%1$d)</string>
+    <string name="mine_not_listed">No hi és el meu</string>
+    <string name="catalog_legend">🧾 amb recepta · ✅ es pot bloquejar · ⛔ no es pot · ❔ sense dades</string>
+    <string name="catalog_empty">Catàleg buit</string>
+    <string name="catalog_empty_msg">Encara no hi ha receptes al catàleg. Pots ser el primer: aprèn el teu router i publica\'l.</string>
+    <string name="learn_my_router">Aprendre el meu router</string>
+    <string name="catalog_recipes">Receptes del catàleg</string>
+    <string name="star_matches">★ = coincideix amb el teu router</string>
+    <string name="downloading_recipe">Descarregant i comprovant la recepta…</string>
+    <string name="not_installed">No s\'ha instal·lat</string>
+    <string name="status_community">verificada per la comunitat</string>
+    <string name="status_tested">provada en un router real</string>
+    <string name="status_simulator">només provada en simulador</string>
+    <string name="status_untested">sense provar</string>
+    <string name="conf_confirmed">Comprovat amb WiFi Casa per %1$d persona(es).</string>
+    <string name="conf_official">Segons l\'ajuda oficial de la companyia o el fabricant. Encara sense comprovar amb WiFi Casa.</string>
+    <string name="conf_probable">Deduït (per exemple, fa servir el mateix panell que un altre model comprovat). Sense confirmar.</string>
+    <string name="conf_web">Segons informació publicada a Internet. Sense confirmar amb WiFi Casa.</string>
+    <string name="learn_sticker">Mira l\'adhesiu del router (a sota o al darrere). Amb aquestes dades s\'anomenaran la gravació i la recepta, perquè altres usuaris la trobin.</string>
+    <string name="hint_vendor">Marca (p. ex. Askey, ZTE, TP-Link)</string>
+    <string name="hint_model">Model (p. ex. RTF8316VW, Archer C6)</string>
+    <string name="hint_isp">Companyia, si és d\'una (p. ex. Movistar)</string>
+    <string name="learn_new_title">Aprendre un router nou</string>
+    <string name="need_vendor_model">Escriu almenys la marca i el model.</string>
+    <string name="looking_sheet">Cercant la fitxa del teu router…</string>
+    <string name="sheet_has_recipe">✅ Aquest router ja té recepta al catàleg (%1$s).\nNo cal gravar-lo: instal·la-la i prova-la.</string>
+    <string name="install_recipe">Instal·la la recepta</string>
+    <string name="record_anyway">Grava igualment</string>
+    <string name="sheet_app_only">⛔ Aquest router no permet tallar Internet a un aparell des del panell: només des de l\'app de la companyia.</string>
+    <string name="sheet_app_only_prob">⛔ Aquest router probablement no permet tallar Internet a un aparell des del panell: només des de l\'app de la companyia.</string>
+    <string name="sheet_none">⛔ Aquest router no permet tallar Internet a un aparell concret.</string>
+    <string name="sheet_none_prob">⛔ Aquest router probablement no permet tallar Internet a un aparell concret.</string>
+    <string name="sheet_list_only">WiFi Casa et podrà mostrar els aparells, però no pausar-los. Gravar el panell només serveix per a això.</string>
+    <string name="record_list_only">Grava només per veure aparells</string>
+    <string name="sheet_unchecked">Encara ningú ho ha comprovat amb l\'app. Si ho comproves tu, ajudaràs tothom: si trobes el bloqueig, grava\'l; si no, prem «No ho trobo» i avisa.</string>
+    <string name="check_myself">Comprova-ho jo</string>
+    <string name="dont_record">No gravis</string>
+    <string name="sheet_can_block">👍 Aquest router permet tallar Internet a un aparell des del panell.</string>
+    <string name="sheet_unknown">❔ Encara no se sap si aquest router permet tallar Internet des del panell.</string>
+    <string name="where_is_it">On és:</string>
+    <string name="start_recording">Comença a gravar</string>
+    <string name="dont_touch">⚠ No toquis:</string>
+    <string name="source">Font: %1$s</string>
+    <string name="catalog_data_lang">(Dades del catàleg en l\'idioma de qui les va aportar.)</string>
+    <string name="no_sheet">Encara no hi ha fitxa d\'aquest router: seràs el primer.\n\nAbans de gravar, dedica 5 minuts a buscar el bloqueig al panell. Sol dir-se:\n• Control parental\n• Control d\'accés\n• Filtre MAC / Filtratge MAC\n• Bloquejar dispositiu\n\n⚠ No serveixen i poden tallar a tothom: apagar el WiFi (Disable), canviar el mode del router, o taules de ports, ponts (bridging) o VLAN.\n\nSi no el trobes, a la gravació prem «No ho trobo»: es desarà igualment i podràs avisar el catàleg perquè ningú més hi perdi el temps.</string>
+    <string name="confirm_learning">S\'obrirà el panell del teu router dins l\'app i et guiaré en 5 passos: entrar, veure els aparells, tallar Internet a un, tornar-l\'hi i sortir.\n\nL\'app grava el que fa el panell per poder escriure\'n la recepta. La contrasenya i les claus WiFi s\'esborren de la gravació. No s\'envia res enlloc fins que tu decideixis compartir-la.\n\nFes-ho connectat al WiFi d\'aquest router, i no tallis Internet al teu propi mòbil.</string>
+    <string name="start">Comença</string>
+    <string name="import_help">Enganxa aquí la recepta (el JSON que t\'ha donat la IA) o obre-la des d\'un fitxer.</string>
+    <string name="paste">📋 Enganxa</string>
+    <string name="open_file">📂 Obre un fitxer</string>
+    <string name="import_title">Importa una recepta</string>
+    <string name="validate">Valida</string>
+    <string name="file_read_error">⚠ No s\'ha pogut llegir el fitxer: %1$s</string>
+    <string name="recipe_invalid">La recepta no és vàlida</string>
+    <string name="recipe_invalid_msg">%1$s\n\nCopia aquest error i passa\'l a la IA perquè la corregeixi.</string>
+    <string name="copy_error">Copia l\'error</string>
+    <string name="back">Torna</string>
+    <string name="recipe_valid">Recepta vàlida</string>
+    <string name="recipe_valid_msg">%1$s · versió %2$s\nPot: %3$s\nEmpremta: %4$s…\n\nAra la provaré amb el teu router, primer només llegint (sense canviar res).</string>
+    <string name="test">Prova</string>
+    <string name="missing_password">Falta la contrasenya</string>
+    <string name="missing_password_msg">Primer posa l\'adreça, l\'usuari i la contrasenya del router a Configuració.</string>
+    <string name="testing_read">Provant la recepta (només lectura)…</string>
+    <string name="read_ok">Lectura correcta</string>
+    <string name="read_failed">La prova de lectura ha fallat</string>
+    <string name="try_cut">Prova de tallar…</string>
+    <string name="install">Instal·la</string>
+    <string name="copy_report">Copia l\'informe</string>
+    <string name="pick_device">A quin aparell tallo Internet uns segons?</string>
+    <string name="cutting_and_back">Tallant i retornant Internet a %1$s…</string>
+    <string name="recipe_works">La recepta funciona!</string>
+    <string name="cut_failed">La prova de tall ha fallat</string>
+    <string name="install_and_use">Instal·la i fes-la servir</string>
+    <string name="skip_test">Salta aquesta prova</string>
+    <string name="recipe_installed">Recepta instal·lada</string>
+    <string name="recipe_in_use">%1$s ja es fa servir en aquesta ubicació.</string>
+    <string name="recipe_share_q">%1$s ja es fa servir en aquesta ubicació.\n\nLa comparteixes al catàleg perquè altres usuaris amb aquest router la puguin fer servir?</string>
+    <string name="publish">Publica</string>
+    <string name="send_file">Envia el fitxer</string>
+    <string name="send_recipe">Envia la recepta</string>
+    <string name="already_bundled">Aquesta recepta ve amb l\'app: ja és al catàleg.</string>
+    <string name="publish_title">Publica al catàleg</string>
+    <string name="publish_msg">He copiat la recepta. S\'obrirà GitHub amb el formulari «Nueva receta» ja preparat (títol i informe de proves):\n\n1. Inicia sessió a GitHub (o crea un compte gratuït a github.com).\n2. Mantén premut el requadre «Receta» i tria Enganxa.\n3. Marca la casella de confirmació i prem «Create» (o «Submit new issue»).\n\nEn un parell de minuts veuràs en aquesta mateixa pàgina si la recepta és vàlida. Quan s\'aprovi, apareixerà al catàleg per a tots els usuaris amb un %1$s.</string>
+    <string name="open_github">Obre GitHub</string>
+    <string name="cap_list">llistar</string>
+    <string name="cap_read">llegir estat</string>
+    <string name="cap_block">tallar</string>
+    <string name="cap_unblock">retornar</string>
+    <string name="cap_none">res</string>
+    <string name="step_title">Pas %1$d de %2$d · %3$s</string>
+    <string name="not_found">No ho trobo</string>
+    <string name="finish">Acaba</string>
+    <string name="done_next">Fet ▶</string>
+    <string name="go_to">Ves a: %1$s. Talla Internet a un aparell que no sigui el teu mòbil i desa.</string>
+    <string name="same_place">Al mateix lloc (%1$s), torna-li Internet i desa.</string>
+    <string name="dont_touch_one">⚠ No toquis: %1$s</string>
+    <string name="nf_app_only">El panell diu que només es pot des de l\'app de la companyia</string>
+    <string name="nf_none">No hi ha cap apartat per bloquejar un aparell</string>
+    <string name="nf_keep">Continua buscant</string>
+    <string name="nf_title">Què has trobat?</string>
+    <string name="understood">Entesos</string>
+    <string name="nf_msg">Tanca la sessió al panell i prem Acaba. La gravació servirà perquè l\'app et mostri els aparells d\'aquest router (sense pausar-los).\n\nEn acabar podràs avisar el catàleg perquè ningú més ho intenti amb aquest model.</string>
+    <string name="recording_counter">● Gravant · %1$d anotacions</string>
+    <string name="limit_reached"> (límit assolit)</string>
+    <string name="recording_ready">Gravació llesta · %1$s</string>
+    <string name="recording_ready_msg">%1$d anotacions a «%2$s». La contrasenya del router i les claus WiFi s\'han esborrat.\n\nPassos següents:\n1. Prem «Comparteix amb una IA» i tria Claude, ChatGPT o Gemini. El fitxer ja porta les instruccions; si et demana un missatge, escriu: «Llegeix les instruccions del fitxer i fes-me la recepta».\n2. Desa la recepta que et torni (receta-%3$s.json) o copia\'n el text.\n3. A WiFi Casa: Configuració → Model de router → El meu router no hi és → Importar una recepta.\n\nTambé pots desar el fitxer al mòbil per fer-ho més tard.</string>
+    <string name="share_ai">Comparteix amb una IA</string>
+    <string name="save_phone">Desa al mòbil</string>
+    <string name="keep_recording">Continua gravant</string>
+    <string name="report_q">Avises el catàleg?</string>
+    <string name="report_msg">Així, qui tingui un %1$s sabrà abans de començar que el panell no permet bloquejar aparells. S\'obrirà GitHub amb tot emplenat: només l\'has d\'enviar.</string>
+    <string name="report">Avisa</string>
+    <string name="share_ai_msg">Llegeix les instruccions del fitxer i fes-me la recepta de WiFi Casa per al meu router %1$s.</string>
+    <string name="share_error">⚠ No s\'ha pogut compartir (%1$s). Desa\'l al mòbil.</string>
+    <string name="recording_saved">Gravació desada.</string>
+    <string name="save_error">⚠ No s\'ha pogut desar: %1$s</string>
+    <string name="basic_auth">El router demana usuari i contrasenya</string>
+    <string name="login">Entra</string>
+    <string name="exit_q">Sortir sense desar?</string>
+    <string name="exit_msg">Es perdrà el que s\'ha gravat.</string>
+    <string name="exit">Surt</string>
+    <string name="keep_going">Continua</string>
+    <string name="skip">Omet</string>
+    <string name="guide_back">Enrere</string>
+    <string name="record_my_router">Grava el meu router</string>
+    <string name="find_my_router">Cerca el meu router</string>
+    <string-array name="learn_steps">
+        <item>Inicia sessió al panell del router</item>
+        <item>Obre la llista de dispositius connectats</item>
+        <item>Talla Internet a un dispositiu</item>
+        <item>Torna-li Internet</item>
+        <item>Tanca la sessió al panell</item>
+    </string-array>
+    <string-array name="learn_help">
+        <item>Escriu l\'usuari i la contrasenya del router com sempre i entra.</item>
+        <item>Busca la pàgina on surten els aparells connectats. Sol dir-se Xarxa local, Clients, Dispositius o DHCP.</item>
+        <item>Tria un aparell que no molesti i talla-li Internet: busca Control parental, Control d\'accés, Bloquejar o Filtre MAC, i desa.</item>
+        <item>Desfés el pas anterior per tornar-li Internet, i desa.</item>
+        <item>Prem Sortir o Tancar sessió al panell. Després prem Acaba.</item>
+    </string-array>
+    <string-array name="guide_titles">
+        <item>El teu router no hi és?</item>
+        <item>Mira\'n la fitxa</item>
+        <item>Grava\'n el panell</item>
+        <item>Passa-ho a una IA</item>
+        <item>Prova-la</item>
+        <item>Comparteix-la</item>
+    </string-array>
+    <string-array name="guide_texts">
+        <item>Afegeix-lo tu en uns 15 minuts i comparteix-lo amb tothom.</item>
+        <item>Escriu la marca i el model de l\'adhesiu. L\'app et diu si es pot bloquejar i on.</item>
+        <item>Segueix els 5 passos de la barra de dalt. Les teves contrasenyes s\'esborren soles.</item>
+        <item>Comparteix-ho amb Claude, ChatGPT o Gemini. Et tornarà la recepta.</item>
+        <item>Importa-la: l\'app llegeix i talla Internet uns segons per comprovar-la.</item>
+        <item>Publica-la i la tindrà qualsevol amb el mateix router.</item>
+    </string-array>
+    <plurals name="paused">
+        <item quantity="one">⏸ Internet pausat (%1$d dispositiu) · %2$s</item>
+        <item quantity="other">⏸ Internet pausat (%1$d dispositius) · %2$s</item>
+    </plurals>
+    <plurals name="resumed">
+        <item quantity="one">▶ Internet represa (%1$d dispositiu) · %2$s</item>
+        <item quantity="other">▶ Internet represa (%1$d dispositius) · %2$s</item>
+    </plurals>
+    <plurals name="skipped">
+        <item quantity="one">%1$d marcat no apareix ara al router i no s\'ha tocat.</item>
+        <item quantity="other">%1$d marcats no apareixen ara al router i no s\'han tocat.</item>
+    </plurals>
+    <plurals name="affects">
+        <item quantity="one">Afecta %1$d dispositiu marcat</item>
+        <item quantity="other">Afecta %1$d dispositius marcats</item>
+    </plurals>
+</resources>

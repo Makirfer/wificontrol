@@ -60,19 +60,16 @@ public class LearnActivity extends Activity {
     private String recorderJs = "";
     private String pendingText;
 
-    private static final String[] HELP = {
-            "Escribe el usuario y la contraseña del router como siempre y entra.",
-            "Busca la página donde salen los aparatos conectados. Suele llamarse Red local, Clientes, "
-                    + "Dispositivos o DHCP.",
-            "Elige un aparato que no moleste y córtale Internet: busca Control parental, Control de acceso, "
-                    + "Bloquear o Filtro MAC, y guarda.",
-            "Deshaz lo del paso anterior para devolverle Internet, y guarda.",
-            "Pulsa Salir o Cerrar sesión en el panel. Luego pulsa Terminar."
-    };
+    /** Nombre y ayuda de cada paso, en el idioma del móvil (res/values/strings.xml y sus traducciones). */
+    private String[] steps, help;
+
+    private String t(int id, Object... a) { return a.length == 0 ? getString(id) : getString(id, a); }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        steps = getResources().getStringArray(R.array.learn_steps);
+        help = getResources().getStringArray(R.array.learn_help);
         String host = getIntent().getStringExtra(EXTRA_HOST);
         if (host == null || host.trim().isEmpty()) host = "192.168.1.1";
         host = host.trim();
@@ -122,12 +119,12 @@ public class LearnActivity extends Activity {
         row.addView(counter);
         notFoundBtn = new Button(this);
         notFoundBtn.setAllCaps(false);
-        notFoundBtn.setText("No lo encuentro");
+        notFoundBtn.setText(t(R.string.not_found));
         notFoundBtn.setOnClickListener(v -> notFound());
         row.addView(notFoundBtn);
         Button cancel = new Button(this);
         cancel.setAllCaps(false);
-        cancel.setText("Cancelar");
+        cancel.setText(t(R.string.cancel));
         cancel.setOnClickListener(v -> confirmExit());
         row.addView(cancel);
         nextBtn = new Button(this);
@@ -157,7 +154,7 @@ public class LearnActivity extends Activity {
             public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
                 capture.record("{\"type\":\"dialog\",\"kind\":\"alert\",\"message\":" + quote(message) + "}");
                 new AlertDialog.Builder(LearnActivity.this).setMessage(message)
-                        .setPositiveButton("Aceptar", (d, w) -> result.confirm())
+                        .setPositiveButton(t(R.string.accept), (d, w) -> result.confirm())
                         .setOnCancelListener(d -> result.confirm()).show();
                 return true;
             }
@@ -165,12 +162,12 @@ public class LearnActivity extends Activity {
             @Override
             public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {
                 new AlertDialog.Builder(LearnActivity.this).setMessage(message)
-                        .setPositiveButton("Aceptar", (d, w) -> {
+                        .setPositiveButton(t(R.string.accept), (d, w) -> {
                             capture.record("{\"type\":\"dialog\",\"kind\":\"confirm\",\"answer\":true,\"message\":"
                                     + quote(message) + "}");
                             result.confirm();
                         })
-                        .setNegativeButton("Cancelar", (d, w) -> result.cancel())
+                        .setNegativeButton(t(R.string.cancel), (d, w) -> result.cancel())
                         .setOnCancelListener(d -> result.cancel()).show();
                 return true;
             }
@@ -222,7 +219,7 @@ public class LearnActivity extends Activity {
 
     private void showStep() {
         int i = capture.step();
-        stepTitle.setText("Paso " + (i + 1) + " de " + Capture.STEPS.length + " · " + Capture.STEPS[i]);
+        stepTitle.setText(t(R.string.step_title, i + 1, steps.length, steps[i]));
         stepHelp.setText(help(i));
         notFoundBtn.setVisibility(i == 2 || i == 3 ? android.view.View.VISIBLE : android.view.View.GONE);
         if (i == 2 && ("app-only".equals(support) || "none".equals(support))) {
@@ -232,7 +229,7 @@ public class LearnActivity extends Activity {
             showStep();
             return;
         }
-        nextBtn.setText(i == Capture.STEPS.length - 1 ? "Terminar" : "Hecho ▶");
+        nextBtn.setText(t(i == steps.length - 1 ? R.string.finish : R.string.done_next));
         updateCounter();
     }
 
@@ -240,47 +237,40 @@ public class LearnActivity extends Activity {
     private String help(int i) {
         if ((i == 2 || i == 3) && !where.isEmpty()) {
             String path = where.replace("\n", " → ");
-            String h = (i == 2 ? "Ve a: " + path + ". Córtale Internet a un aparato que no sea tu móvil y guarda."
-                    : "En el mismo sitio (" + path + "), devuélvele Internet y guarda.");
-            if (!avoid.isEmpty()) h += "\n⚠ No toques: " + avoid.split("\n")[0];
+            String h = t(i == 2 ? R.string.go_to : R.string.same_place, path);
+            if (!avoid.isEmpty()) h += "\n" + t(R.string.dont_touch_one, avoid.split("\n")[0]);
             return h;
         }
-        if (i == 2 && !avoid.isEmpty()) return HELP[i] + "\n⚠ No toques: " + avoid.split("\n")[0];
-        return HELP[i];
+        if (i == 2 && !avoid.isEmpty()) return help[i] + "\n" + t(R.string.dont_touch_one, avoid.split("\n")[0]);
+        return help[i];
     }
 
     /** Si el panel no tiene bloqueo, se termina sin perder el tiempo y se ofrece avisar al catálogo. */
     private void notFound() {
-        String[] items = {
-                "El panel dice que solo se puede desde la app de la compañía",
-                "No hay ningún apartado para bloquear un aparato",
-                "Seguir buscando"
-        };
+        String[] items = { t(R.string.nf_app_only), t(R.string.nf_none), t(R.string.nf_keep) };
         new AlertDialog.Builder(this)
-                .setTitle("¿Qué has encontrado?")
+                .setTitle(t(R.string.nf_title))
                 .setItems(items, (d, w) -> {
                     if (w == 2) return;
                     capture.setBlockOutcome(w == 0 ? "app-only" : "none");
                     capture.setStep(4);
                     showStep();
                     new AlertDialog.Builder(this)
-                            .setTitle("Entendido")
-                            .setMessage("Cierra sesión en el panel y pulsa Terminar. La grabación servirá para que la app "
-                                    + "te enseñe los aparatos de este router (sin pausarlos).\n\n"
-                                    + "Al terminar podrás avisar al catálogo para que nadie más lo intente con este modelo.")
-                            .setPositiveButton("Vale", null)
+                            .setTitle(t(R.string.understood))
+                            .setMessage(t(R.string.nf_msg))
+                            .setPositiveButton(t(R.string.ok), null)
                             .show();
                 })
                 .show();
     }
 
     private void updateCounter() {
-        counter.setText("● Grabando · " + capture.count() + " anotaciones" + (capture.isFull() ? " (límite alcanzado)" : ""));
+        counter.setText(t(R.string.recording_counter, capture.count()) + (capture.isFull() ? t(R.string.limit_reached) : ""));
     }
 
     private void nextStep() {
         int i = capture.step();
-        if (i < Capture.STEPS.length - 1) {
+        if (i < steps.length - 1) {
             capture.setStep(i + 1);
             showStep();
         } else {
@@ -291,25 +281,17 @@ public class LearnActivity extends Activity {
     private void finishRecording() {
         final String text = capture.promptForAi(asset("ia/RECETAS.md"), asset("recetas/zte-zxhn-f6640p.json"));
         new AlertDialog.Builder(this)
-                .setTitle("Grabación lista · " + capture.routerTitle())
-                .setMessage(capture.count() + " anotaciones en «" + capture.fileName() + "». La contraseña del router "
-                        + "y las claves WiFi se han borrado.\n\n"
-                        + "Siguientes pasos:\n"
-                        + "1. Pulsa «Compartir con una IA» y elige Claude, ChatGPT o Gemini. El archivo ya lleva las "
-                        + "instrucciones; si te pide un mensaje, escribe: «Lee las instrucciones del archivo y hazme "
-                        + "la receta».\n"
-                        + "2. Guarda la receta que te devuelva (receta-" + capture.slug() + ".json) o copia su texto.\n"
-                        + "3. En WiFi Casa: Ajustes → Modelo de router → Mi router no está → Importar una receta.\n\n"
-                        + "También puedes guardar el archivo en el móvil para hacerlo más tarde.")
-                .setPositiveButton("Compartir con una IA", (d, w) -> {
+                .setTitle(t(R.string.recording_ready, capture.routerTitle()))
+                .setMessage(t(R.string.recording_ready_msg, capture.count(), capture.fileName(), capture.slug()))
+                .setPositiveButton(t(R.string.share_ai), (d, w) -> {
                     share(text);
                     maybeReport();
                 })
-                .setNeutralButton("Guardar en el móvil", (d, w) -> {
+                .setNeutralButton(t(R.string.save_phone), (d, w) -> {
                     maybeReport();
                     save(text);
                 })
-                .setNegativeButton("Seguir grabando", null)
+                .setNegativeButton(t(R.string.keep_recording), null)
                 .show();
     }
 
@@ -322,16 +304,15 @@ public class LearnActivity extends Activity {
     /** Abre el formulario «Ficha de router» de GitHub ya rellenado con lo comprobado. */
     private void offerReport() {
         new AlertDialog.Builder(this)
-                .setTitle("¿Avisas al catálogo?")
-                .setMessage("Así, quien tenga un " + capture.routerTitle() + " sabrá antes de empezar que su panel no "
-                        + "permite bloquear aparatos. Se abrirá GitHub con todo rellenado: solo tienes que enviarlo.")
-                .setPositiveButton("Avisar", (d, w) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                .setTitle(t(R.string.report_q))
+                .setMessage(t(R.string.report_msg, capture.routerTitle()))
+                .setPositiveButton(t(R.string.report), (d, w) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
                         com.leira.wificasa.core.catalog.Catalog.reportUrl(
                                 nz(getIntent().getStringExtra(EXTRA_VENDOR)), nz(getIntent().getStringExtra(EXTRA_MODEL)),
                                 nz(getIntent().getStringExtra(EXTRA_ISP)), capture.blockOutcome(),
                                 new java.util.ArrayList<String>(), new java.util.ArrayList<String>(),
                                 "Comprobado con el modo aprendizaje de WiFi Casa.")))))
-                .setNegativeButton("Ahora no", null)
+                .setNegativeButton(t(R.string.not_now), null)
                 .show();
     }
 
@@ -349,11 +330,9 @@ public class LearnActivity extends Activity {
     private void share(String text) {
         try {
             ShareProvider.shareText(this, capture.fileName(), text,
-                    "Lee las instrucciones del archivo y hazme la receta de WiFi Casa para mi router "
-                            + capture.routerTitle() + ".", "Compartir con una IA");
+                    t(R.string.share_ai_msg, capture.routerTitle()), t(R.string.share_ai));
         } catch (Exception e) {
-            Toast.makeText(this, "⚠ No se pudo compartir (" + e.getMessage() + "). Guárdalo en el móvil.",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, t(R.string.share_error, e.getMessage()), Toast.LENGTH_LONG).show();
             save(text);
         }
     }
@@ -365,10 +344,10 @@ public class LearnActivity extends Activity {
         Uri uri = data.getData();
         try (OutputStream out = getContentResolver().openOutputStream(uri)) {
             out.write(pendingText.getBytes(StandardCharsets.UTF_8));
-            Toast.makeText(this, "Grabación guardada.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, t(R.string.recording_saved), Toast.LENGTH_LONG).show();
             finish();
         } catch (Exception e) {
-            Toast.makeText(this, "⚠ No se pudo guardar: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, t(R.string.save_error, e.getMessage()), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -377,29 +356,29 @@ public class LearnActivity extends Activity {
         box.setOrientation(LinearLayout.VERTICAL);
         box.setPadding(dp(20), dp(8), dp(20), 0);
         final EditText user = new EditText(this);
-        user.setHint("Usuario");
+        user.setHint(t(R.string.label_user));
         box.addView(user);
         final EditText pass = new EditText(this);
-        pass.setHint("Contraseña");
+        pass.setHint(t(R.string.password));
         pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         box.addView(pass);
         new AlertDialog.Builder(this)
-                .setTitle("El router pide usuario y contraseña" + (realm == null ? "" : " (" + realm + ")"))
+                .setTitle(t(R.string.basic_auth) + (realm == null ? "" : " (" + realm + ")"))
                 .setView(box)
-                .setPositiveButton("Entrar", (d, w) -> {
+                .setPositiveButton(t(R.string.login), (d, w) -> {
                     capture.addSecret(pass.getText().toString());
                     handler.proceed(user.getText().toString(), pass.getText().toString());
                 })
-                .setNegativeButton("Cancelar", (d, w) -> handler.cancel())
+                .setNegativeButton(t(R.string.cancel), (d, w) -> handler.cancel())
                 .show();
     }
 
     private void confirmExit() {
         new AlertDialog.Builder(this)
-                .setTitle("¿Salir sin guardar?")
-                .setMessage("Se perderá lo grabado.")
-                .setPositiveButton("Salir", (d, w) -> finish())
-                .setNegativeButton("Seguir", null)
+                .setTitle(t(R.string.exit_q))
+                .setMessage(t(R.string.exit_msg))
+                .setPositiveButton(t(R.string.exit), (d, w) -> finish())
+                .setNegativeButton(t(R.string.keep_going), null)
                 .show();
     }
 

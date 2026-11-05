@@ -61,6 +61,31 @@ final class RecipeFlows {
         this.recipes = recipes;
     }
 
+    /** Texto traducido (res/values/strings.xml y sus traducciones). */
+    private String t(int id, Object... x) { return x.length == 0 ? a.getString(id) : a.getString(id, x); }
+
+    /** Estado de una receta del catálogo, en el idioma del móvil. */
+    private String subtitle(Catalog.Entry e) {
+        int st;
+        switch (e.status) {
+            case "community-verified": st = R.string.status_community; break;
+            case "tested-device": st = R.string.status_tested; break;
+            case "simulator": st = R.string.status_simulator; break;
+            default: st = R.string.status_untested;
+        }
+        return "v" + e.version + " · " + t(st) + (e.isps.isEmpty() ? "" : " · " + String.join(", ", e.isps));
+    }
+
+    /** Cuánto fiarse de una ficha, en el idioma del móvil. */
+    private String confidence(Catalog.Sheet sh) {
+        switch (sh.confidence) {
+            case "confirmed": return t(R.string.conf_confirmed, sh.reports);
+            case "official": return t(R.string.conf_official);
+            case "probable": return t(R.string.conf_probable);
+            default: return t(R.string.conf_web);
+        }
+    }
+
     private int dp(int v) { return Math.round(v * a.getResources().getDisplayMetrics().density); }
 
     // ================================================================== menú
@@ -73,20 +98,17 @@ final class RecipeFlows {
             return;
         }
         String[] items = {
-                "📖  Cómo funciona (paso a paso)",
-                "🔎  Ver los routers del catálogo",
-                "🎓  Aprender un router nuevo (grabar su panel)",
-                "📥  Importar una receta"
+                t(R.string.menu_guide), t(R.string.menu_catalog), t(R.string.menu_learn), t(R.string.menu_import)
         };
         new AlertDialog.Builder(a)
-                .setTitle("Añadir un modelo de router")
+                .setTitle(t(R.string.add_router_title))
                 .setItems(items, (d, w) -> {
                     if (w == 0) showGuide();
                     else if (w == 1) searchCatalog();
                     else if (w == 2) startLearning();
                     else importRecipe("");
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(t(R.string.cancel), null)
                 .show();
     }
 
@@ -101,11 +123,11 @@ final class RecipeFlows {
 
     void searchCatalog() {
         if (!CatalogConfig.configured()) {
-            info("Catálogo", "El catálogo público todavía no está configurado en esta versión de la app.");
+            info(t(R.string.catalog), t(R.string.catalog_not_configured));
             return;
         }
         final RouterCredentials c = host.credentials();
-        final AlertDialog wait = waiting("Consultando el catálogo…");
+        final AlertDialog wait = waiting(t(R.string.catalog_loading));
         worker.execute(() -> {
             List<Catalog.Entry> detected = new ArrayList<>();
             List<Catalog.Entry> all;
@@ -126,7 +148,7 @@ final class RecipeFlows {
             final String fErr = error;
             a.runOnUiThread(() -> {
                 wait.dismiss();
-                if (fErr != null) { info("Catálogo", "⚠ " + fErr); return; }
+                if (fErr != null) { info(t(R.string.catalog), "⚠ " + fErr); return; }
                 if (fSheets.isEmpty()) showCatalogList(cat, fDet, fAll);
                 else showRouterList(cat, fSheets, fDet, fAll, c);
             });
@@ -152,22 +174,22 @@ final class RecipeFlows {
             String icon = !sh.recipe.isEmpty() ? "🧾" : sh.canBlock() ? "✅"
                     : ("app-only".equals(sh.support) || "none".equals(sh.support)) ? "⛔" : "❔";
             String sub = sh.isps.isEmpty() ? "" : android.text.TextUtils.join(", ", sh.isps);
-            if (!sh.recipe.isEmpty()) sub += (sub.isEmpty() ? "" : " · ") + "con receta";
+            if (!sh.recipe.isEmpty()) sub += (sub.isEmpty() ? "" : " · ") + t(R.string.with_recipe);
             items[i] = (det.contains(sh.recipe) ? "★ " : "") + icon + " " + sh.title() + (sub.isEmpty() ? "" : "\n" + sub);
         }
         new AlertDialog.Builder(a)
-                .setTitle("Routers del catálogo (" + list.size() + ")")
+                .setTitle(t(R.string.catalog_routers, list.size()))
                 .setItems(items, (d, w) -> {
                     Catalog.Sheet sh = list.get(w);
                     Catalog.Entry recipe = null;
                     for (Catalog.Entry e : all) if (e.id.equals(sh.recipe)) recipe = e;
                     showSheet(cat, sh, recipe, c, sh.vendor, sh.model, sh.isps.isEmpty() ? "" : sh.isps.get(0));
                 })
-                .setNeutralButton("No está el mío", (d, w) -> startLearning())
-                .setNegativeButton("Cerrar", null)
+                .setNeutralButton(t(R.string.mine_not_listed), (d, w) -> startLearning())
+                .setNegativeButton(t(R.string.close), null)
                 .show();
         if (list.size() > 0)
-            android.widget.Toast.makeText(a, "🧾 con receta · ✅ se puede bloquear · ⛔ no se puede · ❔ sin datos",
+            android.widget.Toast.makeText(a, t(R.string.catalog_legend),
                     android.widget.Toast.LENGTH_LONG).show();
     }
 
@@ -175,27 +197,27 @@ final class RecipeFlows {
         final List<Catalog.Entry> list = new ArrayList<>(detected);
         for (Catalog.Entry e : all) if (!list.contains(e)) list.add(e);
         if (list.isEmpty()) {
-            new AlertDialog.Builder(a).setTitle("Catálogo vacío")
-                    .setMessage("Todavía no hay recetas en el catálogo. Puedes ser el primero: aprende tu router y publícalo.")
-                    .setPositiveButton("Aprender mi router", (d, w) -> startLearning())
-                    .setNegativeButton("Cerrar", null).show();
+            new AlertDialog.Builder(a).setTitle(t(R.string.catalog_empty))
+                    .setMessage(t(R.string.catalog_empty_msg))
+                    .setPositiveButton(t(R.string.learn_my_router), (d, w) -> startLearning())
+                    .setNegativeButton(t(R.string.close), null).show();
             return;
         }
         String[] items = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {
             Catalog.Entry e = list.get(i);
-            items[i] = (detected.contains(e) ? "★ " : "") + e.title() + "\n" + e.subtitle();
+            items[i] = (detected.contains(e) ? "★ " : "") + e.title() + "\n" + subtitle(e);
         }
         new AlertDialog.Builder(a)
-                .setTitle(detected.isEmpty() ? "Recetas del catálogo" : "★ = coincide con tu router")
+                .setTitle(detected.isEmpty() ? t(R.string.catalog_recipes) : t(R.string.star_matches))
                 .setItems(items, (d, w) -> downloadAndInstall(cat, list.get(w)))
-                .setNeutralButton("No está el mío", (d, w) -> startLearning())
-                .setNegativeButton("Cancelar", null)
+                .setNeutralButton(t(R.string.mine_not_listed), (d, w) -> startLearning())
+                .setNegativeButton(t(R.string.cancel), null)
                 .show();
     }
 
     private void downloadAndInstall(Catalog cat, Catalog.Entry e) {
-        final AlertDialog wait = waiting("Descargando y comprobando la receta…");
+        final AlertDialog wait = waiting(t(R.string.downloading_recipe));
         worker.execute(() -> {
             String err = null;
             RecipeAdapter ad = null;
@@ -208,7 +230,7 @@ final class RecipeFlows {
             final RecipeAdapter fAd = ad;
             a.runOnUiThread(() -> {
                 wait.dismiss();
-                if (fErr != null) { info("No se ha instalado", "⚠ " + fErr); return; }
+                if (fErr != null) { info(t(R.string.not_installed), "⚠ " + fErr); return; }
                 testRead(fAd, false);
             });
         });
@@ -220,26 +242,25 @@ final class RecipeFlows {
         final RouterCredentials c = host.credentials();
         LinearLayout box = box();
         TextView t = new TextView(a);
-        t.setText("Mira la pegatina del router (debajo o detrás). Con estos datos se nombrarán la grabación y la "
-                + "receta, para que otros usuarios la encuentren.");
+        t.setText(t(R.string.learn_sticker));
         t.setTextColor(Color.parseColor("#6B665E"));
         box.addView(t);
-        final EditText vendor = field(box, "Marca (p. ej. Askey, ZTE, TP-Link)");
-        final EditText model = field(box, "Modelo (p. ej. RTF8316VW, Archer C6)");
-        final EditText isp = field(box, "Compañía, si es de una (p. ej. Movistar)");
+        final EditText vendor = field(box, t(R.string.hint_vendor));
+        final EditText model = field(box, t(R.string.hint_model));
+        final EditText isp = field(box, t(R.string.hint_isp));
         new AlertDialog.Builder(a)
-                .setTitle("Aprender un router nuevo")
+                .setTitle(t(R.string.learn_new_title))
                 .setView(box)
-                .setPositiveButton("Siguiente", (d, w) -> {
+                .setPositiveButton(t(R.string.next), (d, w) -> {
                     String v = vendor.getText().toString().trim(), m = model.getText().toString().trim();
                     if (v.isEmpty() || m.isEmpty()) {
-                        Toast.makeText(a, "Escribe al menos la marca y el modelo.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(a, t(R.string.need_vendor_model), Toast.LENGTH_LONG).show();
                         startLearning();
                         return;
                     }
                     checkSheet(c, v, m, isp.getText().toString().trim());
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(t(R.string.cancel), null)
                 .show();
     }
 
@@ -249,7 +270,7 @@ final class RecipeFlows {
      */
     private void checkSheet(final RouterCredentials c, final String vendor, final String model, final String isp) {
         if (!CatalogConfig.configured()) { confirmLearning(c, vendor, model, isp, null); return; }
-        final AlertDialog wait = waiting("Buscando la ficha de tu router…");
+        final AlertDialog wait = waiting(t(R.string.looking_sheet));
         worker.execute(() -> {
             Catalog cat = new Catalog();
             Catalog.Sheet sh = null;
@@ -272,74 +293,60 @@ final class RecipeFlows {
 
     private void showSheet(Catalog cat, Catalog.Sheet sh, Catalog.Entry recipe, RouterCredentials c,
                            String vendor, String model, String isp) {
-        StringBuilder t = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         AlertDialog.Builder b = new AlertDialog.Builder(a).setTitle(sh.title());
         if (recipe != null) {
-            t.append("✅ Este router ya tiene receta en el catálogo (").append(recipe.subtitle())
-                    .append(").\nNo hace falta grabarlo: instálala y pruébala.");
-            b.setPositiveButton("Instalar receta", (d, w) -> downloadAndInstall(cat, recipe));
-            b.setNeutralButton("Grabar igualmente", (d, w) -> confirmLearning(c, vendor, model, isp, sh));
+            sb.append(t(R.string.sheet_has_recipe, subtitle(recipe)));
+            b.setPositiveButton(t(R.string.install_recipe), (d, w) -> downloadAndInstall(cat, recipe));
+            b.setNeutralButton(t(R.string.record_anyway), (d, w) -> confirmLearning(c, vendor, model, isp, sh));
         } else if ("app-only".equals(sh.support) || "none".equals(sh.support)) {
-            String verb = sh.confirmed() ? "no permite" : "probablemente no permite";
-            t.append("app-only".equals(sh.support)
-                    ? "⛔ Este router " + verb + " cortar Internet a un aparato desde su panel: solo desde la app de la compañía."
-                    : "⛔ Este router " + verb + " cortar Internet a un aparato concreto.");
-            if (!sh.how.isEmpty()) t.append("\n\n").append(sh.how);
+            boolean appOnly = "app-only".equals(sh.support);
+            sb.append(t(sh.confirmed() ? (appOnly ? R.string.sheet_app_only : R.string.sheet_none)
+                    : (appOnly ? R.string.sheet_app_only_prob : R.string.sheet_none_prob)));
+            if (!sh.how.isEmpty()) sb.append("\n\n").append(sh.how);
             if (sh.confirmed()) {
-                t.append("\n\nWiFi Casa podrá enseñarte sus aparatos, pero no pausarlos. Grabar el panel solo sirve para eso.");
-                b.setPositiveButton("Grabar solo para ver aparatos", (d, w) -> confirmLearning(c, vendor, model, isp, sh));
+                sb.append("\n\n").append(t(R.string.sheet_list_only));
+                b.setPositiveButton(t(R.string.record_list_only), (d, w) -> confirmLearning(c, vendor, model, isp, sh));
             } else {
-                t.append("\n\nAún nadie lo ha comprobado con la app. Si lo compruebas tú, ayudarás a todos: si encuentras el "
-                        + "bloqueo, grábalo; si no, pulsa «No lo encuentro» y avisa.");
-                b.setPositiveButton("Comprobarlo yo", (d, w) -> confirmLearning(c, vendor, model, isp, sh));
+                sb.append("\n\n").append(t(R.string.sheet_unchecked));
+                b.setPositiveButton(t(R.string.check_myself), (d, w) -> confirmLearning(c, vendor, model, isp, sh));
             }
-            b.setNegativeButton("No grabar", null);
+            b.setNegativeButton(t(R.string.dont_record), null);
         } else {
-            t.append(sh.canBlock() ? "👍 Este router permite cortar Internet a un aparato desde su panel."
-                    : "❔ Aún no se sabe si este router permite cortar Internet desde su panel.");
+            sb.append(t(sh.canBlock() ? R.string.sheet_can_block : R.string.sheet_unknown));
             if (!sh.where.isEmpty()) {
-                t.append("\n\nDónde está:");
-                for (int i = 0; i < sh.where.size(); i++) t.append("\n").append(i + 1).append(". ").append(sh.where.get(i));
+                sb.append("\n\n").append(t(R.string.where_is_it));
+                for (int i = 0; i < sh.where.size(); i++) sb.append("\n").append(i + 1).append(". ").append(sh.where.get(i));
             }
-            if (!sh.how.isEmpty()) t.append("\n\n").append(sh.how);
-            b.setPositiveButton("Empezar a grabar", (d, w) -> confirmLearning(c, vendor, model, isp, sh));
-            b.setNegativeButton("Cancelar", null);
+            if (!sh.how.isEmpty()) sb.append("\n\n").append(sh.how);
+            b.setPositiveButton(t(R.string.start_recording), (d, w) -> confirmLearning(c, vendor, model, isp, sh));
+            b.setNegativeButton(t(R.string.cancel), null);
         }
         if (!sh.avoid.isEmpty()) {
-            t.append("\n\n⚠ No toques:");
-            for (String av : sh.avoid) t.append("\n• ").append(av);
+            sb.append("\n\n").append(t(R.string.dont_touch));
+            for (String av : sh.avoid) sb.append("\n• ").append(av);
         }
-        if (!sh.passwordHint.isEmpty()) t.append("\n\n🔑 ").append(sh.passwordHint);
-        t.append("\n\nℹ ").append(sh.confidenceText());
-        if (!sh.sources.isEmpty()) t.append("\nFuente: ").append(sh.sources.get(0));
-        b.setView(scrollText(t.toString())).show();
+        if (!sh.passwordHint.isEmpty()) sb.append("\n\n🔑 ").append(sh.passwordHint);
+        sb.append("\n\nℹ ").append(confidence(sh));
+        if (!sh.sources.isEmpty()) sb.append("\n").append(t(R.string.source, sh.sources.get(0)));
+        if (!java.util.Locale.getDefault().getLanguage().equals("es")) sb.append("\n\n").append(t(R.string.catalog_data_lang));
+        b.setView(scrollText(sb.toString())).show();
     }
 
     private void noSheet(RouterCredentials c, String vendor, String model, String isp) {
         new AlertDialog.Builder(a)
                 .setTitle(vendor + " " + model)
-                .setView(scrollText("Todavía no hay ficha de este router: serás el primero.\n\n"
-                        + "Antes de grabar, dedica 5 minutos a buscar el bloqueo en su panel. Suele llamarse:\n"
-                        + "• Control parental\n• Control de acceso\n• Filtro MAC / Filtrado MAC\n• Bloquear dispositivo\n\n"
-                        + "⚠ No sirven y pueden cortar a todos: apagar el WiFi (Disable), cambiar el modo del router, "
-                        + "o tablas de puertos, puentes (bridging) o VLAN.\n\n"
-                        + "Si no lo encuentras, en la grabación pulsa «No lo encuentro»: se guardará igualmente y podrás "
-                        + "avisar al catálogo para que nadie más pierda el tiempo."))
-                .setPositiveButton("Empezar a grabar", (d, w) -> confirmLearning(c, vendor, model, isp, null))
-                .setNegativeButton("Cancelar", null)
+                .setView(scrollText(t(R.string.no_sheet)))
+                .setPositiveButton(t(R.string.start_recording), (d, w) -> confirmLearning(c, vendor, model, isp, null))
+                .setNegativeButton(t(R.string.cancel), null)
                 .show();
     }
 
     private void confirmLearning(RouterCredentials c, String vendor, String model, String isp, Catalog.Sheet sh) {
         new AlertDialog.Builder(a)
                 .setTitle(vendor + " " + model)
-                .setMessage("Se abrirá el panel de tu router dentro de la app y te guiaré en 5 pasos: entrar, "
-                        + "ver los aparatos, cortar Internet a uno, devolvérselo y salir.\n\n"
-                        + "La app graba lo que hace el panel para poder escribir su receta. La contraseña y las "
-                        + "claves WiFi se borran de la grabación. Nada se envía a ningún sitio hasta que tú decidas "
-                        + "compartirla.\n\n"
-                        + "Hazlo conectado al WiFi de ese router, y no cortes Internet a tu propio móvil.")
-                .setPositiveButton("Empezar", (d, w) -> {
+                .setMessage(t(R.string.confirm_learning))
+                .setPositiveButton(t(R.string.start), (d, w) -> {
                     Intent i = new Intent(a, LearnActivity.class);
                     i.putExtra(LearnActivity.EXTRA_HOST, c == null ? "192.168.1.1" : c.host);
                     if (c != null) i.putExtra(LearnActivity.EXTRA_PASSWORD, c.password);
@@ -354,7 +361,7 @@ final class RecipeFlows {
                     }
                     a.startActivity(i);
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(t(R.string.cancel), null)
                 .show();
     }
 
@@ -371,7 +378,7 @@ final class RecipeFlows {
     void importRecipe(String initial) {
         LinearLayout box = box();
         TextView t = new TextView(a);
-        t.setText("Pega aquí la receta (el JSON que te ha dado la IA) o ábrela desde un archivo.");
+        t.setText(t(R.string.import_help));
         t.setTextColor(Color.parseColor("#6B665E"));
         box.addView(t);
         final EditText text = new EditText(a);
@@ -385,11 +392,11 @@ final class RecipeFlows {
         row.setOrientation(LinearLayout.HORIZONTAL);
         Button paste = new Button(a);
         paste.setAllCaps(false);
-        paste.setText("📋 Pegar");
+        paste.setText(t(R.string.paste));
         paste.setOnClickListener(v -> text.setText(clipboardText()));
         Button open = new Button(a);
         open.setAllCaps(false);
-        open.setText("📂 Abrir archivo");
+        open.setText(t(R.string.open_file));
         final AlertDialog[] dlg = new AlertDialog[1];
         open.setOnClickListener(v -> {
             if (dlg[0] != null) dlg[0].dismiss();
@@ -403,10 +410,10 @@ final class RecipeFlows {
         box.addView(row);
         box.addView(text);
         dlg[0] = new AlertDialog.Builder(a)
-                .setTitle("Importar receta")
+                .setTitle(t(R.string.import_title))
                 .setView(box)
-                .setPositiveButton("Validar", (d, w) -> validate(stripFences(text.getText().toString())))
-                .setNegativeButton("Cancelar", null)
+                .setPositiveButton(t(R.string.validate), (d, w) -> validate(stripFences(text.getText().toString())))
+                .setNegativeButton(t(R.string.cancel), null)
                 .show();
     }
 
@@ -428,7 +435,7 @@ final class RecipeFlows {
             while ((n = in.read(buf)) > 0 && bo.size() < 512 * 1024) bo.write(buf, 0, n);
             importRecipe(bo.toString("UTF-8"));
         } catch (Exception e) {
-            info("Importar receta", "⚠ No se pudo leer el archivo: " + e.getMessage());
+            info(t(R.string.import_title), t(R.string.file_read_error, e.getMessage()));
         }
         return true;
     }
@@ -439,26 +446,25 @@ final class RecipeFlows {
             r = Recipe.parse(text);
         } catch (Exception e) {
             new AlertDialog.Builder(a)
-                    .setTitle("La receta no es válida")
-                    .setMessage(e.getMessage() + "\n\nCopia este error y pásaselo a la IA para que la corrija.")
-                    .setPositiveButton("Copiar error", (d, w) -> copy("Error al validar la receta en WiFi Casa: "
+                    .setTitle(t(R.string.recipe_invalid))
+                    .setMessage(t(R.string.recipe_invalid_msg, e.getMessage()))
+                    .setPositiveButton(t(R.string.copy_error), (d, w) -> copy("Error al validar la receta en WiFi Casa: "
                             + e.getMessage()))
-                    .setNeutralButton("Volver", (d, w) -> importRecipe(text))
-                    .setNegativeButton("Cerrar", null)
+                    .setNeutralButton(t(R.string.back), (d, w) -> importRecipe(text))
+                    .setNegativeButton(t(R.string.close), null)
                     .show();
             return;
         }
         new AlertDialog.Builder(a)
-                .setTitle("Receta válida")
-                .setMessage(r.displayName() + " · versión " + r.version()
-                        + "\nPuede: " + capsText(r) + "\nHuella: " + r.fingerprint().substring(0, 16) + "…\n\n"
-                        + "Ahora la probaré con tu router, primero solo leyendo (sin cambiar nada).")
-                .setPositiveButton("Probar", (d, w) -> {
+                .setTitle(t(R.string.recipe_valid))
+                .setMessage(t(R.string.recipe_valid_msg, r.displayName(), r.version(), capsText(r),
+                        r.fingerprint().substring(0, 16)))
+                .setPositiveButton(t(R.string.test), (d, w) -> {
                     RecipeAdapter ad = new RecipeAdapter(r);
                     pendingText = text;
                     testRead(ad, true);
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(t(R.string.cancel), null)
                 .show();
     }
 
@@ -469,26 +475,26 @@ final class RecipeFlows {
     private void testRead(final RecipeAdapter ad, final boolean imported) {
         final RouterCredentials c = host.credentials();
         if (c == null) {
-            info("Falta la contraseña", "Primero pon la dirección, el usuario y la contraseña del router en Ajustes.");
+            info(t(R.string.missing_password), t(R.string.missing_password_msg));
             return;
         }
-        final AlertDialog wait = waiting("Probando la receta (solo lectura)…");
+        final AlertDialog wait = waiting(t(R.string.testing_read));
         worker.execute(() -> {
             final RecipeTester.Report rep = RecipeTester.readTest(ad, c);
             a.runOnUiThread(() -> {
                 wait.dismiss();
                 AlertDialog.Builder b = new AlertDialog.Builder(a)
-                        .setTitle(rep.readOk ? "Lectura correcta" : "La prueba de lectura ha fallado")
+                        .setTitle(t(rep.readOk ? R.string.read_ok : R.string.read_failed))
                         .setView(scrollText(rep.text()));
                 boolean canWrite = ad.capabilities().contains(Capability.BLOCK)
                         && ad.capabilities().contains(Capability.UNBLOCK);
                 if (rep.readOk && canWrite) {
-                    b.setPositiveButton("Probar a cortar…", (d, w) -> pickDeviceForWrite(ad, rep, imported));
+                    b.setPositiveButton(t(R.string.try_cut), (d, w) -> pickDeviceForWrite(ad, rep, imported));
                 } else if (rep.readOk) {
-                    b.setPositiveButton("Instalar", (d, w) -> finishInstall(ad, rep, imported));
+                    b.setPositiveButton(t(R.string.install), (d, w) -> finishInstall(ad, rep, imported));
                 }
-                if (!rep.readOk) b.setNeutralButton("Copiar informe", (d, w) -> copy(reportForAi(rep)));
-                b.setNegativeButton(rep.readOk ? "Cancelar" : "Cerrar", null).show();
+                if (!rep.readOk) b.setNeutralButton(t(R.string.copy_report), (d, w) -> copy(reportForAi(rep)));
+                b.setNegativeButton(t(rep.readOk ? R.string.cancel : R.string.close), null).show();
             });
         });
     }
@@ -498,32 +504,32 @@ final class RecipeFlows {
         String[] items = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {
             NetDevice d = list.get(i);
-            items[i] = (d.hostName.isEmpty() ? d.mac : d.hostName) + "  " + d.ip + (d.active ? " · conectado" : "");
+            items[i] = (d.hostName.isEmpty() ? d.mac : d.hostName) + "  " + d.ip + (d.active ? " · " + t(R.string.connected) : "");
         }
         new AlertDialog.Builder(a)
-                .setTitle("¿A qué aparato corto Internet unos segundos?")
+                .setTitle(t(R.string.pick_device))
                 .setItems(items, (d, w) -> {
                     final NetDevice target = list.get(w);
-                    final AlertDialog wait = waiting("Cortando y devolviendo Internet a "
-                            + (target.hostName.isEmpty() ? target.mac : target.hostName) + "…");
+                    final AlertDialog wait = waiting(t(R.string.cutting_and_back,
+                            target.hostName.isEmpty() ? target.mac : target.hostName));
                     final RouterCredentials c = host.credentials();
                     worker.execute(() -> {
                         RecipeTester.writeTest(ad, c, target, rep);
                         a.runOnUiThread(() -> {
                             wait.dismiss();
                             AlertDialog.Builder b = new AlertDialog.Builder(a)
-                                    .setTitle(rep.writeOk ? "¡La receta funciona!" : "La prueba de corte ha fallado")
+                                    .setTitle(t(rep.writeOk ? R.string.recipe_works : R.string.cut_failed))
                                     .setView(scrollText(rep.text()));
                             if (rep.writeOk) {
-                                b.setPositiveButton("Instalar y usar", (x, y) -> finishInstall(ad, rep, imported));
+                                b.setPositiveButton(t(R.string.install_and_use), (x, y) -> finishInstall(ad, rep, imported));
                             } else {
-                                b.setNeutralButton("Copiar informe", (x, y) -> copy(reportForAi(rep)));
+                                b.setNeutralButton(t(R.string.copy_report), (x, y) -> copy(reportForAi(rep)));
                             }
-                            b.setNegativeButton("Cerrar", null).show();
+                            b.setNegativeButton(t(R.string.close), null).show();
                         });
                     });
                 })
-                .setNegativeButton("Saltar esta prueba", (d, w) -> finishInstall(ad, rep, imported))
+                .setNegativeButton(t(R.string.skip_test), (d, w) -> finishInstall(ad, rep, imported))
                 .show();
     }
 
@@ -533,25 +539,24 @@ final class RecipeFlows {
             try {
                 installed = recipes.install(pendingText);
             } catch (Exception e) {
-                info("No se ha instalado", "⚠ " + e.getMessage());
+                info(t(R.string.not_installed), "⚠ " + e.getMessage());
                 return;
             }
         }
         host.useAdapter(installed.id());
         final RecipeAdapter fin = installed;
         AlertDialog.Builder b = new AlertDialog.Builder(a)
-                .setTitle("Receta instalada")
-                .setMessage(fin.displayName() + " ya se usa en esta ubicación.");
+                .setTitle(t(R.string.recipe_installed))
+                .setMessage(t(R.string.recipe_in_use, fin.displayName()));
         boolean listOnly = !installed.capabilities().contains(Capability.BLOCK);
         if (imported && (rep.writeOk || (listOnly && rep.readOk))) {
-            b.setMessage(fin.displayName() + " ya se usa en esta ubicación.\n\n¿La compartes en el catálogo para que "
-                    + "otros usuarios con este router puedan usarla?");
-            b.setPositiveButton("Publicar", (d, w) -> publish(fin, rep));
-            b.setNeutralButton("Enviar archivo", (d, w) -> shareRecipe(fin));
-            b.setNegativeButton("Ahora no", null);
+            b.setMessage(t(R.string.recipe_share_q, fin.displayName()));
+            b.setPositiveButton(t(R.string.publish), (d, w) -> publish(fin, rep));
+            b.setNeutralButton(t(R.string.send_file), (d, w) -> shareRecipe(fin));
+            b.setNegativeButton(t(R.string.not_now), null);
         } else {
-            b.setPositiveButton("Vale", null);
-            if (imported) b.setNeutralButton("Enviar archivo", (d, w) -> shareRecipe(fin));
+            b.setPositiveButton(t(R.string.ok), null);
+            if (imported) b.setNeutralButton(t(R.string.send_file), (d, w) -> shareRecipe(fin));
         }
         b.show();
     }
@@ -561,9 +566,9 @@ final class RecipeFlows {
         String text = recipes.installedText(ad.recipe().id());
         if (text == null) return;
         try {
-            ShareProvider.shareText(a, "receta-" + ad.recipe().id() + ".json", text, null, "Enviar receta");
+            ShareProvider.shareText(a, "receta-" + ad.recipe().id() + ".json", text, null, t(R.string.send_recipe));
         } catch (Exception e) {
-            info("Enviar receta", "⚠ " + e.getMessage());
+            info(t(R.string.send_recipe), "⚠ " + e.getMessage());
         }
     }
 
@@ -571,25 +576,18 @@ final class RecipeFlows {
 
     private void publish(RecipeAdapter ad, RecipeTester.Report rep) {
         if (!CatalogConfig.configured()) {
-            info("Catálogo", "El catálogo público todavía no está configurado en esta versión de la app.");
+            info(t(R.string.catalog), t(R.string.catalog_not_configured));
             return;
         }
         String text = recipes.installedText(ad.recipe().id());
-        if (text == null) { info("Publicar", "Esta receta viene con la app: ya está en el catálogo."); return; }
+        if (text == null) { info(t(R.string.publish), t(R.string.already_bundled)); return; }
         copy(text);
         new AlertDialog.Builder(a)
-                .setTitle("Publicar en el catálogo")
-                .setMessage("He copiado la receta. Se abrirá GitHub con el formulario «Nueva receta» ya preparado "
-                        + "(título e informe de pruebas):\n\n"
-                        + "1. Inicia sesión en GitHub (o crea una cuenta gratis en github.com).\n"
-                        + "2. Mantén pulsado el recuadro «Receta» y elige Pegar.\n"
-                        + "3. Marca la casilla de confirmación y pulsa «Create» (o «Submit new issue»).\n\n"
-                        + "En un par de minutos verás en esa misma página si la receta es válida. Cuando se apruebe, "
-                        + "aparecerá en el catálogo para todos los usuarios con un " + ad.recipe().displayName()
-                        + ".")
-                .setPositiveButton("Abrir GitHub", (d, w) ->
+                .setTitle(t(R.string.publish_title))
+                .setMessage(t(R.string.publish_msg, ad.recipe().displayName()))
+                .setPositiveButton(t(R.string.open_github), (d, w) ->
                         a.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Catalog.publishUrl(ad.recipe(), rep.text())))))
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(t(R.string.cancel), null)
                 .show();
     }
 
@@ -599,13 +597,13 @@ final class RecipeFlows {
         return "La receta ha fallado al probarla en WiFi Casa. Corrígela con este informe:\n" + rep.text();
     }
 
-    private static String capsText(Recipe r) {
+    private String capsText(Recipe r) {
         List<String> s = new ArrayList<>();
-        if (r.capabilities().contains(Capability.LIST_DEVICES)) s.add("listar");
-        if (r.capabilities().contains(Capability.READ_ACCESS)) s.add("leer estado");
-        if (r.capabilities().contains(Capability.BLOCK)) s.add("cortar");
-        if (r.capabilities().contains(Capability.UNBLOCK)) s.add("devolver");
-        return s.isEmpty() ? "nada" : String.join(", ", s);
+        if (r.capabilities().contains(Capability.LIST_DEVICES)) s.add(t(R.string.cap_list));
+        if (r.capabilities().contains(Capability.READ_ACCESS)) s.add(t(R.string.cap_read));
+        if (r.capabilities().contains(Capability.BLOCK)) s.add(t(R.string.cap_block));
+        if (r.capabilities().contains(Capability.UNBLOCK)) s.add(t(R.string.cap_unblock));
+        return s.isEmpty() ? t(R.string.cap_none) : String.join(", ", s);
     }
 
     /** Las IA a veces envuelven el JSON entre ``` ; se quitan. */
@@ -630,7 +628,7 @@ final class RecipeFlows {
     private void copy(String text) {
         ClipboardManager cm = (ClipboardManager) a.getSystemService(Context.CLIPBOARD_SERVICE);
         if (cm != null) cm.setPrimaryClip(ClipData.newPlainText("WiFi Casa", text));
-        Toast.makeText(a, "Copiado", Toast.LENGTH_SHORT).show();
+        Toast.makeText(a, t(R.string.copied), Toast.LENGTH_SHORT).show();
     }
 
     private LinearLayout box() {
@@ -655,6 +653,6 @@ final class RecipeFlows {
     }
 
     private void info(String title, String msg) {
-        new AlertDialog.Builder(a).setTitle(title).setMessage(msg).setPositiveButton("Vale", null).show();
+        new AlertDialog.Builder(a).setTitle(title).setMessage(msg).setPositiveButton(t(R.string.ok), null).show();
     }
 }

@@ -98,7 +98,7 @@ public class MainActivity extends Activity {
         buildUi();
         loc = store.current();
         if (loc == null) {
-            loc = store.create("Casa");
+            loc = store.create(t(R.string.loc_default));
             store.setCurrent(loc.id);
             onLocationChanged();
             showSettings(true);
@@ -121,6 +121,11 @@ public class MainActivity extends Activity {
     }
 
     // ------------------------------------------------------------------ interfaz
+
+    /** Texto traducido (res/values/strings.xml y sus traducciones). */
+    private String t(int id, Object... a) { return a.length == 0 ? getString(id) : getString(id, a); }
+
+    private String q(int id, int n, Object... a) { return getResources().getQuantityString(id, n, a); }
 
     private int dp(int v) {
         return Math.round(v * getResources().getDisplayMetrics().density);
@@ -176,7 +181,7 @@ public class MainActivity extends Activity {
         header.setOrientation(LinearLayout.HORIZONTAL);
         header.setGravity(Gravity.CENTER_VERTICAL);
         TextView title = new TextView(this);
-        title.setText("WiFi Casa");
+        title.setText(t(R.string.app_name));
         title.setTextSize(28);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         title.setTextColor(C_TEXT);
@@ -197,11 +202,11 @@ public class MainActivity extends Activity {
         statusView.setPadding(0, dp(4), 0, dp(6));
         root.addView(statusView);
 
-        studyOnBtn = bigButton("⏸  Pausar Internet", C_RED);
+        studyOnBtn = bigButton(t(R.string.pause), C_RED);
         studyOnBtn.setOnClickListener(v -> applyStudy(true));
         root.addView(studyOnBtn);
 
-        studyOffBtn = bigButton("▶  Reanudar Internet", C_GREEN);
+        studyOffBtn = bigButton(t(R.string.resume), C_GREEN);
         studyOffBtn.setOnClickListener(v -> applyStudy(false));
         root.addView(studyOffBtn);
 
@@ -215,9 +220,9 @@ public class MainActivity extends Activity {
         LinearLayout row = new LinearLayout(this);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setPadding(0, dp(14), 0, dp(6));
-        refreshBtn = smallButton("⟳  Actualizar");
+        refreshBtn = smallButton(t(R.string.refresh));
         refreshBtn.setOnClickListener(v -> refresh());
-        Button settingsBtn = smallButton("⚙  Ajustes");
+        Button settingsBtn = smallButton(t(R.string.settings));
         settingsBtn.setOnClickListener(v -> { if (!busy) showSettings(false); });
         row.addView(refreshBtn);
         row.addView(settingsBtn);
@@ -258,16 +263,16 @@ public class MainActivity extends Activity {
         studyOffBtn.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
         groupInfoView.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
         String g = store.groupName(loc);
-        studyOnBtn.setText(g.isEmpty() ? "⏸  Pausar Internet" : "⏸  Pausar: " + g);
-        studyOffBtn.setText(g.isEmpty() ? "▶  Reanudar Internet" : "▶  Reanudar: " + g);
+        studyOnBtn.setText(g.isEmpty() ? t(R.string.pause) : t(R.string.pause_group, g));
+        studyOffBtn.setText(g.isEmpty() ? t(R.string.resume) : t(R.string.resume_group, g));
         hintView.setText(canSwitch
-                ? "Toca un dispositivo para ponerle nombre e incluirlo en la pausa."
-                : "Este router solo permite consultar los dispositivos.");
+                ? t(R.string.hint_can_switch)
+                : t(R.string.hint_list_only));
         // Se muestran enseguida los dispositivos recordados; Actualizar trae el estado real.
         devices = store.knownDevices(loc);
         present = new java.util.HashSet<>();
         statusView.setText(devices.isEmpty() ? adapter().displayName()
-                : "Último estado conocido · pulsa Actualizar para comprobarlo");
+                : t(R.string.last_known));
         renderList();
     }
 
@@ -310,7 +315,7 @@ public class MainActivity extends Activity {
                     try {
                         fresh = engine.run(ops -> ops.listarConEstado());
                     } catch (Exception e) {
-                        result += "\n(El cambio está hecho, pero no se pudo refrescar la lista: pulsa Actualizar.)";
+                        result += "\n" + t(R.string.done_no_refresh);
                     }
                 } else {
                     final List<NetDevice> holder = new ArrayList<>();
@@ -344,17 +349,16 @@ public class MainActivity extends Activity {
     }
 
     private void refresh() {
-        runJob("Conectando con el router de " + loc.name + "…", false, ops -> "Actualizado: " + nowText());
+        runJob(t(R.string.connecting, loc.name), false, ops -> t(R.string.updated_at, nowText()));
     }
 
     private void applyStudy(boolean block) {
         final Set<String> study = store.studySet(loc);
         if (study.isEmpty()) {
-            Toast.makeText(this, "Primero toca los dispositivos que quieras y márcalos con «Incluir en la pausa».",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, t(R.string.need_marked), Toast.LENGTH_LONG).show();
             return;
         }
-        runJob(block ? "Cortando Internet a los dispositivos marcados…" : "Devolviendo Internet…", true, ops -> {
+        runJob(block ? t(R.string.cutting_marked) : t(R.string.restoring), true, ops -> {
             int n = 0;
             List<String> errors = new ArrayList<>();
             final String[] firstError = new String[1];
@@ -374,24 +378,23 @@ public class MainActivity extends Activity {
                 }
             }
             if (!errors.isEmpty()) {
-                throw new Exception("No se pudo cambiar: " + String.join(", ", errors) + " (" + firstError[0] + ")");
+                throw new Exception(t(R.string.could_not_change, String.join(", ", errors), firstError[0]));
             }
-            if (n == 0) return "Ningún dispositivo marcado está en la lista del router ahora mismo.";
+            if (n == 0) return t(R.string.none_marked_present);
             int skipped = 0;
             for (String mac : study) if (!listed.contains(mac)) skipped++;
-            return (block ? "⏸ Internet pausado (" : "▶ Internet reanudado (") + n + " dispositivo"
-                    + (n == 1 ? "" : "s") + ") · " + nowText()
-                    + (skipped > 0 ? "\n" + skipped + " marcado(s) no aparecen ahora en el router y no se han tocado." : "");
+            return q(block ? R.plurals.paused : R.plurals.resumed, n, n, nowText())
+                    + (skipped > 0 ? "\n" + q(R.plurals.skipped, skipped, skipped) : "");
         });
     }
 
     private void toggleDevice(NetDevice target, boolean block) {
-        runJob((block ? "Cortando Internet a " : "Devolviendo Internet a ") + displayName(target) + "…", true, ops -> {
+        runJob(t(block ? R.string.cutting_one : R.string.restoring_one, displayName(target)), true, ops -> {
             NetDevice d = ops.buscar(target.mac);
             // Si ya no aparece en la lista, se intenta igualmente con los datos que teníamos.
             if (d == null) d = target;
             if (block) ops.bloquearDispositivo(d); else ops.desbloquearDispositivo(d);
-            return displayName(d) + (block ? ": sin Internet" : ": con Internet") + " · " + nowText();
+            return t(block ? R.string.result_off : R.string.result_on, displayName(d), nowText());
         });
     }
 
@@ -407,9 +410,9 @@ public class MainActivity extends Activity {
     private boolean isPresent(NetDevice d) { return present.contains(d.mac); }
 
     private String lastSeenText(NetDevice d) {
-        if (d.lastSeenMs <= 0) return "sin datos";
+        if (d.lastSeenMs <= 0) return t(R.string.no_data);
         java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("dd/MM HH:mm", java.util.Locale.getDefault());
-        return "visto por última vez " + f.format(new java.util.Date(d.lastSeenMs));
+        return t(R.string.last_seen, f.format(new java.util.Date(d.lastSeenMs)));
     }
 
     private String nowText() {
@@ -424,8 +427,7 @@ public class MainActivity extends Activity {
         List<NetDevice> sorted = new ArrayList<>(devices);
         final Set<String> study = store.studySet(loc);
         int nStudy = study.size();
-        groupInfoView.setText(nStudy == 0 ? "Aún no hay dispositivos en la pausa: tócalos en la lista para añadirlos."
-                : "Afecta a " + nStudy + " dispositivo" + (nStudy == 1 ? "" : "s") + " marcado" + (nStudy == 1 ? "" : "s"));
+        groupInfoView.setText(nStudy == 0 ? t(R.string.group_empty) : q(R.plurals.affects, nStudy, nStudy));
         Collections.sort(sorted, new Comparator<NetDevice>() {
             @Override
             public int compare(NetDevice a, NetDevice b) {
@@ -440,7 +442,7 @@ public class MainActivity extends Activity {
         });
         if (sorted.isEmpty()) {
             TextView empty = new TextView(this);
-            empty.setText("Sin datos todavía. Pulsa Actualizar estando conectado al WiFi de " + loc.name + ".");
+            empty.setText(t(R.string.empty_list, loc.name));
             empty.setTextColor(C_MUTED);
             empty.setPadding(dp(4), dp(16), dp(4), dp(16));
             listBox.addView(empty);
@@ -477,7 +479,7 @@ public class MainActivity extends Activity {
         TextView sub = new TextView(this);
         String host = alias(d).isEmpty() ? "" : d.hostName + " · ";
         if (isPresent(d)) {
-            sub.setText(host + d.ip + (d.active ? " · conectado" : " · no conectado"));
+            sub.setText(host + d.ip + " · " + t(d.active ? R.string.connected : R.string.not_connected));
         } else {
             sub.setText(host + (d.ip.isEmpty() ? "" : d.ip + " · ") + lastSeenText(d));
         }
@@ -488,17 +490,17 @@ public class MainActivity extends Activity {
         TextView state = new TextView(this);
         boolean blocked = d.isBlocked();
         if (d.access == AccessState.SCHEDULED) {
-            state.setText("Con horario programado en el router");
+            state.setText(t(R.string.state_scheduled));
             state.setTextColor(C_ACCENT);
         } else if (d.access == AccessState.UNKNOWN) {
-            state.setText("Estado desconocido");
+            state.setText(t(R.string.state_unknown));
             state.setTextColor(C_MUTED);
         } else {
-            state.setText(blocked ? "Sin Internet" : "Con Internet");
+            state.setText(t(blocked ? R.string.state_off : R.string.state_on));
             state.setTextColor(blocked ? C_RED : C_GREEN);
         }
         if (!isPresent(d) && d.access != AccessState.UNKNOWN) {
-            state.setText("Último estado: " + state.getText());
+            state.setText(t(R.string.last_state, state.getText()));
             state.setAlpha(0.7f);
         }
         state.setTextSize(14);
@@ -551,35 +553,34 @@ public class MainActivity extends Activity {
         LinearLayout box = dialogBox();
 
         TextView info = new TextView(this);
-        info.setText("Nombre en el router: " + (d.hostName.isEmpty() ? "—" : d.hostName)
-                + "\nIP: " + d.ip + "\nMAC: " + d.mac
-                + (isPresent(d) ? "" : "\n" + lastSeenText(d) + " (el router no lo muestra ahora)"));
+        info.setText(t(R.string.device_info, d.hostName.isEmpty() ? "—" : d.hostName, d.ip, d.mac)
+                + (isPresent(d) ? "" : "\n" + t(R.string.not_shown_now, lastSeenText(d))));
         info.setTextColor(C_MUTED);
         box.addView(info);
 
         final EditText name = new EditText(this);
-        name.setHint("Nombre (p. ej. Portátil del cole)");
+        name.setHint(t(R.string.device_name_hint));
         name.setText(alias(d));
         name.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         box.addView(name);
 
         final CheckBox study = new CheckBox(this);
         String g = store.groupName(loc);
-        study.setText(g.isEmpty() ? "Incluir en la pausa" : "Incluir en la pausa «" + g + "»");
+        study.setText(g.isEmpty() ? t(R.string.include_pause) : t(R.string.include_pause_named, g));
         study.setChecked(store.studySet(loc).contains(d.mac));
         if (canSwitch()) box.addView(study);
 
         AlertDialog.Builder b = new AlertDialog.Builder(this)
-                .setTitle("Dispositivo")
+                .setTitle(t(R.string.device))
                 .setView(box)
-                .setPositiveButton("Guardar", (dialog, which) -> {
+                .setPositiveButton(t(R.string.save), (dialog, which) -> {
                     store.saveDevice(loc, d.mac, name.getText().toString().trim(), study.isChecked());
                     renderList();
                 })
-                .setNegativeButton("Cancelar", null);
+                .setNegativeButton(t(R.string.cancel), null);
         if (!isPresent(d)) {
             // Solo se pueden olvidar los que el router no está mostrando ahora.
-            b.setNeutralButton("Olvidar", (dialog, which) -> {
+            b.setNeutralButton(t(R.string.forget), (dialog, which) -> {
                 store.forgetDevice(loc, d.mac);
                 List<NetDevice> rest = new ArrayList<>();
                 for (NetDevice x : devices) if (!x.mac.equals(d.mac)) rest.add(x);
@@ -599,9 +600,9 @@ public class MainActivity extends Activity {
             items[i] = all.get(i).name;
             if (all.get(i).id.equals(loc.id)) checked = i;
         }
-        items[all.size()] = "＋ Nueva ubicación";
+        items[all.size()] = t(R.string.new_location_item);
         new AlertDialog.Builder(this)
-                .setTitle("Ubicación")
+                .setTitle(t(R.string.location))
                 .setSingleChoiceItems(items, checked, (dialog, which) -> {
                     dialog.dismiss();
                     if (which == all.size()) {
@@ -611,25 +612,25 @@ public class MainActivity extends Activity {
                         if (store.hasPassword(loc)) refresh(); else showSettings(true);
                     }
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(t(R.string.cancel), null)
                 .show();
     }
 
     private void askNewLocation() {
         LinearLayout box = dialogBox();
         final EditText name = new EditText(this);
-        name.setHint("Nombre (p. ej. Segunda residencia)");
+        name.setHint(t(R.string.new_location_hint));
         name.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         box.addView(name);
         new AlertDialog.Builder(this)
-                .setTitle("Nueva ubicación")
+                .setTitle(t(R.string.new_location))
                 .setView(box)
-                .setPositiveButton("Crear", (dialog, which) -> {
+                .setPositiveButton(t(R.string.create), (dialog, which) -> {
                     String n = name.getText().toString().trim();
-                    switchTo(store.create(n.isEmpty() ? "Ubicación " + (store.all().size() + 1) : n));
+                    switchTo(store.create(n.isEmpty() ? t(R.string.loc_numbered, store.all().size() + 1) : n));
                     showSettings(true);
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(t(R.string.cancel), null)
                 .show();
     }
 
@@ -644,18 +645,17 @@ public class MainActivity extends Activity {
         LinearLayout box = dialogBox();
 
         TextView info = new TextView(this);
-        info.setText("Datos de acceso al router de esta ubicación. La contraseña se guarda cifrada "
-                + "y solo en este móvil.");
+        info.setText(t(R.string.settings_info));
         info.setTextColor(C_MUTED);
         box.addView(info);
 
-        box.addView(label("Nombre de la ubicación"));
+        box.addView(label(t(R.string.label_location_name)));
         final EditText name = new EditText(this);
         name.setText(editing.name);
         name.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         box.addView(name);
 
-        box.addView(label("Modelo de router"));
+        box.addView(label(t(R.string.label_router_model)));
         final List<RouterAdapter> adapters = AdapterRegistry.all();
         final AlertDialog[] settingsDlg = new AlertDialog[1];
         final Button model = new Button(this);
@@ -664,8 +664,8 @@ public class MainActivity extends Activity {
         model.setOnClickListener(v -> {
             String[] names = new String[adapters.size() + 1];
             for (int i = 0; i < adapters.size(); i++) names[i] = adapters.get(i).displayName();
-            names[adapters.size()] = "＋ Mi router no está: buscar, aprender o importar…";
-            new AlertDialog.Builder(this).setTitle("Modelo de router")
+            names[adapters.size()] = t(R.string.router_not_listed);
+            new AlertDialog.Builder(this).setTitle(t(R.string.label_router_model))
                     .setItems(names, (dlg, which) -> {
                         if (which == adapters.size()) {
                             if (settingsDlg[0] != null) settingsDlg[0].dismiss();
@@ -678,41 +678,41 @@ public class MainActivity extends Activity {
         });
         box.addView(model);
 
-        box.addView(label("Nombre de la pausa (opcional)"));
+        box.addView(label(t(R.string.label_group)));
         final EditText group = new EditText(this);
         group.setText(store.groupName(editing));
-        group.setHint("p. ej. Deberes, Hora de cenar");
+        group.setHint(t(R.string.group_hint));
         group.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         box.addView(group);
 
-        box.addView(label("Dirección del router"));
+        box.addView(label(t(R.string.label_host)));
         final EditText host = new EditText(this);
         host.setText(editing.host);
         host.setHint(AdapterRegistry.get(editing.adapterId).defaultHost());
         host.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
         box.addView(host);
 
-        box.addView(label("Usuario"));
+        box.addView(label(t(R.string.label_user)));
         final EditText user = new EditText(this);
         user.setText(editing.user);
         user.setHint(AdapterRegistry.get(editing.adapterId).defaultUser());
         user.setInputType(InputType.TYPE_CLASS_TEXT);
         box.addView(user);
 
-        box.addView(label("Contraseña del router"));
+        box.addView(label(t(R.string.label_password)));
         final EditText pass = new EditText(this);
         final boolean hasPass = store.hasPassword(editing);
-        pass.setHint(hasPass ? "•••••• (guardada; déjalo vacío para no cambiarla)" : "Contraseña");
+        pass.setHint(hasPass ? t(R.string.password_saved_hint) : t(R.string.password));
         pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         box.addView(pass);
 
         AlertDialog.Builder b = new AlertDialog.Builder(this)
-                .setTitle(firstTime ? "Configurar router" : "Ajustes de " + editing.name)
+                .setTitle(firstTime ? t(R.string.setup_router) : t(R.string.settings_of, editing.name))
                 .setView(box)
-                .setPositiveButton("Guardar", (dialog, which) -> {
+                .setPositiveButton(t(R.string.save), (dialog, which) -> {
                     RouterAdapter a = AdapterRegistry.get(editing.adapterId);
                     String n = name.getText().toString().trim();
-                    editing.name = n.isEmpty() ? "Casa" : n;
+                    editing.name = n.isEmpty() ? t(R.string.loc_default) : n;
                     String h = host.getText().toString().trim();
                     editing.host = h.isEmpty() ? a.defaultHost() : h;
                     String u = user.getText().toString().trim();
@@ -721,17 +721,16 @@ public class MainActivity extends Activity {
                     try {
                         store.save(editing, p.isEmpty() && hasPass ? null : p);
                     } catch (Exception e) {
-                        Toast.makeText(this, "⚠ No se pudo guardar la contraseña cifrada: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, t(R.string.password_save_error, e.getMessage()), Toast.LENGTH_LONG).show();
                         return;
                     }
                     store.setGroupName(editing, group.getText().toString());
                     switchTo(editing);
                     refresh();
                 });
-        if (!firstTime) b.setNegativeButton("Cancelar", null);
+        if (!firstTime) b.setNegativeButton(t(R.string.cancel), null);
         if (store.all().size() > 1) {
-            b.setNeutralButton("Eliminar", (dialog, which) -> confirmDelete(editing));
+            b.setNeutralButton(t(R.string.delete), (dialog, which) -> confirmDelete(editing));
         }
         b.setCancelable(!firstTime);
         settingsDlg[0] = b.show();
@@ -739,15 +738,14 @@ public class MainActivity extends Activity {
 
     private void confirmDelete(final Location l) {
         new AlertDialog.Builder(this)
-                .setTitle("Eliminar " + l.name)
-                .setMessage("Se borrarán los datos del router, los nombres y la pausa de esta ubicación. "
-                        + "No cambia nada en el router.")
-                .setPositiveButton("Eliminar", (dialog, which) -> {
+                .setTitle(t(R.string.delete_location, l.name))
+                .setMessage(t(R.string.delete_location_msg))
+                .setPositiveButton(t(R.string.delete), (dialog, which) -> {
                     store.delete(l.id);
                     switchTo(store.current());
                     if (store.hasPassword(loc)) refresh();
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(t(R.string.cancel), null)
                 .show();
     }
 }

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Traducción. Las claves y los %1$s / %2$d no se traducen. -->
+<resources>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="next">Next</string>
+    <string name="accept">OK</string>
+    <string name="copied">Copied</string>
+    <string name="not_now">Not now</string>
+    <string name="loc_default">Home</string>
+    <string name="loc_numbered">Location %1$d</string>
+    <string name="pause">⏸  Pause Internet</string>
+    <string name="resume">▶  Resume Internet</string>
+    <string name="pause_group">⏸  Pause: %1$s</string>
+    <string name="resume_group">▶  Resume: %1$s</string>
+    <string name="refresh">⟳  Refresh</string>
+    <string name="settings">⚙  Settings</string>
+    <string name="hint_can_switch">Tap a device to name it and add it to the pause.</string>
+    <string name="hint_list_only">This router only lets you view the devices.</string>
+    <string name="last_known">Last known status · tap Refresh to check</string>
+    <string name="done_no_refresh">(The change is done, but the list could not be refreshed: tap Refresh.)</string>
+    <string name="connecting">Connecting to the router at %1$s…</string>
+    <string name="updated_at">Updated: %1$s</string>
+    <string name="need_marked">First tap the devices you want and tick «Add to the pause».</string>
+    <string name="cutting_marked">Cutting Internet to the selected devices…</string>
+    <string name="restoring">Restoring Internet…</string>
+    <string name="could_not_change">Could not change: %1$s (%2$s)</string>
+    <string name="none_marked_present">None of the selected devices is on the router\'s list right now.</string>
+    <string name="cutting_one">Cutting Internet to %1$s…</string>
+    <string name="restoring_one">Restoring Internet to %1$s…</string>
+    <string name="result_off">%1$s: no Internet · %2$s</string>
+    <string name="result_on">%1$s: Internet on · %2$s</string>
+    <string name="no_data">no data</string>
+    <string name="last_seen">last seen %1$s</string>
+    <string name="group_empty">No devices in the pause yet: tap them in the list to add them.</string>
+    <string name="empty_list">No data yet. Tap Refresh while connected to the WiFi at %1$s.</string>
+    <string name="connected">connected</string>
+    <string name="not_connected">not connected</string>
+    <string name="state_scheduled">Schedule set on the router</string>
+    <string name="state_unknown">Unknown status</string>
+    <string name="state_off">No Internet</string>
+    <string name="state_on">Internet on</string>
+    <string name="last_state">Last status: %1$s</string>
+    <string name="device_info">Name on the router: %1$s\nIP: %2$s\nMAC: %3$s</string>
+    <string name="not_shown_now">%1$s (the router is not showing it now)</string>
+    <string name="device_name_hint">Name (e.g. School laptop)</string>
+    <string name="include_pause">Add to the pause</string>
+    <string name="include_pause_named">Add to the pause «%1$s»</string>
+    <string name="device">Device</string>
+    <string name="forget">Forget</string>
+    <string name="new_location_item">＋ New location</string>
+    <string name="location">Location</string>
+    <string name="new_location">New location</string>
+    <string name="new_location_hint">Name (e.g. Holiday home)</string>
+    <string name="create">Create</string>
+    <string name="settings_info">Login details for this location\'s router. The password is stored encrypted, only on this phone.</string>
+    <string name="label_location_name">Location name</string>
+    <string name="label_router_model">Router model</string>
+    <string name="router_not_listed">＋ My router is not listed: search, learn or import…</string>
+    <string name="label_group">Pause name (optional)</string>
+    <string name="group_hint">e.g. Homework, Dinner time</string>
+    <string name="label_host">Router address</string>
+    <string name="label_user">Username</string>
+    <string name="label_password">Router password</string>
+    <string name="password">Password</string>
+    <string name="password_saved_hint">•••••• (saved; leave empty to keep it)</string>
+    <string name="setup_router">Set up router</string>
+    <string name="settings_of">%1$s settings</string>
+    <string name="password_save_error">⚠ Could not save the encrypted password: %1$s</string>
+    <string name="delete_location">Delete %1$s</string>
+    <string name="delete_location_msg">The router details, names and pause for this location will be deleted. Nothing changes on the router.</string>
+    <string name="menu_guide">📖  How it works (step by step)</string>
+    <string name="menu_catalog">🔎  Browse the router catalog</string>
+    <string name="menu_learn">🎓  Learn a new router (record its panel)</string>
+    <string name="menu_import">📥  Import a recipe</string>
+    <string name="add_router_title">Add a router model</string>
+    <string name="catalog">Catalog</string>
+    <string name="catalog_not_configured">The public catalog is not configured in this version of the app yet.</string>
+    <string name="catalog_loading">Checking the catalog…</string>
+    <string name="with_recipe">with recipe</string>
+    <string name="catalog_routers">Catalog routers (%1$d)</string>
+    <string name="mine_not_listed">Mine isn\'t listed</string>
+    <string name="catalog_legend">🧾 recipe · ✅ can block · ⛔ cannot block · ❔ no data</string>
+    <string name="catalog_empty">Empty catalog</string>
+    <string name="catalog_empty_msg">There are no recipes in the catalog yet. Be the first: learn your router and publish it.</string>
+    <string name="learn_my_router">Learn my router</string>
+    <string name="catalog_recipes">Catalog recipes</string>
+    <string name="star_matches">★ = matches your router</string>
+    <string name="downloading_recipe">Downloading and checking the recipe…</string>
+    <string name="not_installed">Not installed</string>
+    <string name="status_community">verified by the community</string>
+    <string name="status_tested">tested on a real router</string>
+    <string name="status_simulator">tested only in a simulator</string>
+    <string name="status_untested">untested</string>
+    <string name="conf_confirmed">Checked with WiFi Casa by %1$d person(s).</string>
+    <string name="conf_official">According to the official help of the provider or manufacturer. Not yet checked with WiFi Casa.</string>
+    <string name="conf_probable">Inferred (e.g. it uses the same panel as another checked model). Not confirmed.</string>
+    <string name="conf_web">According to information published online. Not confirmed with WiFi Casa.</string>
+    <string name="learn_sticker">Look at the router\'s sticker (underneath or on the back). The recording and recipe will be named with these details so other users can find them.</string>
+    <string name="hint_vendor">Brand (e.g. Askey, ZTE, TP-Link)</string>
+    <string name="hint_model">Model (e.g. RTF8316VW, Archer C6)</string>
+    <string name="hint_isp">Provider, if it came from one (e.g. Movistar)</string>
+    <string name="learn_new_title">Learn a new router</string>
+    <string name="need_vendor_model">Enter at least the brand and model.</string>
+    <string name="looking_sheet">Looking up your router\'s sheet…</string>
+    <string name="sheet_has_recipe">✅ This router already has a recipe in the catalog (%1$s).\nNo need to record it: install and test it.</string>
+    <string name="install_recipe">Install recipe</string>
+    <string name="record_anyway">Record anyway</string>
+    <string name="sheet_app_only">⛔ This router does not let you cut a device\'s Internet from its panel: only from the provider\'s app.</string>
+    <string name="sheet_app_only_prob">⛔ This router probably does not let you cut a device\'s Internet from its panel: only from the provider\'s app.</string>
+    <string name="sheet_none">⛔ This router cannot cut Internet to a single device.</string>
+    <string name="sheet_none_prob">⛔ This router probably cannot cut Internet to a single device.</string>
+    <string name="sheet_list_only">WiFi Casa can show you its devices, but not pause them. Recording the panel is only useful for that.</string>
+    <string name="record_list_only">Record just to see devices</string>
+    <string name="sheet_unchecked">Nobody has checked it with the app yet. If you do, you\'ll help everyone: if you find the block option, record it; if not, tap «I can\'t find it» and report it.</string>
+    <string name="check_myself">Check it myself</string>
+    <string name="dont_record">Don\'t record</string>
+    <string name="sheet_can_block">👍 This router lets you cut a device\'s Internet from its panel.</string>
+    <string name="sheet_unknown">❔ It\'s not yet known whether this router can cut Internet from its panel.</string>
+    <string name="where_is_it">Where it is:</string>
+    <string name="start_recording">Start recording</string>
+    <string name="dont_touch">⚠ Don\'t touch:</string>
+    <string name="source">Source: %1$s</string>
+    <string name="catalog_data_lang">(Catalog data is in the language of whoever contributed it.)</string>
+    <string name="no_sheet">There\'s no sheet for this router yet: you\'ll be the first.\n\nBefore recording, spend 5 minutes looking for the block option in its panel. It\'s usually called:\n• Parental control\n• Access control\n• MAC filter / MAC filtering\n• Block device\n\n⚠ These don\'t work and may cut everyone off: turning WiFi off (Disable), changing the router mode, or port tables, bridging or VLAN.\n\nIf you can\'t find it, tap «I can\'t find it» during recording: it will still be saved and you can report it to the catalog so nobody else wastes their time.</string>
+    <string name="confirm_learning">Your router\'s panel will open inside the app and I\'ll guide you through 5 steps: log in, see the devices, cut Internet to one, give it back and log out.\n\nThe app records what the panel does so its recipe can be written. The password and WiFi keys are removed from the recording. Nothing is sent anywhere until you decide to share it.\n\nDo it while connected to that router\'s WiFi, and don\'t cut Internet to your own phone.</string>
+    <string name="start">Start</string>
+    <string name="import_help">Paste the recipe here (the JSON the AI gave you) or open it from a file.</string>
+    <string name="paste">📋 Paste</string>
+    <string name="open_file">📂 Open file</string>
+    <string name="import_title">Import recipe</string>
+    <string name="validate">Validate</string>
+    <string name="file_read_error">⚠ Could not read the file: %1$s</string>
+    <string name="recipe_invalid">The recipe is not valid</string>
+    <string name="recipe_invalid_msg">%1$s\n\nCopy this error and give it to the AI so it can fix it.</string>
+    <string name="copy_error">Copy error</string>
+    <string name="back">Back</string>
+    <string name="recipe_valid">Valid recipe</string>
+    <string name="recipe_valid_msg">%1$s · version %2$s\nCan: %3$s\nFingerprint: %4$s…\n\nNow I\'ll test it with your router, first read-only (without changing anything).</string>
+    <string name="test">Test</string>
+    <string name="missing_password">Password missing</string>
+    <string name="missing_password_msg">First enter the router address, username and password in Settings.</string>
+    <string name="testing_read">Testing the recipe (read-only)…</string>
+    <string name="read_ok">Read OK</string>
+    <string name="read_failed">The read test failed</string>
+    <string name="try_cut">Try cutting…</string>
+    <string name="install">Install</string>
+    <string name="copy_report">Copy report</string>
+    <string name="pick_device">Which device should I cut off for a few seconds?</string>
+    <string name="cutting_and_back">Cutting and restoring Internet to %1$s…</string>
+    <string name="recipe_works">The recipe works!</string>
+    <string name="cut_failed">The cut test failed</string>
+    <string name="install_and_use">Install and use</string>
+    <string name="skip_test">Skip this test</string>
+    <string name="recipe_installed">Recipe installed</string>
+    <string name="recipe_in_use">%1$s is now used at this location.</string>
+    <string name="recipe_share_q">%1$s is now used at this location.\n\nShare it in the catalog so other users with this router can use it?</string>
+    <string name="publish">Publish</string>
+    <string name="send_file">Send file</string>
+    <string name="send_recipe">Send recipe</string>
+    <string name="already_bundled">This recipe comes with the app: it\'s already in the catalog.</string>
+    <string name="publish_title">Publish to the catalog</string>
+    <string name="publish_msg">I\'ve copied the recipe. GitHub will open with the «Nueva receta» (new recipe) form ready (title and test report):\n\n1. Sign in to GitHub (or create a free account at github.com).\n2. Long-press the «Receta» box and choose Paste.\n3. Tick the confirmation box and tap «Create» (or «Submit new issue»).\n\nIn a couple of minutes you\'ll see on that same page whether the recipe is valid. Once approved, it will appear in the catalog for every user with a %1$s.</string>
+    <string name="open_github">Open GitHub</string>
+    <string name="cap_list">list</string>
+    <string name="cap_read">read status</string>
+    <string name="cap_block">cut</string>
+    <string name="cap_unblock">restore</string>
+    <string name="cap_none">nothing</string>
+    <string name="step_title">Step %1$d of %2$d · %3$s</string>
+    <string name="not_found">I can\'t find it</string>
+    <string name="finish">Finish</string>
+    <string name="done_next">Done ▶</string>
+    <string name="go_to">Go to: %1$s. Cut Internet to a device other than your phone and save.</string>
+    <string name="same_place">In the same place (%1$s), give it back Internet and save.</string>
+    <string name="dont_touch_one">⚠ Don\'t touch: %1$s</string>
+    <string name="nf_app_only">The panel says it can only be done from the provider\'s app</string>
+    <string name="nf_none">There is no section to block a device</string>
+    <string name="nf_keep">Keep looking</string>
+    <string name="nf_title">What did you find?</string>
+    <string name="understood">Got it</string>
+    <string name="nf_msg">Log out of the panel and tap Finish. The recording will let the app show this router\'s devices (without pausing them).\n\nWhen you finish you can report it to the catalog so nobody else tries with this model.</string>
+    <string name="recording_counter">● Recording · %1$d entries</string>
+    <string name="limit_reached"> (limit reached)</string>
+    <string name="recording_ready">Recording ready · %1$s</string>
+    <string name="recording_ready_msg">%1$d entries in «%2$s». The router password and WiFi keys have been removed.\n\nNext steps:\n1. Tap «Share with an AI» and choose Claude, ChatGPT or Gemini. The file already includes the instructions; if it asks for a message, write: «Read the instructions in the file and make me the recipe».\n2. Save the recipe it gives you (receta-%3$s.json) or copy its text.\n3. In WiFi Casa: Settings → Router model → My router is not listed → Import a recipe.\n\nYou can also save the file on your phone to do it later.</string>
+    <string name="share_ai">Share with an AI</string>
+    <string name="save_phone">Save on the phone</string>
+    <string name="keep_recording">Keep recording</string>
+    <string name="report_q">Report it to the catalog?</string>
+    <string name="report_msg">That way, anyone with a %1$s will know before starting that its panel can\'t block devices. GitHub will open with everything filled in: you just need to send it.</string>
+    <string name="report">Report</string>
+    <string name="share_ai_msg">Read the instructions in the file and make me the WiFi Casa recipe for my %1$s router.</string>
+    <string name="share_error">⚠ Could not share (%1$s). Save it on your phone.</string>
+    <string name="recording_saved">Recording saved.</string>
+    <string name="save_error">⚠ Could not save: %1$s</string>
+    <string name="basic_auth">The router asks for a username and password</string>
+    <string name="login">Log in</string>
+    <string name="exit_q">Exit without saving?</string>
+    <string name="exit_msg">The recording will be lost.</string>
+    <string name="exit">Exit</string>
+    <string name="keep_going">Continue</string>
+    <string name="skip">Skip</string>
+    <string name="guide_back">Back</string>
+    <string name="record_my_router">Record my router</string>
+    <string name="find_my_router">Find my router</string>
+    <string-array name="learn_steps">
+        <item>Log in to the router panel</item>
+        <item>Open the list of connected devices</item>
+        <item>Cut Internet to a device</item>
+        <item>Give it back Internet</item>
+        <item>Log out of the panel</item>
+    </string-array>
+    <string-array name="learn_help">
+        <item>Enter the router username and password as usual and log in.</item>
+        <item>Find the page that shows connected devices. It\'s usually called Local network, Clients, Devices or DHCP.</item>
+        <item>Pick a device that won\'t be missed and cut its Internet: look for Parental control, Access control, Block or MAC filter, and save.</item>
+        <item>Undo the previous step to give it back Internet, and save.</item>
+        <item>Tap Log out or Exit in the panel. Then tap Finish.</item>
+    </string-array>
+    <string-array name="guide_titles">
+        <item>Router not listed?</item>
+        <item>Check its sheet</item>
+        <item>Record its panel</item>
+        <item>Give it to an AI</item>
+        <item>Test it</item>
+        <item>Share it</item>
+    </string-array>
+    <string-array name="guide_texts">
+        <item>Add it yourself in about 15 minutes and share it with everyone.</item>
+        <item>Enter the brand and model from the sticker. The app tells you whether it can block and where.</item>
+        <item>Follow the 5 steps in the top bar. Your passwords are removed automatically.</item>
+        <item>Share it with Claude, ChatGPT or Gemini. It will give you the recipe.</item>
+        <item>Import it: the app reads and cuts Internet for a few seconds to check it.</item>
+        <item>Publish it and anyone with the same router will have it.</item>
+    </string-array>
+    <plurals name="paused">
+        <item quantity="one">⏸ Internet paused (%1$d device) · %2$s</item>
+        <item quantity="other">⏸ Internet paused (%1$d devices) · %2$s</item>
+    </plurals>
+    <plurals name="resumed">
+        <item quantity="one">▶ Internet resumed (%1$d device) · %2$s</item>
+        <item quantity="other">▶ Internet resumed (%1$d devices) · %2$s</item>
+    </plurals>
+    <plurals name="skipped">
+        <item quantity="one">%1$d selected device is not on the router now and was left untouched.</item>
+        <item quantity="other">%1$d selected devices are not on the router now and were left untouched.</item>
+    </plurals>
+    <plurals name="affects">
+        <item quantity="one">Affects %1$d selected device</item>
+        <item quantity="other">Affects %1$d selected devices</item>
+    </plurals>
+</resources>
