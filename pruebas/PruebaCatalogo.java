@@ -78,6 +78,9 @@ public class PruebaCatalogo {
                 "el Livebox 6s de Yoigo enlaza la receta del ZTE");
         ok(fc.findSheet("Orange", "Livebox 6") != null && fc.findSheet("Orange", "Livebox 6").id.equals("arcadyan-arltfibra6"),
                 "Orange Livebox 6 no se confunde con el Livebox 6s");
+        Catalog.Sheet l7 = fc.findSheet("Orange", "Livebox 7");
+        ok(l7 != null && l7.id.equals("orange-livebox-7") && "official".equals(l7.confidence) && l7.where.size() == 4,
+                "Livebox 7: camino de la ayuda oficial de Orange");
         String repUrl = Catalog.reportUrl("Askey", "RTF8316VW", "Movistar", "app-only", new ArrayList<>(), new ArrayList<>(), "x");
         ok(repUrl.contains("template=ficha-router.yml") && repUrl.contains("bloqueo=app-only") && repUrl.contains("modelo=RTF8316VW"),
                 "enlace para informar con el formulario rellenado");

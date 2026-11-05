@@ -145,10 +145,11 @@
     "confidence": {
       "enum": [
         "confirmed",
+        "official",
         "web",
         "probable"
       ],
-      "description": "confirmed: comprobado con la app en un router real · web: documentado en las fuentes · probable: deducido (p. ej. mismo portal que otro modelo confirmado)"
+      "description": "confirmed: comprobado con la app en un router real · official: documentado por la compañía o el fabricante · web: publicado en otras webs · probable: deducido"
     },
     "sources": {
       "type": "array",

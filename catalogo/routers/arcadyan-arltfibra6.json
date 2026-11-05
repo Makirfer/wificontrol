@@ -19,16 +19,20 @@
   "block": {
     "support": "panel",
     "where": [
-      "Control parental (en el panel web)",
-      "Elige el dispositivo → «Siempre bloqueado» o un horario"
+      "mi red local (pestaña de arriba)",
+      "dispositivos conectados (columna izquierda)",
+      "Pulsa el aparato → «Restricción de acceso a Internet»",
+      "Elige «Bloquear Internet de forma permanente» (o «Programar acceso» por franjas) y pulsa «guardar»"
     ],
     "how": "Cada dispositivo puede quedar «Siempre bloqueado» o con horario permitido por días (máximo 16 reglas). Una integración de Home Assistant ya lo hace hablando con el mismo panel.",
-    "scope": "unknown"
+    "scope": "unknown",
+    "notes": "Camino tomado de la ayuda oficial del Livebox 7, que usa el mismo panel de Orange; falta comprobarlo en un Livebox 6."
   },
   "confidence": "web",
   "sources": [
     "https://github.com/davidmc473/orange-livebox-es",
-    "https://jbeex.com/livebox-7/"
+    "https://jbeex.com/livebox-7/",
+    "https://ayuda.orange.es/dispositivos-y-routers/manuales-y-especificaciones/router-livebox-7/"
   ],
   "updated": "2026-11-05"
 }

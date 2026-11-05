@@ -22,6 +22,10 @@ from procesar_issue import seccion  # noqa: E402
 
 SOPORTES = {"panel", "app-only", "none", "unknown"}
 NO_RESPUESTA = {"", "_no response_", "_sin respuesta_"}
+# Webs de ayuda de compañías y fabricantes: lo que documentan cuenta como información oficial.
+OFICIALES = ("ayuda.orange.es", "movistar.es", "vodafone.es", "digimobil.es", "masmovil.es", "yoigo.com",
+             "pepephone.com", "lowi.es", "o2online.es", "parlem.com", "avatel.es", "finetwork.com",
+             "tp-link.com", "asus.com", "fritz.com", "avm.de", "zyxel.com", "mi.com", "netgear.com", "huawei.com")
 
 
 def slug(s: str) -> str:
@@ -70,10 +74,17 @@ def main():
         nueva["firmware"] = [valor(c, "Versión del firmware")[:60]]
     if lineas(valor(c, "Dónde está el bloqueo")):
         nueva["block"]["where"] = [l[:200] for l in lineas(valor(c, "Dónde está el bloqueo"))]
+    fuente = valor(c, "Enlace a la ayuda oficial")
+    if fuente.startswith("https://") and len(fuente) <= 300:
+        nueva["sources"] = [fuente]
     if valor(c, "Notas"):
         nueva["block"]["notes"] = valor(c, "Notas")[:500]
     if lineas(valor(c, "Qué no tocar")):
         nueva["avoid"] = [l[:300] for l in lineas(valor(c, "Qué no tocar"))]
+
+    # Desde la app (botón «No lo encuentro» → Avisar) la persona lo acaba de comprobar en su router.
+    desde_app = "Comprobado con el modo aprendizaje" in valor(c, "Notas")
+    oficial = any(d in u for u in nueva.get("sources", []) for d in OFICIALES)
 
     aviso = ""
     if destino.exists():
@@ -81,17 +92,24 @@ def main():
         f["reports"] = f.get("reports", 1) + 1
         conf_antes = f.get("confidence", "web")
         f["updated"] = hoy
+        for v in nueva.get("sources", []):
+            if v not in f.setdefault("sources", []):
+                f["sources"].append(v)
         for k in ("isps", "firmware", "avoid"):
             for v in nueva.get(k, []):
                 if v not in f.setdefault(k, []):
                     f[k].append(v)
         antes = f["block"]["support"]
+        nivel = "confirmed" if desde_app else ("official" if oficial else "web")
+        orden = ["probable", "web", "official", "confirmed"]
         if soporte == antes:
-            f["confidence"] = "confirmed"  # alguien lo ha comprobado con la app
-        elif antes == "unknown" or (conf_antes != "confirmed" and soporte != "unknown"):
+            if orden.index(nivel) > orden.index(conf_antes if conf_antes in orden else "web"):
+                f["confidence"] = nivel  # más fiable que lo que había
+        elif antes == "unknown" or (orden.index(nivel) > orden.index(conf_antes if conf_antes in orden else "web")
+                                    and soporte != "unknown"):
             # Lo comprobado con la app manda sobre lo deducido o leído en Internet
             f["block"]["support"] = soporte
-            f["confidence"] = "confirmed"
+            f["confidence"] = nivel
             f["block"]["notes"] = (f["block"].get("notes", "") + f" Corregido por un usuario ({hoy}): antes decía {antes}.").strip()[:500]
         elif soporte not in (antes, "unknown"):
             aviso = (f"\n\n⚠️ Esta ficha decía `{antes}` y ahora se informa `{soporte}`. "
@@ -102,6 +120,9 @@ def main():
             if v not in f["block"].setdefault("where", []):
                 f["block"]["where"].append(v)
         nueva = f
+    if not desde_app and not destino.exists():
+        # Informada a mano (no desde la app): oficial si hay enlace de una web de ayuda, si no, web.
+        nueva["confidence"] = "official" if oficial else "web"
     try:
         jsonschema.Draft202012Validator(json.loads((RAIZ / "docs" / "ficha.schema.json").read_text())).validate(nueva)
     except jsonschema.ValidationError as e:

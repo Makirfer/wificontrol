@@ -1,0 +1,40 @@
+{
+  "format": "wificasa-router/1",
+  "id": "orange-livebox-7",
+  "vendor": "Orange",
+  "model": "Livebox 7",
+  "commercialName": "Livebox 7",
+  "isps": [
+    "Orange",
+    "Jazztel"
+  ],
+  "aliases": [
+    "Livebox 7 Arcadyan",
+    "Livebox 7 ZTE",
+    "Livebox7"
+  ],
+  "login": {
+    "address": "192.168.1.1",
+    "passwordHint": "La contraseña de administración de la pegatina del router."
+  },
+  "block": {
+    "support": "panel",
+    "where": [
+      "mi red local (pestaña de arriba)",
+      "dispositivos conectados (columna izquierda)",
+      "Pulsa el aparato → «Restricción de acceso a Internet»",
+      "Elige «Bloquear Internet de forma permanente» (o «Programar acceso» por franjas) y pulsa «guardar»"
+    ],
+    "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Casa: «Bloquear Internet de forma permanente» y «Permitir Internet de forma permanente».",
+    "scope": "unknown",
+    "notes": "El Livebox 7 existe en versión Arcadyan y ZTE; la ayuda de Orange describe el mismo panel para ambas."
+  },
+  "avoid": [
+    "«dispositivos desconectados» solo muestra el historial: no bloquea."
+  ],
+  "confidence": "official",
+  "sources": [
+    "https://ayuda.orange.es/dispositivos-y-routers/manuales-y-especificaciones/router-livebox-7/"
+  ],
+  "updated": "2026-11-05"
+}

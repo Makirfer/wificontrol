@@ -80,6 +80,7 @@ public final class Catalog {
         public String confidenceText() {
             switch (confidence) {
                 case "confirmed": return "Comprobado con WiFi Casa por " + reports + (reports == 1 ? " persona." : " personas.");
+                case "official": return "Según la ayuda oficial de la compañía o el fabricante. Sin comprobar aún con WiFi Casa.";
                 case "probable": return "Deducido (por ejemplo, usa el mismo panel que otro modelo comprobado). Sin confirmar.";
                 default: return "Según información publicada en Internet. Sin confirmar con WiFi Casa.";
             }
@@ -284,7 +285,7 @@ public final class Catalog {
             sh.recipe = s(m, "recipe");
             sh.sources = l(m, "sources");
             String conf = s(m, "confidence");
-            sh.confidence = conf.matches("confirmed|web|probable") ? conf : "web";
+            sh.confidence = conf.matches("confirmed|official|web|probable") ? conf : "web";
             if (m.get("reports") instanceof Double) sh.reports = ((Double) m.get("reports")).intValue();
             if (m.get("block") instanceof Map) {
                 Map<?, ?> b = (Map<?, ?>) m.get("block");

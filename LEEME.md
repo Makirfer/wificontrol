@@ -1,4 +1,10 @@
-# WiFi Casa 2.6.1
+# WiFi Casa 2.6.2
+
+## Novedades de la 2.6.2
+
+- Nueva ficha del **Orange Livebox 7** sacada de la ayuda oficial de Orange (camino exacto para
+  bloquear un aparato). Las fichas pueden indicar ahora que vienen de **documentación oficial**.
+- El formulario «Ficha de router» de GitHub admite un enlace a la ayuda oficial.
 
 ## Novedades de la 2.6.1
 

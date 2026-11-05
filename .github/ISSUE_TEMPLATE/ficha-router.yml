@@ -45,6 +45,11 @@ body:
     attributes:
       label: Qué no tocar
       description: Apartados que parecen servir pero no, o que cortan el servicio a todos. Uno por línea.
+  - type: input
+    id: fuente
+    attributes:
+      label: Enlace a la ayuda oficial
+      description: Si la compañía o el fabricante explica cómo hacerlo, pega aquí el enlace.
   - type: textarea
     id: notas
     attributes:

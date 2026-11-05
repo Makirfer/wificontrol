@@ -35,8 +35,9 @@ solo desde la app de la compañía (`app-only`), de ninguna forma (`none`) o si 
 (`unknown`), el camino de menús hasta el bloqueo y qué apartados no tocar.
 
 Cada ficha indica de dónde sale su información (`confidence`) y sus fuentes (`sources`):
-`confirmed` (comprobada con la app en un router real), `web` (documentada en Internet) o
-`probable` (deducida, p. ej. porque usa el mismo panel que otro modelo comprobado). La app solo
+`confirmed` (comprobada con la app en un router real), `official` (documentada por la compañía
+o el fabricante en su web de ayuda), `web` (publicada en otras webs) o `probable` (deducida, p. ej.
+porque usa el mismo panel que otro modelo comprobado). La app solo
 da por cerrado un «no se puede bloquear» si está `confirmed`; en los demás casos invita a
 comprobarlo. Cuando alguien lo comprueba con la app, la ficha pasa a `confirmed`, y si
 contradice algo que no estaba confirmado, manda lo comprobado.
@@ -64,3 +65,14 @@ python3 catalogo/herramientas/generar_indice.py           # regenera index.json
 python3 catalogo/herramientas/generar_indice.py --comprobar
 catalogo/herramientas/validar_java.sh                      # validador de la app sobre todas las recetas
 ```
+
+## Cómo aportar un router sin tener que programar
+
+- **Con la app** (lo más fiable): Ajustes → Modelo de router → Mi router no está → Aprender. Si el
+  panel no permite bloquear, «No lo encuentro» → Avisar. La ficha queda como `confirmed`.
+- **Con la ayuda oficial**: abre el formulario
+  [Ficha de router](../../issues/new?template=ficha-router.yml), rellena marca, modelo, si se puede
+  bloquear y el camino de menús, y pega el **enlace a la ayuda oficial**. Si el enlace es de una web
+  de ayuda de una compañía o fabricante conocido, la ficha queda como `official`.
+- **Con un PDF o capturas de un manual**: abre un issue normal y adjúntalo; el responsable del
+  catálogo preparará la ficha.
