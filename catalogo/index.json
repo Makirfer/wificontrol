@@ -583,6 +583,46 @@
     },
     {
       "format": "wificasa-router/1",
+      "id": "sercomm-fg824cd",
+      "vendor": "Sercomm",
+      "model": "FG824CD",
+      "isps": [
+        "MásMóvil",
+        "Yoigo",
+        "Pepephone"
+      ],
+      "aliases": [
+        "FG824CD",
+        "Sercomm FG824"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "passwordHint": "Usuario y contraseña de la pegatina del router (si no, prueba 192.168.0.1)."
+      },
+      "block": {
+        "support": "unknown",
+        "scope": "wifi-only",
+        "where": [
+          "Wifi (menú de arriba)",
+          "MAC Filter (menú de la izquierda), si aparece con tu usuario"
+        ],
+        "how": "Solo se conoce un filtro MAC del WiFi. No se sabe si es lista de bloqueados o de permitidos, ni si aparece con el usuario normal de la pegatina. No se conoce control parental por aparato.",
+        "notes": "Datos de los comentarios de un blog técnico: un lector no veía «MAC Filter» con el usuario de la pegatina y otro dice que sí le sale. Si al añadir un aparato se desconectan todos los demás, quítalo enseguida: sería una lista de permitidos. Graba lo que encuentres con la app o pulsa «No lo encuentro»."
+      },
+      "avoid": [
+        "MAC Filter en modo lista de permitidos: deja sin WiFi a todos los aparatos que no estén en la lista.",
+        "Settings → LAN Switch (modo router/bridge): deja sin Internet a toda la casa.",
+        "Settings → Configuración → restaurar valores de fábrica."
+      ],
+      "confidence": "web",
+      "sources": [
+        "https://www.acampos.net/2021/01/router-sercomm-fg824cd-i.html"
+      ],
+      "updated": "2026-11-05",
+      "reports": 1
+    },
+    {
+      "format": "wificasa-router/1",
       "id": "sercomm-h500-s",
       "vendor": "Sercomm",
       "model": "H500-s",

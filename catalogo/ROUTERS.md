@@ -18,6 +18,7 @@ Generado automáticamente a partir de `catalogo/routers/`. ¿Falta el tuyo o alg
 | Movistar, O2 | MitraStar GPT-2541GNAC (Router Smart WiFi (HGU)) | ❔ Sin datos | — | — | Deducido |
 | Movistar, O2 | MitraStar GPT-2742GX4X5 (Smart WiFi 6 Go) | ❔ Sin datos | — | — | Deducido |
 | Movistar, O2 | MitraStar GPT-2841GX4X5 (Smart WiFi 6) | ✅ Sí, desde el panel | Configuración avanzada (enlace al final del menú básico) → Network Setting → Wireless 2,4 GHz y Wireless 5 GHz (el menú avanzado está en inglés) | — | Según Internet |
+| MásMóvil, Yoigo, Pepephone | Sercomm FG824CD | ❔ Sin datos | Wifi (menú de arriba) → MAC Filter (menú de la izquierda), si aparece con tu usuario | — | Según Internet |
 | Orange, Jazztel | Arcadyan ARLTFIBRA6 (Livebox 6 Fibra) | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Según Internet |
 | Orange, Jazztel | ZTE ZXHN F8748 | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Ayuda oficial |
 | Orange, Jazztel, Mundo R | Arcadyan Livebox 6s (Livebox 6s) | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Ayuda oficial |
