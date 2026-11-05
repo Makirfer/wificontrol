@@ -315,6 +315,7 @@ public class LearnActivity extends Activity {
 
     /** Ofrece avisar al catálogo solo si el usuario ha descubierto algo que la ficha no decía. */
     private void maybeReport() {
+        // support solo llega si la ficha está comprobada; si no, el aviso sirve para confirmarla.
         if (!capture.blockOutcome().isEmpty() && !capture.blockOutcome().equals(support)) offerReport();
     }
 

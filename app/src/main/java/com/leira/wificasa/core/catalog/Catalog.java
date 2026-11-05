@@ -68,10 +68,22 @@ public final class Catalog {
     /** Ficha de un modelo de router: si se puede bloquear, dónde y qué no tocar. */
     public static final class Sheet {
         public String id = "", vendor = "", model = "", commercialName = "", support = "unknown", how = "",
-                scope = "", notes = "", recipe = "", loginAddress = "", loginUser = "", passwordHint = "";
+                scope = "", notes = "", recipe = "", loginAddress = "", loginUser = "", passwordHint = "",
+                confidence = "web";
         public List<String> isps = new ArrayList<>(), aliases = new ArrayList<>(), where = new ArrayList<>(),
-                avoid = new ArrayList<>();
+                avoid = new ArrayList<>(), sources = new ArrayList<>();
         public int reports = 1;
+
+        /** Comprobada con la app en un router real (no solo leída en Internet o deducida). */
+        public boolean confirmed() { return "confirmed".equals(confidence); }
+
+        public String confidenceText() {
+            switch (confidence) {
+                case "confirmed": return "Comprobado con WiFi Casa por " + reports + (reports == 1 ? " persona." : " personas.");
+                case "probable": return "Deducido (por ejemplo, usa el mismo panel que otro modelo comprobado). Sin confirmar.";
+                default: return "Según información publicada en Internet. Sin confirmar con WiFi Casa.";
+            }
+        }
 
         public String title() {
             return commercialName.isEmpty() ? vendor + " " + model : vendor + " " + model + " (" + commercialName + ")";
@@ -270,6 +282,9 @@ public final class Catalog {
             sh.aliases = l(m, "aliases");
             sh.avoid = l(m, "avoid");
             sh.recipe = s(m, "recipe");
+            sh.sources = l(m, "sources");
+            String conf = s(m, "confidence");
+            sh.confidence = conf.matches("confirmed|web|probable") ? conf : "web";
             if (m.get("reports") instanceof Double) sh.reports = ((Double) m.get("reports")).intValue();
             if (m.get("block") instanceof Map) {
                 Map<?, ?> b = (Map<?, ?>) m.get("block");

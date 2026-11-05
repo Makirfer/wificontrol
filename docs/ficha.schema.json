@@ -141,6 +141,23 @@
     "updated": {
       "type": "string",
       "format": "date"
+    },
+    "confidence": {
+      "enum": [
+        "confirmed",
+        "web",
+        "probable"
+      ],
+      "description": "confirmed: comprobado con la app en un router real · web: documentado en las fuentes · probable: deducido (p. ej. mismo portal que otro modelo confirmado)"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^https://",
+        "maxLength": 300
+      },
+      "maxItems": 10
     }
   }
 }

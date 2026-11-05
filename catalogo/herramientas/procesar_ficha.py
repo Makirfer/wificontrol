@@ -62,7 +62,7 @@ def main():
     hoy = datetime.date.today().isoformat()
     nueva = {
         "format": "wificasa-router/1", "id": fid, "vendor": marca[:60], "model": modelo[:60],
-        "block": {"support": soporte}, "updated": hoy, "reports": 1,
+        "block": {"support": soporte}, "updated": hoy, "reports": 1, "confidence": "confirmed",
     }
     if valor(c, "Compañía"):
         nueva["isps"] = [valor(c, "Compañía")[:40]]
@@ -79,14 +79,20 @@ def main():
     if destino.exists():
         f = json.loads(destino.read_text(encoding="utf-8"))
         f["reports"] = f.get("reports", 1) + 1
+        conf_antes = f.get("confidence", "web")
         f["updated"] = hoy
         for k in ("isps", "firmware", "avoid"):
             for v in nueva.get(k, []):
                 if v not in f.setdefault(k, []):
                     f[k].append(v)
         antes = f["block"]["support"]
-        if antes == "unknown":
+        if soporte == antes:
+            f["confidence"] = "confirmed"  # alguien lo ha comprobado con la app
+        elif antes == "unknown" or (conf_antes != "confirmed" and soporte != "unknown"):
+            # Lo comprobado con la app manda sobre lo deducido o leído en Internet
             f["block"]["support"] = soporte
+            f["confidence"] = "confirmed"
+            f["block"]["notes"] = (f["block"].get("notes", "") + f" Corregido por un usuario ({hoy}): antes decía {antes}.").strip()[:500]
         elif soporte not in (antes, "unknown"):
             aviso = (f"\n\n⚠️ Esta ficha decía `{antes}` y ahora se informa `{soporte}`. "
                      "Se mantiene lo anterior hasta que el responsable lo revise.")

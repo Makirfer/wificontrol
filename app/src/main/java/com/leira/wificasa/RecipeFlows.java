@@ -237,12 +237,19 @@ final class RecipeFlows {
             b.setPositiveButton("Instalar receta", (d, w) -> downloadAndInstall(cat, recipe));
             b.setNeutralButton("Grabar igualmente", (d, w) -> confirmLearning(c, vendor, model, isp, sh));
         } else if ("app-only".equals(sh.support) || "none".equals(sh.support)) {
+            String verb = sh.confirmed() ? "no permite" : "probablemente no permite";
             t.append("app-only".equals(sh.support)
-                    ? "⛔ Este router no permite cortar Internet a un aparato desde su panel: solo desde la app de la compañía."
-                    : "⛔ Este router no permite cortar Internet a un aparato concreto.");
+                    ? "⛔ Este router " + verb + " cortar Internet a un aparato desde su panel: solo desde la app de la compañía."
+                    : "⛔ Este router " + verb + " cortar Internet a un aparato concreto.");
             if (!sh.how.isEmpty()) t.append("\n\n").append(sh.how);
-            t.append("\n\nWiFi Casa podrá enseñarte sus aparatos, pero no pausarlos. Grabar el panel solo sirve para eso.");
-            b.setPositiveButton("Grabar solo para ver aparatos", (d, w) -> confirmLearning(c, vendor, model, isp, sh));
+            if (sh.confirmed()) {
+                t.append("\n\nWiFi Casa podrá enseñarte sus aparatos, pero no pausarlos. Grabar el panel solo sirve para eso.");
+                b.setPositiveButton("Grabar solo para ver aparatos", (d, w) -> confirmLearning(c, vendor, model, isp, sh));
+            } else {
+                t.append("\n\nAún nadie lo ha comprobado con la app. Si lo compruebas tú, ayudarás a todos: si encuentras el "
+                        + "bloqueo, grábalo; si no, pulsa «No lo encuentro» y avisa.");
+                b.setPositiveButton("Comprobarlo yo", (d, w) -> confirmLearning(c, vendor, model, isp, sh));
+            }
             b.setNegativeButton("No grabar", null);
         } else {
             t.append(sh.canBlock() ? "👍 Este router permite cortar Internet a un aparato desde su panel."
@@ -260,7 +267,8 @@ final class RecipeFlows {
             for (String av : sh.avoid) t.append("\n• ").append(av);
         }
         if (!sh.passwordHint.isEmpty()) t.append("\n\n🔑 ").append(sh.passwordHint);
-        t.append("\n\n(Ficha confirmada por ").append(sh.reports).append(sh.reports == 1 ? " persona)" : " personas)");
+        t.append("\n\nℹ ").append(sh.confidenceText());
+        if (!sh.sources.isEmpty()) t.append("\nFuente: ").append(sh.sources.get(0));
         b.setView(scrollText(t.toString())).show();
     }
 
@@ -298,7 +306,8 @@ final class RecipeFlows {
                     if (sh != null) {
                         i.putExtra(LearnActivity.EXTRA_WHERE, String.join("\n", sh.where));
                         i.putExtra(LearnActivity.EXTRA_AVOID, String.join("\n", sh.avoid));
-                        i.putExtra(LearnActivity.EXTRA_SUPPORT, sh.support);
+                        // Solo se salta el bloqueo si está comprobado; si no, la persona lo comprueba.
+                        if (sh.confirmed()) i.putExtra(LearnActivity.EXTRA_SUPPORT, sh.support);
                     }
                     a.startActivity(i);
                 })

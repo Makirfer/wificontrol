@@ -26,6 +26,110 @@
   "routers": [
     {
       "format": "wificasa-router/1",
+      "id": "arcadyan-arltfibra6",
+      "vendor": "Arcadyan",
+      "model": "ARLTFIBRA6",
+      "commercialName": "Livebox 6 Fibra",
+      "isps": [
+        "Orange",
+        "Jazztel"
+      ],
+      "aliases": [
+        "Livebox 6",
+        "Livebox 6 Fibra"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "passwordHint": "La contraseña de administración de la pegatina (si no aparece, prueba la clave WiFi de la pegatina)."
+      },
+      "block": {
+        "support": "panel",
+        "where": [
+          "Control parental (en el panel web)",
+          "Elige el dispositivo → «Siempre bloqueado» o un horario"
+        ],
+        "how": "Cada dispositivo puede quedar «Siempre bloqueado» o con horario permitido por días (máximo 16 reglas). Una integración de Home Assistant ya lo hace hablando con el mismo panel.",
+        "scope": "unknown"
+      },
+      "confidence": "web",
+      "sources": [
+        "https://github.com/davidmc473/orange-livebox-es",
+        "https://jbeex.com/livebox-7/"
+      ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "askey-rtf3505vw",
+      "vendor": "Askey",
+      "model": "RTF3505VW",
+      "commercialName": "Router Smart WiFi (HGU)",
+      "isps": [
+        "Movistar",
+        "O2"
+      ],
+      "aliases": [
+        "HGU",
+        "Smart WiFi",
+        "RTF8115VW"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "1234",
+        "passwordHint": "La contraseña de acceso de la pegatina del router."
+      },
+      "block": {
+        "support": "app-only",
+        "how": "Movistar gestiona el control parental y la pausa de dispositivos desde la app Smart WiFi (perfiles y horarios), no desde el panel web del router. Comprobado en el Askey RTF8316VW, que usa el mismo portal.",
+        "scope": "unknown"
+      },
+      "avoid": [
+        "Configuración avanzada → Network Setting → Bridging → Filtering: no bloquea aparatos; reparte puertos entre Internet, Voz e IPTV.",
+        "Apagar el WiFi (Disable) en la configuración inalámbrica: corta a todos."
+      ],
+      "confidence": "probable",
+      "sources": [
+        "https://www.telefonica.com/es/sala-comunicacion/prensa/movistar-incorpora-el-control-parental-de-la-red-wifi-en-su-app-movil-smart-wifi/",
+        "https://www.adslzone.net/operadores/routers/routers-movistar-modelos/"
+      ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "askey-rtf8225vw",
+      "vendor": "Askey",
+      "model": "RTF8225VW",
+      "commercialName": "Smart WiFi 6 Go",
+      "isps": [
+        "Movistar",
+        "O2"
+      ],
+      "aliases": [
+        "Smart WiFi 6 Go"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "1234",
+        "passwordHint": "La contraseña de acceso de la pegatina del router."
+      },
+      "block": {
+        "support": "app-only",
+        "how": "Movistar gestiona el control parental y la pausa de dispositivos desde la app Smart WiFi (perfiles y horarios), no desde el panel web del router. Comprobado en el Askey RTF8316VW, que usa el mismo portal.",
+        "scope": "unknown"
+      },
+      "avoid": [
+        "Configuración avanzada → Network Setting → Bridging → Filtering: no bloquea aparatos; reparte puertos entre Internet, Voz e IPTV.",
+        "Apagar el WiFi (Disable) en la configuración inalámbrica: corta a todos."
+      ],
+      "confidence": "probable",
+      "sources": [
+        "https://www.telefonica.com/es/sala-comunicacion/prensa/movistar-incorpora-el-control-parental-de-la-red-wifi-en-su-app-movil-smart-wifi/",
+        "https://www.adslzone.net/operadores/routers/routers-movistar-modelos/"
+      ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
       "id": "askey-rtf8316vw",
       "vendor": "Askey",
       "model": "RTF8316VW",
@@ -58,6 +162,207 @@
         "Wireless LAN → AP Setting y Associated Clients: no tienen filtro ni bloqueo."
       ],
       "reports": 1,
+      "updated": "2026-11-05",
+      "confidence": "confirmed",
+      "sources": [
+        "https://www.telefonica.com/es/sala-comunicacion/prensa/movistar-incorpora-el-control-parental-de-la-red-wifi-en-su-app-movil-smart-wifi/"
+      ]
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "mitrastar-gpt-2541gnac",
+      "vendor": "MitraStar",
+      "model": "GPT-2541GNAC",
+      "commercialName": "Router Smart WiFi (HGU)",
+      "isps": [
+        "Movistar",
+        "O2"
+      ],
+      "aliases": [
+        "HGU",
+        "Smart WiFi",
+        "GPT-2741GNAC"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "1234",
+        "passwordHint": "La contraseña de acceso de la pegatina del router."
+      },
+      "block": {
+        "support": "app-only",
+        "how": "Movistar gestiona el control parental y la pausa de dispositivos desde la app Smart WiFi (perfiles y horarios), no desde el panel web del router. Comprobado en el Askey RTF8316VW, que usa el mismo portal.",
+        "scope": "unknown"
+      },
+      "avoid": [
+        "Configuración avanzada → Network Setting → Bridging → Filtering: no bloquea aparatos; reparte puertos entre Internet, Voz e IPTV.",
+        "Apagar el WiFi (Disable) en la configuración inalámbrica: corta a todos."
+      ],
+      "confidence": "probable",
+      "sources": [
+        "https://www.telefonica.com/es/sala-comunicacion/prensa/movistar-incorpora-el-control-parental-de-la-red-wifi-en-su-app-movil-smart-wifi/",
+        "https://www.adslzone.net/operadores/routers/routers-movistar-modelos/"
+      ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "mitrastar-gpt-2742gx4x5",
+      "vendor": "MitraStar",
+      "model": "GPT-2742GX4X5",
+      "commercialName": "Smart WiFi 6 Go",
+      "isps": [
+        "Movistar",
+        "O2"
+      ],
+      "aliases": [
+        "Smart WiFi 6 Go"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "1234",
+        "passwordHint": "La contraseña de acceso de la pegatina del router."
+      },
+      "block": {
+        "support": "app-only",
+        "how": "Movistar gestiona el control parental y la pausa de dispositivos desde la app Smart WiFi (perfiles y horarios), no desde el panel web del router. Comprobado en el Askey RTF8316VW, que usa el mismo portal.",
+        "scope": "unknown"
+      },
+      "avoid": [
+        "Configuración avanzada → Network Setting → Bridging → Filtering: no bloquea aparatos; reparte puertos entre Internet, Voz e IPTV.",
+        "Apagar el WiFi (Disable) en la configuración inalámbrica: corta a todos."
+      ],
+      "confidence": "probable",
+      "sources": [
+        "https://www.telefonica.com/es/sala-comunicacion/prensa/movistar-incorpora-el-control-parental-de-la-red-wifi-en-su-app-movil-smart-wifi/",
+        "https://www.adslzone.net/operadores/routers/routers-movistar-modelos/"
+      ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "mitrastar-gpt-2841gx4x5",
+      "vendor": "MitraStar",
+      "model": "GPT-2841GX4X5",
+      "commercialName": "Smart WiFi 6",
+      "isps": [
+        "Movistar",
+        "O2"
+      ],
+      "aliases": [
+        "Smart WiFi 6 Movistar"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "1234",
+        "passwordHint": "La contraseña de acceso de la pegatina del router."
+      },
+      "block": {
+        "support": "app-only",
+        "how": "Movistar gestiona el control parental y la pausa de dispositivos desde la app Smart WiFi (perfiles y horarios), no desde el panel web del router. Comprobado en el Askey RTF8316VW, que usa el mismo portal.",
+        "scope": "unknown"
+      },
+      "avoid": [
+        "Configuración avanzada → Network Setting → Bridging → Filtering: no bloquea aparatos; reparte puertos entre Internet, Voz e IPTV.",
+        "Apagar el WiFi (Disable) en la configuración inalámbrica: corta a todos."
+      ],
+      "confidence": "probable",
+      "sources": [
+        "https://www.telefonica.com/es/sala-comunicacion/prensa/movistar-incorpora-el-control-parental-de-la-red-wifi-en-su-app-movil-smart-wifi/",
+        "https://www.adslzone.net/operadores/routers/routers-movistar-modelos/"
+      ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "mitrastar-gpt-6841jl4l4",
+      "vendor": "MitraStar",
+      "model": "GPT-6841JL4L4",
+      "commercialName": "Router Movistar WiFi 7",
+      "isps": [
+        "Movistar"
+      ],
+      "aliases": [
+        "Movistar WiFi 7",
+        "GPT-6841JL4L4v11"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "1234",
+        "passwordHint": "La contraseña de acceso de la pegatina del router."
+      },
+      "block": {
+        "support": "app-only",
+        "how": "Movistar gestiona el control parental y la pausa de dispositivos desde la app Smart WiFi (perfiles y horarios), no desde el panel web del router. Comprobado en el Askey RTF8316VW, que usa el mismo portal.",
+        "scope": "unknown"
+      },
+      "avoid": [
+        "Configuración avanzada → Network Setting → Bridging → Filtering: no bloquea aparatos; reparte puertos entre Internet, Voz e IPTV.",
+        "Apagar el WiFi (Disable) en la configuración inalámbrica: corta a todos."
+      ],
+      "confidence": "probable",
+      "sources": [
+        "https://www.telefonica.com/es/sala-comunicacion/prensa/movistar-incorpora-el-control-parental-de-la-red-wifi-en-su-app-movil-smart-wifi/",
+        "https://www.adslzone.net/operadores/routers/routers-movistar-modelos/"
+      ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "sercomm-h500-s",
+      "vendor": "Sercomm",
+      "model": "H500-s",
+      "isps": [
+        "Vodafone",
+        "Lowi"
+      ],
+      "aliases": [
+        "VFH500-S",
+        "H500s"
+      ],
+      "login": {
+        "address": "192.168.0.1",
+        "passwordHint": "Usuario y contraseña de la pegatina de la base del router. Activa el «Modo experto» para ver todas las opciones."
+      },
+      "block": {
+        "support": "none",
+        "how": "No hay bloqueo por dispositivo. El «Filtrado MAC» (Modo experto → Wi-Fi → Filtro MAC) es una lista de PERMITIDOS: al activarlo solo se conectan los de la lista, así que no sirve para pausar a uno solo sin riesgo. La opción «Programar» apaga el WiFi de toda la casa por horas.",
+        "scope": "wifi-only"
+      },
+      "avoid": [
+        "Modo experto → Wi-Fi → Filtro MAC: deja entrar SOLO a los aparatos de la lista; los demás se quedan sin WiFi.",
+        "Wi-Fi → Programar: apaga el WiFi a todos."
+      ],
+      "confidence": "web",
+      "sources": [
+        "https://www.adslzone.net/operadores/routers/configurar-router-vodafone-fibra-optica/"
+      ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "zte-f8648p",
+      "vendor": "ZTE",
+      "model": "F8648P",
+      "isps": [
+        "Digi"
+      ],
+      "aliases": [
+        "ZXHN F8648P"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "user",
+        "passwordHint": "La contraseña de la pegatina o de la guía rápida; el router pide cambiarla la primera vez."
+      },
+      "block": {
+        "support": "panel",
+        "how": "Se menciona que tiene control parental en el panel; falta el camino exacto de menús.",
+        "scope": "unknown"
+      },
+      "confidence": "web",
+      "sources": [
+        "https://www.adslzone.net/operadores/digi/configurar-router-digi-fibra-optica/"
+      ],
       "updated": "2026-11-05"
     },
     {
@@ -68,12 +373,16 @@
       "commercialName": "Livebox 6s",
       "isps": [
         "Parlem",
-        "Orange"
+        "Orange",
+        "Yoigo",
+        "MásMóvil",
+        "Pepephone"
       ],
       "aliases": [
         "Livebox 6s",
         "F6640P",
-        "F6640"
+        "F6640",
+        "ZXHN F6640"
       ],
       "login": {
         "address": "192.168.1.1",
@@ -86,10 +395,81 @@
           "Ya tiene receta probada en el catálogo: no hace falta grabarlo."
         ],
         "how": "Restricción de acceso por dispositivo (bloqueo total o por horario).",
-        "scope": "wifi-and-cable"
+        "scope": "wifi-and-cable",
+        "notes": "Receta probada en un Livebox 6s de Parlem. MasOrange instala el mismo modelo en Yoigo, MásMóvil y Pepephone desde diciembre de 2025; su firmware podría variar."
       },
       "recipe": "zte-zxhn-f6640p",
       "reports": 1,
+      "updated": "2026-11-05",
+      "confidence": "confirmed",
+      "sources": [
+        "https://roams.es/actualidad/telefonia/masorange-renueva-el-router-livebox-6s-de-yoigo-masmovil-y-pepephone-llega-el-zte-f6640-con-buenas-noticias/"
+      ]
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "zte-zxhn-h3600",
+      "vendor": "ZTE",
+      "model": "ZXHN H3600",
+      "isps": [
+        "Digi"
+      ],
+      "aliases": [
+        "H3600"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "user",
+        "passwordHint": "La contraseña de la pegatina o de la guía rápida; el router pide cambiarla la primera vez."
+      },
+      "block": {
+        "support": "panel",
+        "where": [
+          "Internet",
+          "Controles Parentales"
+        ],
+        "how": "Misma familia que el H3600P: control parental por dispositivo con horario.",
+        "scope": "unknown"
+      },
+      "confidence": "probable",
+      "sources": [
+        "https://www.digimobil.es/downloads/manual-zte-h3600p"
+      ],
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "zte-zxhn-h3600p",
+      "vendor": "ZTE",
+      "model": "ZXHN H3600P",
+      "isps": [
+        "Digi"
+      ],
+      "aliases": [
+        "H3600P"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "user",
+        "passwordHint": "La contraseña de la pegatina o de la guía rápida; el router pide cambiarla la primera vez."
+      },
+      "block": {
+        "support": "panel",
+        "where": [
+          "Internet (menú de arriba)",
+          "Controles Parentales (menú de la izquierda)"
+        ],
+        "how": "Se elige el dispositivo y se le aplica un horario por días: bloquear todo Internet, o solo una lista de webs. Para la pausa de WiFi Casa, un horario que bloquee todo el día.",
+        "scope": "unknown"
+      },
+      "avoid": [
+        "Internet → Seguridad → Port Forwarding: solo abre puertos, no bloquea."
+      ],
+      "confidence": "web",
+      "sources": [
+        "https://www.digimobil.es/downloads/manual-zte-h3600p",
+        "https://www.xatakamovil.com/tutoriales/controla-uso-que-hacen-ninos-internet-asi-puedes-configurar-control-parental-router"
+      ],
       "updated": "2026-11-05"
     }
   ]

@@ -69,6 +69,15 @@ public class PruebaCatalogo {
         ok(fc.findSheet("Parlem", "Livebox 6s") != null && fc.findSheet("Parlem", "Livebox 6s").recipe.equals("zte-zxhn-f6640p"),
                 "encuentra el ZTE por su nombre comercial y enlaza su receta");
         ok(fc.findSheet("TP-Link", "Archer C6") == null, "sin ficha para un router desconocido");
+        ok(sh.confirmed(), "la ficha del Askey está comprobada");
+        Catalog.Sheet mv = fc.findSheet("Movistar", "Smart WiFi 6");
+        ok(mv != null && !mv.confirmed() && "app-only".equals(mv.support), "Smart WiFi 6 de Movistar: probable, sin confirmar (" + (mv == null ? "-" : mv.id) + ")");
+        Catalog.Sheet dg = fc.findSheet("ZTE", "H3600P");
+        ok(dg != null && dg.canBlock() && dg.where.size() == 2 && !dg.sources.isEmpty(), "Digi H3600P: se puede, con camino de menús y fuente");
+        ok(fc.findSheet("Yoigo", "Livebox 6s") != null && fc.findSheet("Yoigo", "Livebox 6s").recipe.equals("zte-zxhn-f6640p"),
+                "el Livebox 6s de Yoigo enlaza la receta del ZTE");
+        ok(fc.findSheet("Orange", "Livebox 6") != null && fc.findSheet("Orange", "Livebox 6").id.equals("arcadyan-arltfibra6"),
+                "Orange Livebox 6 no se confunde con el Livebox 6s");
         String repUrl = Catalog.reportUrl("Askey", "RTF8316VW", "Movistar", "app-only", new ArrayList<>(), new ArrayList<>(), "x");
         ok(repUrl.contains("template=ficha-router.yml") && repUrl.contains("bloqueo=app-only") && repUrl.contains("modelo=RTF8316VW"),
                 "enlace para informar con el formulario rellenado");

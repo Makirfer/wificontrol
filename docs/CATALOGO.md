@@ -34,6 +34,17 @@ comercial y alias). La ficha dice si se puede bloquear un aparato desde el panel
 solo desde la app de la compañía (`app-only`), de ninguna forma (`none`) o si aún no se sabe
 (`unknown`), el camino de menús hasta el bloqueo y qué apartados no tocar.
 
+Cada ficha indica de dónde sale su información (`confidence`) y sus fuentes (`sources`):
+`confirmed` (comprobada con la app en un router real), `web` (documentada en Internet) o
+`probable` (deducida, p. ej. porque usa el mismo panel que otro modelo comprobado). La app solo
+da por cerrado un «no se puede bloquear» si está `confirmed`; en los demás casos invita a
+comprobarlo. Cuando alguien lo comprueba con la app, la ficha pasa a `confirmed`, y si
+contradice algo que no estaba confirmado, manda lo comprobado.
+
+Fichas iniciales (noviembre de 2026): routers de Movistar/O2 (Askey y MitraStar), Digi (ZTE
+H3600P, H3600, F8648P), Orange/Jazztel (Livebox 6 Arcadyan), Vodafone/Lowi (Sercomm H500-s) y
+MasOrange/Parlem (ZTE F6640P Livebox 6s).
+
 Las fichas llegan igual que las recetas: desde la app («No lo encuentro» → Avisar) se abre el
 formulario **Ficha de router** ya rellenado; la acción **Ficha desde issue** la valida y propone
 la incorporación. Si alguien informa algo distinto de lo que ya decía la ficha, se mantiene lo

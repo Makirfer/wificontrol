@@ -1,0 +1,32 @@
+{
+  "format": "wificasa-router/1",
+  "id": "sercomm-h500-s",
+  "vendor": "Sercomm",
+  "model": "H500-s",
+  "isps": [
+    "Vodafone",
+    "Lowi"
+  ],
+  "aliases": [
+    "VFH500-S",
+    "H500s"
+  ],
+  "login": {
+    "address": "192.168.0.1",
+    "passwordHint": "Usuario y contraseña de la pegatina de la base del router. Activa el «Modo experto» para ver todas las opciones."
+  },
+  "block": {
+    "support": "none",
+    "how": "No hay bloqueo por dispositivo. El «Filtrado MAC» (Modo experto → Wi-Fi → Filtro MAC) es una lista de PERMITIDOS: al activarlo solo se conectan los de la lista, así que no sirve para pausar a uno solo sin riesgo. La opción «Programar» apaga el WiFi de toda la casa por horas.",
+    "scope": "wifi-only"
+  },
+  "avoid": [
+    "Modo experto → Wi-Fi → Filtro MAC: deja entrar SOLO a los aparatos de la lista; los demás se quedan sin WiFi.",
+    "Wi-Fi → Programar: apaga el WiFi a todos."
+  ],
+  "confidence": "web",
+  "sources": [
+    "https://www.adslzone.net/operadores/routers/configurar-router-vodafone-fibra-optica/"
+  ],
+  "updated": "2026-11-05"
+}

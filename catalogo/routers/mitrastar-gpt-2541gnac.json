@@ -1,0 +1,36 @@
+{
+  "format": "wificasa-router/1",
+  "id": "mitrastar-gpt-2541gnac",
+  "vendor": "MitraStar",
+  "model": "GPT-2541GNAC",
+  "commercialName": "Router Smart WiFi (HGU)",
+  "isps": [
+    "Movistar",
+    "O2"
+  ],
+  "aliases": [
+    "HGU",
+    "Smart WiFi",
+    "GPT-2741GNAC"
+  ],
+  "login": {
+    "address": "192.168.1.1",
+    "user": "1234",
+    "passwordHint": "La contraseña de acceso de la pegatina del router."
+  },
+  "block": {
+    "support": "app-only",
+    "how": "Movistar gestiona el control parental y la pausa de dispositivos desde la app Smart WiFi (perfiles y horarios), no desde el panel web del router. Comprobado en el Askey RTF8316VW, que usa el mismo portal.",
+    "scope": "unknown"
+  },
+  "avoid": [
+    "Configuración avanzada → Network Setting → Bridging → Filtering: no bloquea aparatos; reparte puertos entre Internet, Voz e IPTV.",
+    "Apagar el WiFi (Disable) en la configuración inalámbrica: corta a todos."
+  ],
+  "confidence": "probable",
+  "sources": [
+    "https://www.telefonica.com/es/sala-comunicacion/prensa/movistar-incorpora-el-control-parental-de-la-red-wifi-en-su-app-movil-smart-wifi/",
+    "https://www.adslzone.net/operadores/routers/routers-movistar-modelos/"
+  ],
+  "updated": "2026-11-05"
+}

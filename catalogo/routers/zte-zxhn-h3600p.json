@@ -1,0 +1,35 @@
+{
+  "format": "wificasa-router/1",
+  "id": "zte-zxhn-h3600p",
+  "vendor": "ZTE",
+  "model": "ZXHN H3600P",
+  "isps": [
+    "Digi"
+  ],
+  "aliases": [
+    "H3600P"
+  ],
+  "login": {
+    "address": "192.168.1.1",
+    "user": "user",
+    "passwordHint": "La contraseña de la pegatina o de la guía rápida; el router pide cambiarla la primera vez."
+  },
+  "block": {
+    "support": "panel",
+    "where": [
+      "Internet (menú de arriba)",
+      "Controles Parentales (menú de la izquierda)"
+    ],
+    "how": "Se elige el dispositivo y se le aplica un horario por días: bloquear todo Internet, o solo una lista de webs. Para la pausa de WiFi Casa, un horario que bloquee todo el día.",
+    "scope": "unknown"
+  },
+  "avoid": [
+    "Internet → Seguridad → Port Forwarding: solo abre puertos, no bloquea."
+  ],
+  "confidence": "web",
+  "sources": [
+    "https://www.digimobil.es/downloads/manual-zte-h3600p",
+    "https://www.xatakamovil.com/tutoriales/controla-uso-que-hacen-ninos-internet-asi-puedes-configurar-control-parental-router"
+  ],
+  "updated": "2026-11-05"
+}

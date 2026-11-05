@@ -6,12 +6,16 @@
   "commercialName": "Livebox 6s",
   "isps": [
     "Parlem",
-    "Orange"
+    "Orange",
+    "Yoigo",
+    "MásMóvil",
+    "Pepephone"
   ],
   "aliases": [
     "Livebox 6s",
     "F6640P",
-    "F6640"
+    "F6640",
+    "ZXHN F6640"
   ],
   "login": {
     "address": "192.168.1.1",
@@ -24,9 +28,14 @@
       "Ya tiene receta probada en el catálogo: no hace falta grabarlo."
     ],
     "how": "Restricción de acceso por dispositivo (bloqueo total o por horario).",
-    "scope": "wifi-and-cable"
+    "scope": "wifi-and-cable",
+    "notes": "Receta probada en un Livebox 6s de Parlem. MasOrange instala el mismo modelo en Yoigo, MásMóvil y Pepephone desde diciembre de 2025; su firmware podría variar."
   },
   "recipe": "zte-zxhn-f6640p",
   "reports": 1,
-  "updated": "2026-11-05"
+  "updated": "2026-11-05",
+  "confidence": "confirmed",
+  "sources": [
+    "https://roams.es/actualidad/telefonia/masorange-renueva-el-router-livebox-6s-de-yoigo-masmovil-y-pepephone-llega-el-zte-f6640-con-buenas-noticias/"
+  ]
 }

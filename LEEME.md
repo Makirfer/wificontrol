@@ -1,4 +1,11 @@
-# WiFi Casa 2.6
+# WiFi Casa 2.6.1
+
+## Novedades de la 2.6.1
+
+- El catálogo trae **13 fichas** de los routers que instalan ahora Movistar/O2, Digi, Orange/Jazztel,
+  Vodafone/Lowi y MasOrange (Yoigo, MásMóvil, Pepephone, Parlem), con sus fuentes.
+- Cada ficha dice si está **comprobada** con la app o es **información de Internet** sin confirmar.
+  Un «no se puede bloquear» sin confirmar no impide grabar: la app invita a comprobarlo.
 
 ## Novedades de la 2.6
 

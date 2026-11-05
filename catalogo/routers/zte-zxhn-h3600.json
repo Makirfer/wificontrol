@@ -1,0 +1,31 @@
+{
+  "format": "wificasa-router/1",
+  "id": "zte-zxhn-h3600",
+  "vendor": "ZTE",
+  "model": "ZXHN H3600",
+  "isps": [
+    "Digi"
+  ],
+  "aliases": [
+    "H3600"
+  ],
+  "login": {
+    "address": "192.168.1.1",
+    "user": "user",
+    "passwordHint": "La contraseña de la pegatina o de la guía rápida; el router pide cambiarla la primera vez."
+  },
+  "block": {
+    "support": "panel",
+    "where": [
+      "Internet",
+      "Controles Parentales"
+    ],
+    "how": "Misma familia que el H3600P: control parental por dispositivo con horario.",
+    "scope": "unknown"
+  },
+  "confidence": "probable",
+  "sources": [
+    "https://www.digimobil.es/downloads/manual-zte-h3600p"
+  ],
+  "updated": "2026-11-05"
+}
