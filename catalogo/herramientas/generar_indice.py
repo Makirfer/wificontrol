@@ -17,6 +17,7 @@ import jsonschema
 RAIZ = pathlib.Path(__file__).resolve().parents[2]
 CATALOGO = RAIZ / "catalogo"
 ESQUEMA = json.loads((RAIZ / "docs" / "receta.schema.json").read_text(encoding="utf-8"))
+ESQUEMA_FICHA = json.loads((RAIZ / "docs" / "ficha.schema.json").read_text(encoding="utf-8"))
 
 
 def entrada(ruta: pathlib.Path) -> dict:
@@ -41,12 +42,23 @@ def entrada(ruta: pathlib.Path) -> dict:
     }
 
 
+def ficha(ruta: pathlib.Path, recetas: set) -> dict:
+    f = json.loads(ruta.read_text(encoding="utf-8"))
+    jsonschema.Draft202012Validator(ESQUEMA_FICHA).validate(f)
+    if ruta.stem != f["id"]:
+        raise ValueError(f"{ruta.name}: el nombre del archivo debe ser <id>.json ({f['id']}.json)")
+    if "recipe" in f and f["recipe"] not in recetas:
+        raise ValueError(f"{ruta.name}: la receta {f['recipe']} no existe en el catálogo")
+    return f
+
+
 def generar() -> str:
     entradas = [entrada(p) for p in sorted((CATALOGO / "recetas").glob("*.json"))]
     ids = [e["id"] for e in entradas]
     if len(ids) != len(set(ids)):
         raise ValueError("Hay dos recetas con el mismo id")
-    indice = {"format": "wificasa-catalog/1", "recipes": entradas}
+    fichas = [ficha(p, set(ids)) for p in sorted((CATALOGO / "routers").glob("*.json"))]
+    indice = {"format": "wificasa-catalog/1", "recipes": entradas, "routers": fichas}
     return json.dumps(indice, ensure_ascii=False, indent=2) + "\n"
 
 
@@ -58,7 +70,7 @@ if __name__ == "__main__":
         if actual != nuevo:
             print("index.json no está al día: ejecuta catalogo/herramientas/generar_indice.py")
             sys.exit(1)
-        print("Catálogo correcto:", nuevo.count('"id"'), "recetas")
+        print("Catálogo correcto")
     else:
         destino.write_text(nuevo, encoding="utf-8")
-        print("index.json generado:", nuevo.count('"id"'), "recetas")
+        print("index.json generado")

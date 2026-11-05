@@ -1,4 +1,16 @@
-# WiFi Casa 2.5
+# WiFi Casa 2.6
+
+## Novedades de la 2.6
+
+- **Fichas de router** en el catálogo: si un modelo permite bloquear aparatos desde su panel,
+  dónde está la opción y qué no tocar. Antes de grabar, la app consulta la ficha:
+  - si el router ya tiene receta, ofrece instalarla;
+  - si no permite bloquear (p. ej. el Askey RTF8316VW de Movistar), lo avisa antes de empezar;
+  - si sí, guía el paso 3 con el camino exacto de menús.
+- **«No lo encuentro»** en la grabación: termina sin perder el tiempo, deja la grabación lista para
+  una receta de solo consulta y permite **avisar al catálogo** con el formulario ya rellenado.
+- **Guía en fichas ilustradas**: seis fichas con dibujo y una frase, que se pasan deslizando.
+- Se pueden publicar recetas de **solo consulta** (listar aparatos) si la prueba de lectura sale bien.
 
 ## Novedades de la 2.5
 

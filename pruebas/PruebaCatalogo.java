@@ -60,7 +60,19 @@ public class PruebaCatalogo {
         ok(new Catalog(base).detect("<html>login Frm_Password</html>").size() == 1, "reconoce el router por su página de inicio");
         ok(new Catalog(base).detect("<html>otro router</html>").isEmpty(), "no confunde otros routers");
         override.clear();
-        srv.stop(0);
+        // Fichas de router
+        Catalog fc = new Catalog(base);
+        ok(fc.sheets().size() >= 2, "fichas leídas: " + fc.sheets().size());
+        Catalog.Sheet sh = fc.findSheet("Askey", "RTF8316VW");
+        ok(sh != null && "app-only".equals(sh.support) && !sh.avoid.isEmpty(), "ficha del Askey: no permite bloquear desde el panel");
+        ok(fc.findSheet("movistar", "rtf 8316-vw") != null, "encuentra la ficha aunque se escriba distinto");
+        ok(fc.findSheet("Parlem", "Livebox 6s") != null && fc.findSheet("Parlem", "Livebox 6s").recipe.equals("zte-zxhn-f6640p"),
+                "encuentra el ZTE por su nombre comercial y enlaza su receta");
+        ok(fc.findSheet("TP-Link", "Archer C6") == null, "sin ficha para un router desconocido");
+        String repUrl = Catalog.reportUrl("Askey", "RTF8316VW", "Movistar", "app-only", new ArrayList<>(), new ArrayList<>(), "x");
+        ok(repUrl.contains("template=ficha-router.yml") && repUrl.contains("bloqueo=app-only") && repUrl.contains("modelo=RTF8316VW"),
+                "enlace para informar con el formulario rellenado");
+                srv.stop(0);
 
         // Pruebas de compatibilidad contra el simulador del ZTE
         RecipeAdapter ad = new RecipeAdapter(Recipe.parse(text));

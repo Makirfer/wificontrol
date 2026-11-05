@@ -1,0 +1,32 @@
+{
+  "format": "wificasa-router/1",
+  "id": "zte-zxhn-f6640p",
+  "vendor": "ZTE",
+  "model": "ZXHN F6640P",
+  "commercialName": "Livebox 6s",
+  "isps": [
+    "Parlem",
+    "Orange"
+  ],
+  "aliases": [
+    "Livebox 6s",
+    "F6640P",
+    "F6640"
+  ],
+  "login": {
+    "address": "192.168.1.1",
+    "user": "admin",
+    "passwordHint": "La contraseña de acceso de la pegatina del router."
+  },
+  "block": {
+    "support": "panel",
+    "where": [
+      "Ya tiene receta probada en el catálogo: no hace falta grabarlo."
+    ],
+    "how": "Restricción de acceso por dispositivo (bloqueo total o por horario).",
+    "scope": "wifi-and-cable"
+  },
+  "recipe": "zte-zxhn-f6640p",
+  "reports": 1,
+  "updated": "2026-11-05"
+}

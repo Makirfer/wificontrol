@@ -6,6 +6,7 @@ El catálogo vive en este mismo repositorio, en `catalogo/`:
 catalogo/
 ├── index.json          Lo que descarga la app: una entrada por receta con su huella SHA-256
 ├── recetas/<id>.json   Las recetas
+├── routers/<id>.json   Fichas de router: si permite bloquear, dónde y qué no tocar (docs/ficha.schema.json)
 └── herramientas/       generar_indice.py, procesar_issue.py, ValidarReceta.java, validar_java.sh
 ```
 
@@ -26,9 +27,21 @@ su huella coincide con la del índice y la pasa por el validador.
 4. El responsable del repositorio revisa la pull request y la acepta. Desde ese momento la
    receta aparece en la app de todos los usuarios.
 
+## Fichas de router
+
+Antes de grabar un router, la app busca su ficha por marca y modelo (también por nombre
+comercial y alias). La ficha dice si se puede bloquear un aparato desde el panel (`panel`),
+solo desde la app de la compañía (`app-only`), de ninguna forma (`none`) o si aún no se sabe
+(`unknown`), el camino de menús hasta el bloqueo y qué apartados no tocar.
+
+Las fichas llegan igual que las recetas: desde la app («No lo encuentro» → Avisar) se abre el
+formulario **Ficha de router** ya rellenado; la acción **Ficha desde issue** la valida y propone
+la incorporación. Si alguien informa algo distinto de lo que ya decía la ficha, se mantiene lo
+anterior y se anota para revisarlo. Al publicar una receta, su ficha se crea o se enlaza sola.
+
 ## Puesta en marcha (una sola vez)
 
-- Crear la etiqueta `nueva-receta` en el repositorio.
+- Crear las etiquetas `nueva-receta` y `ficha-router` en el repositorio.
 - *Settings → Actions → General → Workflow permissions*: **Read and write permissions** y
   marcar **Allow GitHub Actions to create and approve pull requests**.
 - Poner el usuario y el repositorio en `CatalogConfig.java` y generar la app.

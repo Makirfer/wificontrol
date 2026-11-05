@@ -43,6 +43,10 @@ public class LearnActivity extends Activity {
     public static final String EXTRA_VENDOR = "vendor";
     public static final String EXTRA_MODEL = "model";
     public static final String EXTRA_ISP = "isp";
+    /** De la ficha del catálogo: camino hasta el bloqueo, qué no tocar y si se puede bloquear. */
+    public static final String EXTRA_WHERE = "where";
+    public static final String EXTRA_AVOID = "avoid";
+    public static final String EXTRA_SUPPORT = "support";
 
     private static final int REQ_SAVE = 41;
     private static final int C_BAR = Color.parseColor("#1F1D1A");
@@ -51,7 +55,8 @@ public class LearnActivity extends Activity {
     private Capture capture;
     private WebView web;
     private TextView stepTitle, stepHelp, counter;
-    private Button nextBtn;
+    private Button nextBtn, notFoundBtn;
+    private String where = "", avoid = "", support = "";
     private String recorderJs = "";
     private String pendingText;
 
@@ -76,6 +81,9 @@ public class LearnActivity extends Activity {
         capture.setRouter(getIntent().getStringExtra(EXTRA_VENDOR), getIntent().getStringExtra(EXTRA_MODEL),
                 getIntent().getStringExtra(EXTRA_ISP));
         recorderJs = asset("aprendizaje/grabador.js");
+        where = nz(getIntent().getStringExtra(EXTRA_WHERE));
+        avoid = nz(getIntent().getStringExtra(EXTRA_AVOID));
+        support = nz(getIntent().getStringExtra(EXTRA_SUPPORT));
         buildUi();
         showStep();
         web.loadUrl(host + "/");
@@ -112,6 +120,11 @@ public class LearnActivity extends Activity {
         counter.setTextSize(12);
         counter.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         row.addView(counter);
+        notFoundBtn = new Button(this);
+        notFoundBtn.setAllCaps(false);
+        notFoundBtn.setText("No lo encuentro");
+        notFoundBtn.setOnClickListener(v -> notFound());
+        row.addView(notFoundBtn);
         Button cancel = new Button(this);
         cancel.setAllCaps(false);
         cancel.setText("Cancelar");
@@ -210,9 +223,55 @@ public class LearnActivity extends Activity {
     private void showStep() {
         int i = capture.step();
         stepTitle.setText("Paso " + (i + 1) + " de " + Capture.STEPS.length + " · " + Capture.STEPS[i]);
-        stepHelp.setText(HELP[i]);
+        stepHelp.setText(help(i));
+        notFoundBtn.setVisibility(i == 2 || i == 3 ? android.view.View.VISIBLE : android.view.View.GONE);
+        if (i == 2 && ("app-only".equals(support) || "none".equals(support))) {
+            // La ficha ya dice que no se puede: se salta directamente al cierre de sesión.
+            capture.setBlockOutcome(support);
+            capture.setStep(4);
+            showStep();
+            return;
+        }
         nextBtn.setText(i == Capture.STEPS.length - 1 ? "Terminar" : "Hecho ▶");
         updateCounter();
+    }
+
+    /** Ayuda de cada paso; en el 3 y el 4 usa la ficha del catálogo si la hay. */
+    private String help(int i) {
+        if ((i == 2 || i == 3) && !where.isEmpty()) {
+            String path = where.replace("\n", " → ");
+            String h = (i == 2 ? "Ve a: " + path + ". Córtale Internet a un aparato que no sea tu móvil y guarda."
+                    : "En el mismo sitio (" + path + "), devuélvele Internet y guarda.");
+            if (!avoid.isEmpty()) h += "\n⚠ No toques: " + avoid.split("\n")[0];
+            return h;
+        }
+        if (i == 2 && !avoid.isEmpty()) return HELP[i] + "\n⚠ No toques: " + avoid.split("\n")[0];
+        return HELP[i];
+    }
+
+    /** Si el panel no tiene bloqueo, se termina sin perder el tiempo y se ofrece avisar al catálogo. */
+    private void notFound() {
+        String[] items = {
+                "El panel dice que solo se puede desde la app de la compañía",
+                "No hay ningún apartado para bloquear un aparato",
+                "Seguir buscando"
+        };
+        new AlertDialog.Builder(this)
+                .setTitle("¿Qué has encontrado?")
+                .setItems(items, (d, w) -> {
+                    if (w == 2) return;
+                    capture.setBlockOutcome(w == 0 ? "app-only" : "none");
+                    capture.setStep(4);
+                    showStep();
+                    new AlertDialog.Builder(this)
+                            .setTitle("Entendido")
+                            .setMessage("Cierra sesión en el panel y pulsa Terminar. La grabación servirá para que la app "
+                                    + "te enseñe los aparatos de este router (sin pausarlos).\n\n"
+                                    + "Al terminar podrás avisar al catálogo para que nadie más lo intente con este modelo.")
+                            .setPositiveButton("Vale", null)
+                            .show();
+                })
+                .show();
     }
 
     private void updateCounter() {
@@ -242,11 +301,40 @@ public class LearnActivity extends Activity {
                         + "2. Guarda la receta que te devuelva (receta-" + capture.slug() + ".json) o copia su texto.\n"
                         + "3. En WiFi Casa: Ajustes → Modelo de router → Mi router no está → Importar una receta.\n\n"
                         + "También puedes guardar el archivo en el móvil para hacerlo más tarde.")
-                .setPositiveButton("Compartir con una IA", (d, w) -> share(text))
-                .setNeutralButton("Guardar en el móvil", (d, w) -> save(text))
+                .setPositiveButton("Compartir con una IA", (d, w) -> {
+                    share(text);
+                    maybeReport();
+                })
+                .setNeutralButton("Guardar en el móvil", (d, w) -> {
+                    maybeReport();
+                    save(text);
+                })
                 .setNegativeButton("Seguir grabando", null)
                 .show();
     }
+
+    /** Ofrece avisar al catálogo solo si el usuario ha descubierto algo que la ficha no decía. */
+    private void maybeReport() {
+        if (!capture.blockOutcome().isEmpty() && !capture.blockOutcome().equals(support)) offerReport();
+    }
+
+    /** Abre el formulario «Ficha de router» de GitHub ya rellenado con lo comprobado. */
+    private void offerReport() {
+        new AlertDialog.Builder(this)
+                .setTitle("¿Avisas al catálogo?")
+                .setMessage("Así, quien tenga un " + capture.routerTitle() + " sabrá antes de empezar que su panel no "
+                        + "permite bloquear aparatos. Se abrirá GitHub con todo rellenado: solo tienes que enviarlo.")
+                .setPositiveButton("Avisar", (d, w) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                        com.leira.wificasa.core.catalog.Catalog.reportUrl(
+                                nz(getIntent().getStringExtra(EXTRA_VENDOR)), nz(getIntent().getStringExtra(EXTRA_MODEL)),
+                                nz(getIntent().getStringExtra(EXTRA_ISP)), capture.blockOutcome(),
+                                new java.util.ArrayList<String>(), new java.util.ArrayList<String>(),
+                                "Comprobado con el modo aprendizaje de WiFi Casa.")))))
+                .setNegativeButton("Ahora no", null)
+                .show();
+    }
+
+    private static String nz(String s) { return s == null ? "" : s; }
 
     private void save(String text) {
         pendingText = text;

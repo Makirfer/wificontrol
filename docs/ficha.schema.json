@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Makirfer/wificontrol/docs/ficha.schema.json",
+  "title": "Ficha de router para WiFi Casa (formato wificasa-router/1)",
+  "description": "Qué se sabe de un modelo de router: si permite bloquear aparatos desde su panel, dónde, qué no tocar y si tiene receta. La app la consulta antes de grabar.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "id",
+    "vendor",
+    "model",
+    "block",
+    "updated"
+  ],
+  "properties": {
+    "format": {
+      "const": "wificasa-router/1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"
+    },
+    "vendor": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "model": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "commercialName": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "isps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 40
+      },
+      "maxItems": 10
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 60
+      },
+      "maxItems": 10,
+      "description": "Otros nombres con que se conoce (p. ej. el que da la operadora)."
+    },
+    "firmware": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 60
+      },
+      "maxItems": 10
+    },
+    "login": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "user": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "passwordHint": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Dónde encontrar la contraseña (nunca la contraseña)."
+        }
+      }
+    },
+    "block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "support"
+      ],
+      "properties": {
+        "support": {
+          "enum": [
+            "panel",
+            "app-only",
+            "none",
+            "unknown"
+          ],
+          "description": "panel: se puede desde su panel web · app-only: solo desde la app de la operadora · none: no se puede · unknown: sin comprobar"
+        },
+        "where": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "maxItems": 10,
+          "description": "Camino de menús hasta la opción de bloqueo, un paso por elemento."
+        },
+        "how": {
+          "type": "string",
+          "maxLength": 400
+        },
+        "scope": {
+          "enum": [
+            "wifi-and-cable",
+            "wifi-only",
+            "unknown"
+          ]
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 500
+        }
+      }
+    },
+    "avoid": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 300
+      },
+      "maxItems": 10,
+      "description": "Apartados que parecen servir pero no, o que son peligrosos."
+    },
+    "recipe": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{2,63}$",
+      "description": "Id de la receta del catálogo para este router, si existe."
+    },
+    "reports": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Cuántas personas han confirmado esta ficha."
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

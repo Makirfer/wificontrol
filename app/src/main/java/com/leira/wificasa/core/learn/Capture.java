@@ -44,6 +44,8 @@ public final class Capture {
 
     private final String host;
     private String vendor = "", model = "", isp = "";
+    /** Lo que el usuario ha comprobado sobre el bloqueo: "" (lo ha grabado), "app-only" o "none". */
+    private String blockOutcome = "";
     private final List<Object[]> events = new ArrayList<>(); // {paso, Map evento}
     private final Set<String> secrets = new LinkedHashSet<>();
     private final Set<String> scriptsSeen = new HashSet<>();
@@ -85,6 +87,11 @@ public final class Capture {
     }
 
     public synchronized void setStep(int s) { step = s; }
+
+    /** El usuario indica que el panel no permite bloquear ("app-only" o "none"). */
+    public synchronized void setBlockOutcome(String outcome) { blockOutcome = outcome == null ? "" : outcome; }
+
+    public synchronized String blockOutcome() { return blockOutcome; }
 
     public synchronized int step() { return step; }
 
@@ -162,6 +169,7 @@ public final class Capture {
         router.put("isp", isp);
         router.put("suggestedId", slug());
         root.put("router", router);
+        if (!blockOutcome.isEmpty()) root.put("blockOutcome", blockOutcome);
         List<Object> steps = new ArrayList<>();
         for (String s : STEPS) steps.add(s);
         root.put("steps", steps);
@@ -209,6 +217,11 @@ public final class Capture {
                 + "  Si no, responde con el JSON completo dentro de un único bloque de código.\n"
                 + "- Usa \"id\": \"" + id + "\" (marca-modelo en minúsculas con guiones).\n"
                 + "- Después, explica al usuario en 2 o 3 frases sencillas qué hace la receta y qué no.\n\n"
+                + (blockOutcome.isEmpty() ? "" : "IMPORTANTE: el usuario ha comprobado que este router NO permite cortar "
+                        + "Internet a un aparato desde su panel web (" + ("app-only".equals(blockOutcome)
+                        ? "el panel remite a la app de la compañía" : "no hay ningún apartado para hacerlo")
+                        + "). Escribe una receta SOLO con \"capabilities\": [\"LIST_DEVICES\"] (y READ_ACCESS si se ve el "
+                        + "estado), y explícalo en \"limitations\". No intentes improvisar un bloqueo con otros apartados.\n\n")
                 + "REGLAS DE LA RECETA:\n"
                 + "1. Usa únicamente los pasos, funciones, filtros y campos de la documentación. No inventes otros.\n"
                 + "2. La contraseña aparece como " + MASK_PASSWORD + " y otros valores sensibles como " + MASK

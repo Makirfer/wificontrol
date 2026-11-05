@@ -90,42 +90,11 @@ final class RecipeFlows {
                 .show();
     }
 
-    /** Guía completa: buscar, grabar, pasar a la IA, probar y publicar. */
+    static final int REQ_GUIDE = 53;
+
+    /** Guía en fichas ilustradas (GuideActivity). Al terminar, sigue con lo que elija la persona. */
     void showGuide() {
-        String text = "WiFi Casa habla con cada modelo de router mediante una «receta». Si la tuya no existe, "
-                + "puedes crearla tú en unos 15 minutos y compartirla con todos.\n\n"
-                + "0 · BUSCA PRIMERO\n"
-                + "Ajustes → Modelo de router → Mi router no está → Buscar en el catálogo. Si tu router aparece, "
-                + "instálalo y listo.\n\n"
-                + "1 · GRABA EL PANEL DE TU ROUTER\n"
-                + "• Conéctate al WiFi de ese router y crea su ubicación (📍) con dirección, usuario y contraseña.\n"
-                + "• Elige «Aprender un router nuevo» y escribe la marca y el modelo de la pegatina.\n"
-                + "• Se abre el panel del router dentro de la app. Sigue los 5 pasos de la barra de arriba y pulsa "
-                + "«Hecho ▶» al terminar cada uno: entrar, ver la lista de aparatos, cortar Internet a uno (que no "
-                + "sea tu móvil), devolvérselo y salir.\n"
-                + "• Busca el bloqueo en apartados como Control parental, Control de acceso o Filtro MAC. Si no lo "
-                + "encuentras, pregúntale a la IA antes de seguir.\n\n"
-                + "2 · PÁSALO A UNA IA\n"
-                + "• Al terminar, pulsa «Compartir con una IA» y elige Claude, ChatGPT o Gemini. El archivo "
-                + "(grabacion-marca-modelo-fecha.txt) ya lleva las instrucciones y no contiene tus contraseñas.\n"
-                + "• Escribe: «Lee las instrucciones del archivo y hazme la receta».\n"
-                + "• La IA te dará un archivo receta-marca-modelo.json o un texto que empieza por { .\n\n"
-                + "3 · IMPÓRTALA Y PRUÉBALA\n"
-                + "• «Importar una receta» → abre el archivo o pega el texto → Validar → Probar.\n"
-                + "• Primero solo lee (no cambia nada). Luego, con tu permiso, corta y devuelve Internet unos "
-                + "segundos a un aparato.\n"
-                + "• Si algo falla, pulsa «Copiar informe», pégaselo a la IA y pide que la corrija.\n\n"
-                + "4 · COMPÁRTELA\n"
-                + "• Si todo sale bien, pulsa «Publicar». Se abre GitHub con el formulario preparado: pega la "
-                + "receta (ya está copiada) y envía. Necesitas una cuenta gratuita de GitHub.\n"
-                + "• Se valida sola y, cuando se aprueba, cualquiera con tu router la encontrará en el catálogo.";
-        new AlertDialog.Builder(a)
-                .setTitle("Cómo añadir tu router")
-                .setView(scrollText(text))
-                .setPositiveButton("Buscar en el catálogo", (d, w) -> searchCatalog())
-                .setNeutralButton("Grabar mi router", (d, w) -> startLearning())
-                .setNegativeButton("Cerrar", null)
-                .show();
+        a.startActivityForResult(new Intent(a, GuideActivity.class), REQ_GUIDE);
     }
 
     // ================================================================== catálogo
@@ -225,13 +194,92 @@ final class RecipeFlows {
                         startLearning();
                         return;
                     }
-                    confirmLearning(c, v, m, isp.getText().toString().trim());
+                    checkSheet(c, v, m, isp.getText().toString().trim());
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
 
-    private void confirmLearning(RouterCredentials c, String vendor, String model, String isp) {
+    /**
+     * Antes de grabar, mira en el catálogo qué se sabe de este router: si ya tiene receta, si no
+     * permite bloquear (para no hacer perder el tiempo) o dónde está el bloqueo (para guiar).
+     */
+    private void checkSheet(final RouterCredentials c, final String vendor, final String model, final String isp) {
+        if (!CatalogConfig.configured()) { confirmLearning(c, vendor, model, isp, null); return; }
+        final AlertDialog wait = waiting("Buscando la ficha de tu router…");
+        worker.execute(() -> {
+            Catalog cat = new Catalog();
+            Catalog.Sheet sh = null;
+            Catalog.Entry recipe = null;
+            try {
+                sh = cat.findSheet(vendor, model);
+                if (sh != null && !sh.recipe.isEmpty()) recipe = cat.entryById(sh.recipe);
+            } catch (Exception ignored) {
+                // sin conexión con el catálogo: se sigue sin ficha
+            }
+            final Catalog.Sheet fSh = sh;
+            final Catalog.Entry fRe = recipe;
+            a.runOnUiThread(() -> {
+                wait.dismiss();
+                if (fSh == null) { noSheet(c, vendor, model, isp); return; }
+                showSheet(cat, fSh, fRe, c, vendor, model, isp);
+            });
+        });
+    }
+
+    private void showSheet(Catalog cat, Catalog.Sheet sh, Catalog.Entry recipe, RouterCredentials c,
+                           String vendor, String model, String isp) {
+        StringBuilder t = new StringBuilder();
+        AlertDialog.Builder b = new AlertDialog.Builder(a).setTitle(sh.title());
+        if (recipe != null) {
+            t.append("✅ Este router ya tiene receta en el catálogo (").append(recipe.subtitle())
+                    .append(").\nNo hace falta grabarlo: instálala y pruébala.");
+            b.setPositiveButton("Instalar receta", (d, w) -> downloadAndInstall(cat, recipe));
+            b.setNeutralButton("Grabar igualmente", (d, w) -> confirmLearning(c, vendor, model, isp, sh));
+        } else if ("app-only".equals(sh.support) || "none".equals(sh.support)) {
+            t.append("app-only".equals(sh.support)
+                    ? "⛔ Este router no permite cortar Internet a un aparato desde su panel: solo desde la app de la compañía."
+                    : "⛔ Este router no permite cortar Internet a un aparato concreto.");
+            if (!sh.how.isEmpty()) t.append("\n\n").append(sh.how);
+            t.append("\n\nWiFi Casa podrá enseñarte sus aparatos, pero no pausarlos. Grabar el panel solo sirve para eso.");
+            b.setPositiveButton("Grabar solo para ver aparatos", (d, w) -> confirmLearning(c, vendor, model, isp, sh));
+            b.setNegativeButton("No grabar", null);
+        } else {
+            t.append(sh.canBlock() ? "👍 Este router permite cortar Internet a un aparato desde su panel."
+                    : "❔ Aún no se sabe si este router permite cortar Internet desde su panel.");
+            if (!sh.where.isEmpty()) {
+                t.append("\n\nDónde está:");
+                for (int i = 0; i < sh.where.size(); i++) t.append("\n").append(i + 1).append(". ").append(sh.where.get(i));
+            }
+            if (!sh.how.isEmpty()) t.append("\n\n").append(sh.how);
+            b.setPositiveButton("Empezar a grabar", (d, w) -> confirmLearning(c, vendor, model, isp, sh));
+            b.setNegativeButton("Cancelar", null);
+        }
+        if (!sh.avoid.isEmpty()) {
+            t.append("\n\n⚠ No toques:");
+            for (String av : sh.avoid) t.append("\n• ").append(av);
+        }
+        if (!sh.passwordHint.isEmpty()) t.append("\n\n🔑 ").append(sh.passwordHint);
+        t.append("\n\n(Ficha confirmada por ").append(sh.reports).append(sh.reports == 1 ? " persona)" : " personas)");
+        b.setView(scrollText(t.toString())).show();
+    }
+
+    private void noSheet(RouterCredentials c, String vendor, String model, String isp) {
+        new AlertDialog.Builder(a)
+                .setTitle(vendor + " " + model)
+                .setView(scrollText("Todavía no hay ficha de este router: serás el primero.\n\n"
+                        + "Antes de grabar, dedica 5 minutos a buscar el bloqueo en su panel. Suele llamarse:\n"
+                        + "• Control parental\n• Control de acceso\n• Filtro MAC / Filtrado MAC\n• Bloquear dispositivo\n\n"
+                        + "⚠ No sirven y pueden cortar a todos: apagar el WiFi (Disable), cambiar el modo del router, "
+                        + "o tablas de puertos, puentes (bridging) o VLAN.\n\n"
+                        + "Si no lo encuentras, en la grabación pulsa «No lo encuentro»: se guardará igualmente y podrás "
+                        + "avisar al catálogo para que nadie más pierda el tiempo."))
+                .setPositiveButton("Empezar a grabar", (d, w) -> confirmLearning(c, vendor, model, isp, null))
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void confirmLearning(RouterCredentials c, String vendor, String model, String isp, Catalog.Sheet sh) {
         new AlertDialog.Builder(a)
                 .setTitle(vendor + " " + model)
                 .setMessage("Se abrirá el panel de tu router dentro de la app y te guiaré en 5 pasos: entrar, "
@@ -247,6 +295,11 @@ final class RecipeFlows {
                     i.putExtra(LearnActivity.EXTRA_VENDOR, vendor);
                     i.putExtra(LearnActivity.EXTRA_MODEL, model);
                     i.putExtra(LearnActivity.EXTRA_ISP, isp);
+                    if (sh != null) {
+                        i.putExtra(LearnActivity.EXTRA_WHERE, String.join("\n", sh.where));
+                        i.putExtra(LearnActivity.EXTRA_AVOID, String.join("\n", sh.avoid));
+                        i.putExtra(LearnActivity.EXTRA_SUPPORT, sh.support);
+                    }
                     a.startActivity(i);
                 })
                 .setNegativeButton("Cancelar", null)
@@ -307,6 +360,13 @@ final class RecipeFlows {
 
     /** Resultado de "Abrir archivo". Devuelve true si era para nosotros. */
     boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQ_GUIDE) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                if (GuideActivity.ACTION_LEARN.equals(data.getStringExtra(GuideActivity.RESULT_ACTION))) startLearning();
+                else searchCatalog();
+            }
+            return true;
+        }
         if (requestCode != REQ_OPEN_RECIPE) return false;
         if (resultCode != Activity.RESULT_OK || data == null) return true;
         try (InputStream in = a.getContentResolver().openInputStream(data.getData())) {
@@ -430,7 +490,8 @@ final class RecipeFlows {
         AlertDialog.Builder b = new AlertDialog.Builder(a)
                 .setTitle("Receta instalada")
                 .setMessage(fin.displayName() + " ya se usa en esta ubicación.");
-        if (imported && rep.writeOk) {
+        boolean listOnly = !installed.capabilities().contains(Capability.BLOCK);
+        if (imported && (rep.writeOk || (listOnly && rep.readOk))) {
             b.setMessage(fin.displayName() + " ya se usa en esta ubicación.\n\n¿La compartes en el catálogo para que "
                     + "otros usuarios con este router puedan usarla?");
             b.setPositiveButton("Publicar", (d, w) -> publish(fin, rep));

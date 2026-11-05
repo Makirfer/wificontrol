@@ -1,0 +1,49 @@
+name: Ficha desde issue
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  procesar:
+    if: contains(github.event.issue.labels.*.name, 'ficha-router')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install jsonschema
+      - name: Validar la ficha del issue
+        id: prep
+        env:
+          CUERPO: ${{ github.event.issue.body }}
+        run: python3 catalogo/herramientas/procesar_ficha.py >> "$GITHUB_OUTPUT"
+      - name: Avisar del error
+        if: steps.prep.outputs.ok != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue comment "${{ github.event.issue.number }}" --body-file resultado.md
+      - name: Proponer la incorporación (pull request)
+        if: steps.prep.outputs.ok == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RID: ${{ steps.prep.outputs.id }}
+          NUM: ${{ github.event.issue.number }}
+        run: |
+          rama="ficha/${RID}-${NUM}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$rama"
+          git add catalogo
+          git commit -m "Ficha ${RID} (#${NUM})"
+          git push -f origin "$rama"
+          gh pr create --title "Ficha ${RID}" --head "$rama" \
+            --body "Informada en #${NUM}. Al aprobarla, la app mostrará esta ficha antes de grabar este router." \
+            || echo "La pull request ya existía; se ha actualizado."
+          gh issue comment "$NUM" --body-file resultado.md

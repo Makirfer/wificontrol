@@ -22,5 +22,75 @@
       "sha256": "61f43e5849f4654e7408959261ad76bfb0094c29ee784cdd830f400d7b887eac",
       "path": "recetas/zte-zxhn-f6640p.json"
     }
+  ],
+  "routers": [
+    {
+      "format": "wificasa-router/1",
+      "id": "askey-rtf8316vw",
+      "vendor": "Askey",
+      "model": "RTF8316VW",
+      "commercialName": "Router Movistar WiFi 7",
+      "isps": [
+        "Movistar"
+      ],
+      "aliases": [
+        "Movistar WiFi 7",
+        "RTF8316"
+      ],
+      "firmware": [
+        "GL_g1.18_R8316_V2.19"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "1234",
+        "passwordHint": "La «Contraseña de acceso al router» de la pegatina. Para la Configuración avanzada, usuario 1234."
+      },
+      "block": {
+        "support": "app-only",
+        "where": [],
+        "how": "El panel web no permite bloquear un aparato concreto. El Filtrado MAC de la página de WiFi remite a la app de Movistar (Smart WiFi), que funciona a través de los servidores de Movistar.",
+        "scope": "unknown",
+        "notes": "WiFi Casa puede listar los aparatos de este router, pero no cortarles Internet."
+      },
+      "avoid": [
+        "Configuración avanzada → Network Setting → Bridging → Filtering (L2 Ingress Filtering): no bloquea aparatos; reparte puertos y redes WiFi entre Internet, Voz e IPTV. Cambiarlo puede dejar sin servicio a toda la casa.",
+        "Configuración avanzada → Wireless LAN → 2.4G/5G → Physical Setting → Disable: apaga el WiFi de esa banda para todos.",
+        "Wireless LAN → AP Setting y Associated Clients: no tienen filtro ni bloqueo."
+      ],
+      "reports": 1,
+      "updated": "2026-11-05"
+    },
+    {
+      "format": "wificasa-router/1",
+      "id": "zte-zxhn-f6640p",
+      "vendor": "ZTE",
+      "model": "ZXHN F6640P",
+      "commercialName": "Livebox 6s",
+      "isps": [
+        "Parlem",
+        "Orange"
+      ],
+      "aliases": [
+        "Livebox 6s",
+        "F6640P",
+        "F6640"
+      ],
+      "login": {
+        "address": "192.168.1.1",
+        "user": "admin",
+        "passwordHint": "La contraseña de acceso de la pegatina del router."
+      },
+      "block": {
+        "support": "panel",
+        "where": [
+          "Ya tiene receta probada en el catálogo: no hace falta grabarlo."
+        ],
+        "how": "Restricción de acceso por dispositivo (bloqueo total o por horario).",
+        "scope": "wifi-and-cable"
+      },
+      "recipe": "zte-zxhn-f6640p",
+      "reports": 1,
+      "updated": "2026-11-05"
+    }
   ]
 }

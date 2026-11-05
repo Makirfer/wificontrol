@@ -24,6 +24,7 @@ sys.path.insert(0, str(RAIZ / "catalogo" / "herramientas"))
 import generar_indice  # noqa: E402
 
 PRUEBA_ESCRITURA_OK = "✓ Comprobado en una sesión nueva: con Internet"
+PRUEBA_LECTURA_OK = ("✓ Sesión iniciada", "✓ Lista de dispositivos")
 
 
 def seccion(cuerpo: str, titulo: str) -> str:
@@ -73,12 +74,15 @@ def main():
                             "Para actualizarla, sube el número de `version`.", rid, version)
 
     # Si el informe de la app demuestra la prueba completa en un router real, se indica.
-    if PRUEBA_ESCRITURA_OK in informe and r.get("validation", {}).get("status") in (None, "untested", "simulator"):
+    solo_lectura = "BLOCK" not in r.get("capabilities", [])
+    probada = PRUEBA_ESCRITURA_OK in informe or (solo_lectura and all(x in informe for x in PRUEBA_LECTURA_OK))
+    if probada and r.get("validation", {}).get("status") in (None, "untested", "simulator"):
         fecha = re.search(r"Prueba del (\d{2})/(\d{2})/(\d{4})", informe)
         r["validation"] = {
             "date": f"{fecha.group(3)}-{fecha.group(2)}-{fecha.group(1)}" if fecha else "",
             "status": "tested-device",
-            "notes": "Probada con la app WiFi Casa en un router real (listar, cortar y devolver Internet).",
+            "notes": "Probada con la app WiFi Casa en un router real ("
+                     + ("listar dispositivos)." if solo_lectura else "listar, cortar y devolver Internet)."),
         }
         if not r["validation"]["date"]:
             del r["validation"]["date"]
@@ -93,6 +97,21 @@ def main():
         salida = [l for l in java.stdout.splitlines() if l.startswith("ERROR")]
         terminar(False, "❌ El validador de la app rechaza la receta: "
                  + (salida[0].split("·", 1)[-1].strip() if salida else java.stderr[-500:]), rid, version)
+
+    # La ficha del router enlaza la receta (se crea si no existía).
+    ficha_ruta = RAIZ / "catalogo" / "routers" / f"{rid}.json"
+    if ficha_ruta.exists():
+        ficha = json.loads(ficha_ruta.read_text(encoding="utf-8"))
+    else:
+        ro = r["router"]
+        ficha = {"format": "wificasa-router/1", "id": rid, "vendor": ro["vendor"], "model": ro["model"],
+                 "block": {"support": "unknown" if solo_lectura else "panel"}, "reports": 1}
+        for k in ("commercialName", "isps", "firmware"):
+            if ro.get(k):
+                ficha[k] = ro[k]
+    ficha["recipe"] = rid
+    ficha["updated"] = __import__("datetime").date.today().isoformat()
+    ficha_ruta.write_text(json.dumps(ficha, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     (RAIZ / "catalogo" / "index.json").write_text(generar_indice.generar(), encoding="utf-8")
     estado = r.get("validation", {}).get("status", "untested")

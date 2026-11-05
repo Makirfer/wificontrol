@@ -1,0 +1,51 @@
+name: Ficha de router
+description: Cuenta qué permite tu router (si se puede bloquear un aparato y dónde) para que nadie pierda el tiempo.
+title: "Ficha: "
+labels: ["ficha-router"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        La app WiFi Casa rellena este formulario por ti. Solo tienes que revisarlo y enviarlo.
+        **No escribas contraseñas.**
+  - type: input
+    id: marca
+    attributes:
+      label: Marca
+    validations:
+      required: true
+  - type: input
+    id: modelo
+    attributes:
+      label: Modelo
+    validations:
+      required: true
+  - type: input
+    id: compania
+    attributes:
+      label: Compañía
+  - type: input
+    id: firmware
+    attributes:
+      label: Versión del firmware
+  - type: input
+    id: bloqueo
+    attributes:
+      label: ¿Se puede bloquear un aparato?
+      description: "panel (sí, desde el panel web) · app-only (solo desde la app de la compañía) · none (no) · unknown (no lo sé)"
+    validations:
+      required: true
+  - type: textarea
+    id: donde
+    attributes:
+      label: Dónde está el bloqueo
+      description: Un paso de menú por línea.
+  - type: textarea
+    id: evitar
+    attributes:
+      label: Qué no tocar
+      description: Apartados que parecen servir pero no, o que cortan el servicio a todos. Uno por línea.
+  - type: textarea
+    id: notas
+    attributes:
+      label: Notas

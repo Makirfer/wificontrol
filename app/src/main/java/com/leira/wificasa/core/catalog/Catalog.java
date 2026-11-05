@@ -65,8 +65,24 @@ public final class Catalog {
         }
     }
 
+    /** Ficha de un modelo de router: si se puede bloquear, dónde y qué no tocar. */
+    public static final class Sheet {
+        public String id = "", vendor = "", model = "", commercialName = "", support = "unknown", how = "",
+                scope = "", notes = "", recipe = "", loginAddress = "", loginUser = "", passwordHint = "";
+        public List<String> isps = new ArrayList<>(), aliases = new ArrayList<>(), where = new ArrayList<>(),
+                avoid = new ArrayList<>();
+        public int reports = 1;
+
+        public String title() {
+            return commercialName.isEmpty() ? vendor + " " + model : vendor + " " + model + " (" + commercialName + ")";
+        }
+
+        public boolean canBlock() { return "panel".equals(support); }
+    }
+
     private final String base;
     private List<Entry> entries;
+    private List<Sheet> sheets;
 
     public Catalog() { this(CatalogConfig.rawBase()); }
 
@@ -75,8 +91,72 @@ public final class Catalog {
     // ------------------------------------------------------------------ índice
 
     public List<Entry> entries() throws RouterException {
-        if (entries == null) entries = parseIndex(get(base + "index.json", true));
+        load();
         return entries;
+    }
+
+    public List<Sheet> sheets() throws RouterException {
+        load();
+        return sheets;
+    }
+
+    private void load() throws RouterException {
+        if (entries != null) return;
+        String text = get(base + "index.json", true);
+        entries = parseIndex(text);
+        sheets = parseSheets(text);
+    }
+
+    public Entry entryById(String id) throws RouterException {
+        for (Entry e : entries()) if (e.id.equals(id)) return e;
+        return null;
+    }
+
+    /**
+     * Busca la ficha de un router por lo que el usuario ha escrito (marca y modelo de la pegatina).
+     * Compara de forma flexible: sin mayúsculas, espacios ni guiones, y también con los alias.
+     */
+    public Sheet findSheet(String vendor, String model) throws RouterException {
+        String m = norm(model), v = norm(vendor);
+        if (m.length() < 3) return null;
+        Sheet best = null;
+        int bestScore = 0;
+        for (Sheet sh : sheets()) {
+            int score = 0;
+            List<String> names = new ArrayList<>(sh.aliases);
+            names.add(sh.model);
+            names.add(sh.commercialName);
+            for (String n : names) {
+                String nn = norm(n);
+                if (nn.length() < 3) continue;
+                if (nn.equals(m)) score = Math.max(score, 3);
+                else if (nn.length() >= 4 && m.length() >= 4 && (nn.contains(m) || m.contains(nn))) score = Math.max(score, 2);
+            }
+            if (score > 0 && !v.isEmpty() && norm(sh.vendor).equals(v)) score++;
+            for (String isp : sh.isps) if (!v.isEmpty() && norm(isp).equals(v)) score++;
+            if (score > bestScore) { bestScore = score; best = sh; }
+        }
+        return best;
+    }
+
+    static String norm(String s) {
+        return s == null ? "" : java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]", "");
+    }
+
+    /**
+     * Enlace al formulario «Ficha de router» de GitHub con todo rellenado: la persona solo
+     * tiene que revisarlo y enviarlo. No incluye ninguna contraseña.
+     */
+    public static String reportUrl(String vendor, String model, String isp, String support,
+                                   List<String> where, List<String> avoid, String notes) {
+        return CatalogConfig.repoUrl() + "/issues/new?template=ficha-router.yml"
+                + "&title=" + enc("Ficha: " + vendor + " " + model)
+                + "&marca=" + enc(vendor) + "&modelo=" + enc(model) + "&compania=" + enc(isp)
+                + "&bloqueo=" + enc(support)
+                + "&donde=" + enc(String.join("\n", where))
+                + "&evitar=" + enc(String.join("\n", avoid))
+                + "&notas=" + enc(notes);
     }
 
     public List<Entry> search(String query) throws RouterException {
@@ -170,6 +250,43 @@ public final class Catalog {
             e.capabilities = l(m, "capabilities");
             e.detect = l(m, "detect");
             if (!e.id.isEmpty() && !e.path.isEmpty() && !e.sha256.isEmpty()) out.add(e);
+        }
+        return out;
+    }
+
+    static List<Sheet> parseSheets(String text) throws RecipeException {
+        Object o = Json.parse(text);
+        List<Sheet> out = new ArrayList<>();
+        if (!(o instanceof Map) || !(((Map<?, ?>) o).get("routers") instanceof List)) return out;
+        for (Object x : (List<?>) ((Map<?, ?>) o).get("routers")) {
+            if (!(x instanceof Map)) continue;
+            Map<?, ?> m = (Map<?, ?>) x;
+            Sheet sh = new Sheet();
+            sh.id = s(m, "id");
+            sh.vendor = s(m, "vendor");
+            sh.model = s(m, "model");
+            sh.commercialName = s(m, "commercialName");
+            sh.isps = l(m, "isps");
+            sh.aliases = l(m, "aliases");
+            sh.avoid = l(m, "avoid");
+            sh.recipe = s(m, "recipe");
+            if (m.get("reports") instanceof Double) sh.reports = ((Double) m.get("reports")).intValue();
+            if (m.get("block") instanceof Map) {
+                Map<?, ?> b = (Map<?, ?>) m.get("block");
+                String sup = s(b, "support");
+                sh.support = sup.matches("panel|app-only|none|unknown") ? sup : "unknown";
+                sh.where = l(b, "where");
+                sh.how = s(b, "how");
+                sh.scope = s(b, "scope");
+                sh.notes = s(b, "notes");
+            }
+            if (m.get("login") instanceof Map) {
+                Map<?, ?> lg = (Map<?, ?>) m.get("login");
+                sh.loginAddress = s(lg, "address");
+                sh.loginUser = s(lg, "user");
+                sh.passwordHint = s(lg, "passwordHint");
+            }
+            if (!sh.id.isEmpty() && !sh.model.isEmpty()) out.add(sh);
         }
         return out;
     }

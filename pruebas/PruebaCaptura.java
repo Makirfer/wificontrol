@@ -41,7 +41,11 @@ public class PruebaCaptura {
         ok(prompt.startsWith("====") && prompt.contains("PARA TI") && prompt.contains("PARA LA IA"), "el archivo explica qué hacer a la persona y a la IA");
         ok(prompt.contains("receta-askey-rtf8316vw.json") && prompt.contains("\"id\": \"askey-rtf8316vw\""), "la IA debe nombrar la receta con el modelo");
         ok(out.contains("\"model\":\"") || c.sanitizedJson().contains("\"model\":\"RTF8316VW\""), "la grabación incluye marca y modelo");
-        System.out.println(f == 0 ? "TODO CORRECTO" : f + " FALLOS");
+        c.setBlockOutcome("app-only");
+        String p2 = c.promptForAi("DOCS", "EJEMPLO");
+        ok(p2.contains("NO permite cortar") && p2.contains("SOLO con") && c.sanitizedJson().contains("\"blockOutcome\":\"app-only\""),
+                "si el router no permite bloquear, la IA lo sabe y hace una receta de solo consulta");
+                System.out.println(f == 0 ? "TODO CORRECTO" : f + " FALLOS");
         System.exit(f);
     }
 }
