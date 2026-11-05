@@ -13,10 +13,10 @@ Generado automáticamente a partir de `catalogo/routers/`. ¿Falta el tuyo o alg
 | Digi | Zyxel EX3501 | ✅ Sí, desde el panel | Icono de la parte superior derecha del panel → Seguridad → Control parental → activa «Control parental» | — | Ayuda oficial |
 | Movistar | Askey RTF8316VW (Router Movistar WiFi 7) | ⛔ Solo desde la app de la compañía | — | — | Comprobado con la app |
 | Movistar | MitraStar GPT-6841JL4L4 (Router Movistar WiFi 7) | ⛔ Solo desde la app de la compañía | — | — | Deducido |
-| Movistar, O2 | Askey RTF3505VW (Router Smart WiFi (HGU)) | ⛔ Solo desde la app de la compañía | — | — | Deducido |
-| Movistar, O2 | Askey RTF8225VW (Smart WiFi 6 Go) | ⛔ Solo desde la app de la compañía | — | — | Deducido |
-| Movistar, O2 | MitraStar GPT-2541GNAC (Router Smart WiFi (HGU)) | ⛔ Solo desde la app de la compañía | — | — | Deducido |
-| Movistar, O2 | MitraStar GPT-2742GX4X5 (Smart WiFi 6 Go) | ⛔ Solo desde la app de la compañía | — | — | Deducido |
+| Movistar, O2 | Askey RTF3505VW (Router Smart WiFi (HGU)) | ❔ Sin datos | — | — | Deducido |
+| Movistar, O2 | Askey RTF8225VW (Smart WiFi 6 Go) | ❔ Sin datos | — | — | Deducido |
+| Movistar, O2 | MitraStar GPT-2541GNAC (Router Smart WiFi (HGU)) | ❔ Sin datos | — | — | Deducido |
+| Movistar, O2 | MitraStar GPT-2742GX4X5 (Smart WiFi 6 Go) | ❔ Sin datos | — | — | Deducido |
 | Movistar, O2 | MitraStar GPT-2841GX4X5 (Smart WiFi 6) | ✅ Sí, desde el panel | Configuración avanzada (enlace al final del menú básico) → WiFi (2,4 GHz y 5 GHz) | — | Según Internet |
 | Orange, Jazztel | Arcadyan ARLTFIBRA6 (Livebox 6 Fibra) | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Según Internet |
 | Orange, Jazztel | Orange Livebox 7 (Livebox 7) | ✅ Sí, desde el panel | mi red local (pestaña de arriba) → dispositivos conectados (columna izquierda) | — | Ayuda oficial |

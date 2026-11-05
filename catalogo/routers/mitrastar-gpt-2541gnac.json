@@ -19,9 +19,10 @@
     "passwordHint": "La contraseña de acceso de la pegatina del router."
   },
   "block": {
-    "support": "app-only",
-    "how": "Movistar gestiona el control parental y la pausa de dispositivos desde la app Smart WiFi (perfiles y horarios), no desde el panel web del router. Comprobado en el Askey RTF8316VW, que usa el mismo portal.",
-    "scope": "unknown"
+    "support": "unknown",
+    "scope": "unknown",
+    "how": "Movistar ofrece la pausa de dispositivos en la app Smart WiFi. En el panel web, sin confirmar.",
+    "notes": "Router HGU antiguo de Movistar: no se ha comprobado si su menú avanzado tiene filtrado MAC con lista negra como el Smart WiFi 6. Si lo compruebas con la app, la ficha se completa."
   },
   "avoid": [
     "Configuración avanzada → Network Setting → Bridging → Filtering: no bloquea aparatos; reparte puertos entre Internet, Voz e IPTV.",
