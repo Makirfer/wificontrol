@@ -249,6 +249,7 @@
     <string name="cat_can_block">✅ Es pot bloquejar des del panell (cal gravar-lo)</string>
     <string name="cat_cannot_block">⛔ No deixa bloquejar: només veure i avisar</string>
     <string name="cat_unknown">❔ Encara no se sap</string>
+    <string name="notify_watching">🔔 T\'aviso quan es connecti</string>
     <string-array name="learn_steps">
         <item>Inicia sessió al panell del router</item>
         <item>Obre la llista de dispositius connectats</item>

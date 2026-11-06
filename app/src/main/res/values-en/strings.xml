@@ -249,6 +249,7 @@
     <string name="cat_can_block">✅ Can block from its panel (needs recording)</string>
     <string name="cat_cannot_block">⛔ No blocking: only see and alert</string>
     <string name="cat_unknown">❔ Not known yet</string>
+    <string name="notify_watching">🔔 I\'ll alert you when it connects</string>
     <string-array name="learn_steps">
         <item>Log in to the router panel</item>
         <item>Open the list of connected devices</item>

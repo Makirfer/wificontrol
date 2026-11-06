@@ -250,6 +250,7 @@
     <string name="cat_can_block">✅ Se puede bloquear desde su panel (falta grabarlo)</string>
     <string name="cat_cannot_block">⛔ No deja bloquear: solo ver y avisar</string>
     <string name="cat_unknown">❔ Aún no se sabe</string>
+    <string name="notify_watching">🔔 Te aviso cuando se conecte</string>
     <string-array name="learn_steps">
         <item>Inicia sesión en el panel del router</item>
         <item>Abre la lista de dispositivos conectados</item>

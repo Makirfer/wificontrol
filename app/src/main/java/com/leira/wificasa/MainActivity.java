@@ -557,7 +557,18 @@ public class MainActivity extends Activity {
         state.setTextSize(14);
         state.setTypeface(Typeface.DEFAULT_BOLD);
         state.setPadding(0, dp(4), 0, 0);
-        texts.addView(state);
+        // En routers que solo dejan ver aparatos, «Estado desconocido» no aporta nada: se muestra
+        // si se le vigila, que es lo que sí se puede hacer.
+        boolean viewOnly = !canSwitch && !adapter().capabilities().contains(Capability.READ_ACCESS);
+        if (viewOnly) {
+            if (store.notifySet(loc).contains(d.mac)) {
+                state.setText(t(R.string.notify_watching));
+                state.setTextColor(C_ACCENT);
+                texts.addView(state);
+            }
+        } else {
+            texts.addView(state);
+        }
 
         card.addView(texts);
 
