@@ -250,6 +250,15 @@
     <string name="cat_cannot_block">⛔ No blocking: only see and alert</string>
     <string name="cat_unknown">❔ Not known yet</string>
     <string name="notify_watching">🔔 I\'ll alert you when it connects</string>
+    <string name="photo_button">📷 Read the sticker with a photo</string>
+    <string name="photo_title">Router sticker</string>
+    <string name="photo_take">📷 Take a photo</string>
+    <string name="photo_pick">🖼 Choose a photo from the gallery</string>
+    <string name="photo_no_camera">Can\'t open the camera or gallery on this phone.</string>
+    <string name="photo_reading">Reading the sticker…</string>
+    <string name="photo_nothing">Couldn\'t read any details in the photo. Try closer, with good light and no glare.</string>
+    <string name="photo_check">Check what was read: 0/O or 1/l are sometimes mixed up.</string>
+    <string name="photo_error">⚠ Couldn\'t read the photo: %1$s</string>
     <string-array name="learn_steps">
         <item>Log in to the router panel</item>
         <item>Open the list of connected devices</item>

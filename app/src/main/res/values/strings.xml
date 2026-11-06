@@ -251,6 +251,15 @@
     <string name="cat_cannot_block">⛔ No deja bloquear: solo ver y avisar</string>
     <string name="cat_unknown">❔ Aún no se sabe</string>
     <string name="notify_watching">🔔 Te aviso cuando se conecte</string>
+    <string name="photo_button">📷 Leer la pegatina con una foto</string>
+    <string name="photo_title">Pegatina del router</string>
+    <string name="photo_take">📷 Hacer una foto</string>
+    <string name="photo_pick">🖼 Elegir una foto de la galería</string>
+    <string name="photo_no_camera">No se puede abrir la cámara ni la galería en este móvil.</string>
+    <string name="photo_reading">Leyendo la pegatina…</string>
+    <string name="photo_nothing">No he podido leer datos en la foto. Prueba más cerca, con buena luz y sin reflejos.</string>
+    <string name="photo_check">Revisa lo leído: a veces se confunden 0 y O, o 1 y l.</string>
+    <string name="photo_error">⚠ No se pudo leer la foto: %1$s</string>
     <string-array name="learn_steps">
         <item>Inicia sesión en el panel del router</item>
         <item>Abre la lista de dispositivos conectados</item>

@@ -177,6 +177,7 @@ java -cp /tmp/wc PruebaRecetas app/src/main/assets/recetas/zte-zxhn-f6640p.json 
 java -cp /tmp/wc PruebaCatalogo catalogo http://127.0.0.1:8765                       # catálogo y pruebas de recetas
 java -cp /tmp/wc PruebaCaptura pruebas/panel_falso/eventos_grabados.txt              # saneado de grabaciones
 java -cp /tmp/wc PruebaHorario                                                       # horarios
+java -cp /tmp/wc PruebaPegatina                                                      # lectura de la pegatina
 ```
 
 El simulador imita el panel del ZTE; no sustituye a probar con el router real.

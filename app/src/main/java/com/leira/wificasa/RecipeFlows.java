@@ -46,6 +46,8 @@ final class RecipeFlows {
         /** Usa este adaptador en la ubicación actual y actualiza. */
         void useAdapter(String adapterId);
         /** Dirección y usuario guardados en la ubicación actual ("" si no hay). */
+        /** Lector de la pegatina con la cámara (lo gestiona la actividad). */
+        PegatinaScanner scanner();
         /** Id del adaptador que usa ahora la ubicación actual. */
         String currentAdapterId();
         String savedHost();
@@ -255,6 +257,11 @@ final class RecipeFlows {
         final EditText vendor = field(box, t(R.string.hint_vendor));
         final EditText model = field(box, t(R.string.hint_model));
         final EditText isp = field(box, t(R.string.hint_isp));
+        box.addView(photoButton(() -> host.scanner().scan(p -> {
+            if (!p.vendor.isEmpty()) vendor.setText(p.vendor);
+            if (!p.model.isEmpty()) model.setText(p.model);
+            if (!p.isp.isEmpty()) isp.setText(p.isp);
+        })));
         new AlertDialog.Builder(a)
                 .setTitle(t(R.string.learn_new_title))
                 .setView(box)
@@ -370,6 +377,15 @@ final class RecipeFlows {
                 })
                 .setNegativeButton(t(R.string.cancel), null)
                 .show();
+    }
+
+    /** Botón «📷 Leer la pegatina». */
+    private Button photoButton(Runnable onClick) {
+        Button b = new Button(a);
+        b.setAllCaps(false);
+        b.setText(t(R.string.photo_button));
+        b.setOnClickListener(v -> onClick.run());
+        return b;
     }
 
     private TextView smallLabel(String text) {
@@ -533,6 +549,15 @@ final class RecipeFlows {
         box.addView(smallLabel(t(R.string.label_password)));
         final EditText passF = field(box, keepPass ? t(R.string.password_saved_hint) : t(R.string.password));
         passF.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        box.addView(photoButton(() -> host.scanner().scan(p -> {
+            if (!p.host.isEmpty()) hostF.setText(p.host);
+            if (!p.user.isEmpty()) userF.setText(p.user);
+            if (!p.password.isEmpty()) {
+                passF.setText(p.password);
+                // Se muestra lo leído para poder revisarlo (la lectura puede confundir 0/O o 1/l).
+                passF.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            }
+        })));
         new AlertDialog.Builder(a)
                 .setTitle(t(R.string.cred_title))
                 .setView(box)

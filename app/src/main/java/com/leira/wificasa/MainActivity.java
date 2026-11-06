@@ -68,6 +68,7 @@ public class MainActivity extends Activity {
     private boolean busy = false;
     private RecipeFlows flows;
     private HorarioUi horarios;
+    private PegatinaScanner scanner;
     private Button scheduleBtn;
 
     // ------------------------------------------------------------------ ciclo de vida
@@ -78,7 +79,10 @@ public class MainActivity extends Activity {
         RecipeStore recipeStore = new RecipeStore(this);
         recipeStore.registerAll();
         store = new LocationStore(this);
+        scanner = new PegatinaScanner(this);
         flows = new RecipeFlows(this, new RecipeFlows.Host() {
+            @Override public PegatinaScanner scanner() { return scanner; }
+
             @Override
             public RouterCredentials credentials() {
                 return loc != null && store.hasPassword(loc) ? store.credentials(loc) : null;
@@ -139,6 +143,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (scanner.onActivityResult(requestCode, resultCode, data)) return;
         flows.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -790,6 +795,19 @@ public class MainActivity extends Activity {
         pass.setHint(hasPass ? t(R.string.password_saved_hint) : t(R.string.password));
         pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         box.addView(pass);
+
+        Button photo = new Button(this);
+        photo.setAllCaps(false);
+        photo.setText(t(R.string.photo_button));
+        photo.setOnClickListener(v -> scanner.scan(p -> {
+            if (!p.host.isEmpty()) host.setText(p.host);
+            if (!p.user.isEmpty()) user.setText(p.user);
+            if (!p.password.isEmpty()) {
+                pass.setText(p.password);
+                pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            }
+        }));
+        box.addView(photo);
 
         final CheckBox notifyNew = new CheckBox(this);
         notifyNew.setText(t(R.string.notify_new_devices));

@@ -25,6 +25,8 @@ import java.nio.charset.StandardCharsets;
 public class ShareProvider extends ContentProvider {
 
     static final String AUTHORITY = "com.leira.wificasa.compartir";
+    /** Único archivo en el que se deja escribir: la foto de la pegatina que hace la cámara. */
+    static final String PHOTO = "pegatina.jpg";
 
     /** Guarda el texto como archivo y abre el menú de compartir de Android. */
     static void shareText(Context c, String fileName, String text, String message, String chooserTitle)
@@ -64,11 +66,18 @@ public class ShareProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         String n = uri.getLastPathSegment();
+        if (PHOTO.equals(n)) return "image/jpeg";
         return n != null && n.endsWith(".json") ? "application/json" : "text/plain";
     }
 
     @Override
     public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
+        if (PHOTO.equals(uri.getLastPathSegment()) && mode.contains("w")) {
+            File dir = new File(getContext().getCacheDir(), "compartir");
+            if (!dir.exists() && !dir.mkdirs()) throw new FileNotFoundException();
+            return ParcelFileDescriptor.open(new File(dir, PHOTO), ParcelFileDescriptor.MODE_READ_WRITE
+                    | ParcelFileDescriptor.MODE_CREATE | ParcelFileDescriptor.MODE_TRUNCATE);
+        }
         if (!"r".equals(mode)) throw new FileNotFoundException("Solo lectura");
         return ParcelFileDescriptor.open(file(uri), ParcelFileDescriptor.MODE_READ_ONLY);
     }

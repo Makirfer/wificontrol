@@ -250,6 +250,15 @@
     <string name="cat_cannot_block">⛔ No deixa bloquejar: només veure i avisar</string>
     <string name="cat_unknown">❔ Encara no se sap</string>
     <string name="notify_watching">🔔 T\'aviso quan es connecti</string>
+    <string name="photo_button">📷 Llegeix l\'adhesiu amb una foto</string>
+    <string name="photo_title">Adhesiu del router</string>
+    <string name="photo_take">📷 Fes una foto</string>
+    <string name="photo_pick">🖼 Tria una foto de la galeria</string>
+    <string name="photo_no_camera">No es pot obrir la càmera ni la galeria en aquest mòbil.</string>
+    <string name="photo_reading">Llegint l\'adhesiu…</string>
+    <string name="photo_nothing">No he pogut llegir dades a la foto. Prova-ho més a prop, amb bona llum i sense reflexos.</string>
+    <string name="photo_check">Revisa el que s\'ha llegit: de vegades es confonen 0 i O, o 1 i l.</string>
+    <string name="photo_error">⚠ No s\'ha pogut llegir la foto: %1$s</string>
     <string-array name="learn_steps">
         <item>Inicia sessió al panell del router</item>
         <item>Obre la llista de dispositius connectats</item>
