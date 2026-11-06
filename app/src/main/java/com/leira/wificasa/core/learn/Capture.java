@@ -219,6 +219,9 @@ public final class Capture {
                 + "  archivos .json. Si además puedes crear archivos, ofrece también receta-" + id + ".json.\n"
                 + "- Usa \"id\": \"" + id + "\" (marca-modelo en minúsculas con guiones).\n"
                 + "- Después, explica al usuario en 2 o 3 frases sencillas qué hace la receta y qué no.\n\n"
+                + "COOKIES: los eventos \"cookies\" muestran las que el navegador envía al router (los valores largos\n"
+                + "están ocultos). Si las crea el propio router, usa \"http\": {\"cookieJar\": true} (motor 5); si las\n"
+                + "crea el JavaScript del panel, reprodúcelas con \"http.cookies\" y variables (motor 4).\n\n"
                 + (blockOutcome.isEmpty() ? "" : "IMPORTANTE: el usuario ha comprobado que este router NO permite cortar "
                         + "Internet a un aparato desde su panel web (" + ("app-only".equals(blockOutcome)
                         ? "el panel remite a la app de la compañía" : "no hay ningún apartado para hacerlo")

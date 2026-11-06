@@ -182,6 +182,10 @@
           "propertyNames": {
             "pattern": "^[A-Za-z0-9_-]{1,40}$"
           }
+        },
+        "cookieJar": {
+          "type": "boolean",
+          "description": "Motor v5: guarda y reenvía todas las cookies que pone el router."
         }
       },
       "required": []

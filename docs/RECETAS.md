@@ -24,9 +24,10 @@ Estas reglas las aplica la app al cargar la receta. Si una sola falla, la receta
 5. **Límites.** Archivo ≤ 256 KB, ≤ 60 pasos por operación, expresiones regulares ≤ 500
    caracteres, respuestas ≤ 2 MB, ≤ 300 dispositivos, `repeat` ≤ 10.000 caracteres,
    `call` solo desde `setBlocked` y con profundidad ≤ 2.
-6. **Versión del motor.** Si `minEngine` es mayor que el motor de la app, se rechaza. Motor actual: 4
+6. **Versión del motor.** Si `minEngine` es mayor que el motor de la app, se rechaza. Motor actual: 5
    (v3: `fixedCookies` admite `.` y `%`; v4: `http.cookies` = {"Nombre": "${variable}"}, cookies con valores
-   sacados de la sesión, como las que crea el JavaScript del panel al entrar; nunca la contraseña).
+   sacados de la sesión, como las que crea el JavaScript del panel al entrar; nunca la contraseña;
+   v5: `http.cookieJar: true` guarda y reenvía todas las cookies que pone el router, como un navegador).
 7. **Huella.** La app calcula el SHA-256 del archivo. El catálogo lo guardará con cada versión
    para detectar cualquier modificación.
 8. **Comprobación tras escribir.** Después de cortar o devolver Internet, el motor vuelve a

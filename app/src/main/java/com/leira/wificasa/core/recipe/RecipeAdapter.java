@@ -78,6 +78,9 @@ public final class RecipeAdapter implements RouterAdapter {
         private final Map<String, String> vars = new HashMap<>();
         private final String cookieName;
         private String cookieValue;
+        /** Motor v5 (http.cookieJar): todas las cookies que manda el router, como hace un navegador. */
+        private final java.util.LinkedHashMap<String, String> jar = new java.util.LinkedHashMap<>();
+        private final boolean useJar;
         private long counter = System.currentTimeMillis();
         private NetDevice device;
         private boolean blocked;
@@ -89,6 +92,7 @@ public final class RecipeAdapter implements RouterAdapter {
             this.base = cred.baseUrl();
             String c = Recipe.str(recipe.http(), "sessionCookie");
             this.cookieName = c.isEmpty() ? null : c;
+            this.useJar = Boolean.TRUE.equals(recipe.http().get("cookieJar"));
         }
 
         // ------------------------------------------------------------ operaciones
@@ -228,7 +232,12 @@ public final class RecipeAdapter implements RouterAdapter {
             Matcher mt = Pattern.compile(s(m, "regex"), Pattern.DOTALL).matcher(var(s(m, "from")));
             boolean found = mt.find();
             if (found) vars.put("match", mt.groupCount() >= 1 && mt.group(1) != null ? mt.group(1) : mt.group());
-            if (found == failIfMatch) throw new RouterException(fill(s(m, "error")));
+            if (found == failIfMatch) {
+                String msg = fill(s(m, "error"));
+                // Pista para corregir la receta: qué cookies ha puesto el router (solo los nombres).
+                if (useJar) msg += " [cookies del router: " + (jar.isEmpty() ? "ninguna" : String.join(", ", jar.keySet())) + "]";
+                throw new RouterException(msg);
+            }
         }
 
         private void compute(Map<String, Object> m) throws RouterException {
@@ -412,21 +421,28 @@ public final class RecipeAdapter implements RouterAdapter {
                 c.setUseCaches(false);
                 c.setRequestMethod(method);
                 for (Map.Entry<String, String> e : headers.entrySet()) c.setRequestProperty(e.getKey(), e.getValue());
-                String fixed = Recipe.str(recipe.http(), "fixedCookies");
-                String cookie = fixed;
-                if (cookieName != null && cookieValue != null) {
-                    cookie = cookieName + "=" + cookieValue + (fixed.isEmpty() ? "" : "; " + fixed);
+                // Cookies, en este orden (una posterior con el mismo nombre sustituye a la anterior):
+                // fijas, de sesión, con variables (motor v4) y las que ha mandado el router (v5).
+                java.util.LinkedHashMap<String, String> ck = new java.util.LinkedHashMap<>();
+                for (String part : Recipe.str(recipe.http(), "fixedCookies").split(";")) {
+                    int eq = part.indexOf('=');
+                    if (eq > 0) ck.put(part.substring(0, eq).trim(), part.substring(eq + 1).trim());
                 }
-                // Cookies con variables (motor v4): las que aún no tienen valor (antes del login) no se envían.
+                if (cookieName != null && cookieValue != null) ck.put(cookieName, cookieValue);
                 for (Map.Entry<String, Object> e : Recipe.obj(recipe.http(), "cookies").entrySet()) {
-                    String v;
                     try {
-                        v = fill((String) e.getValue());
+                        ck.put(e.getKey(), fill((String) e.getValue()).replaceAll("[;\\r\\n]", ""));
                     } catch (RouterException notYet) {
-                        continue;
+                        // variable aún sin valor (antes del login): no se envía
                     }
-                    cookie = (cookie.isEmpty() ? "" : cookie + "; ") + e.getKey() + "=" + v.replaceAll("[;\\r\\n]", "");
                 }
+                if (useJar) ck.putAll(jar);
+                StringBuilder cookieSb = new StringBuilder();
+                for (Map.Entry<String, String> e : ck.entrySet()) {
+                    if (cookieSb.length() > 0) cookieSb.append("; ");
+                    cookieSb.append(e.getKey()).append('=').append(e.getValue());
+                }
+                String cookie = cookieSb.toString();
                 if (!cookie.isEmpty()) c.setRequestProperty("Cookie", cookie);
                 if (body == null && "POST".equals(method)) {
                     // POST sin formulario (como $.post sin datos): cuerpo vacío con Content-Length: 0
@@ -441,6 +457,17 @@ public final class RecipeAdapter implements RouterAdapter {
                     try (OutputStream os = c.getOutputStream()) { os.write(data); }
                 }
                 int code = c.getResponseCode();
+                if (useJar) {
+                    for (Map.Entry<String, List<String>> e : c.getHeaderFields().entrySet()) {
+                        if (e.getKey() == null || !e.getKey().equalsIgnoreCase("Set-Cookie")) continue;
+                        for (String v : e.getValue()) {
+                            Matcher m = Pattern.compile("^\\s*([^=;\\s]{1,60})=([^;]*)").matcher(v);
+                            if (!m.find()) continue;
+                            boolean gone = v.toLowerCase(java.util.Locale.ROOT).matches("(?s).*(max-age=0|expires=thu, 01[- ]jan[- ]1970).*");
+                            if (gone) jar.remove(m.group(1)); else if (jar.size() < 30) jar.put(m.group(1), m.group(2));
+                        }
+                    }
+                }
                 if (cookieName != null) {
                     Pattern p = Pattern.compile("(?:^|;\\s*)" + Pattern.quote(cookieName) + "=([^;]*)");
                     for (Map.Entry<String, List<String>> e : c.getHeaderFields().entrySet()) {

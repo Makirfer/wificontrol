@@ -29,6 +29,9 @@ class H(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", 'text/xml; charset="utf-8"')
         self.send_header("Content-Length", str(len(b)))
+        for k, v in getattr(self, "extra", []):
+            self.send_header(k, v)
+        self.extra = []
         self.end_headers()
         self.wfile.write(b)
 
@@ -39,6 +42,7 @@ class H(BaseHTTPRequestHandler):
         if p == "/cgi-bin/cbCheckLogin.xml":
             ok = f.get("rqUsername") == xor(USER) and f.get("rqPasswd") == xor(PASS)
             logged["ok"] = ok
+            self.extra = [("Set-Cookie", "rtk=7f3a9c; Path=/; HttpOnly")] if ok else []
             return self.send("<cbCheckLogin><Result>%d</Result><SessionID>NotUsed</SessionID>"
                              "<LoginTime>20261106095900</LoginTime><LoginRole>admin</LoginRole><BruteTime>0</BruteTime>"
                              "</cbCheckLogin>" % (0 if ok else 1))
@@ -46,10 +50,10 @@ class H(BaseHTTPRequestHandler):
             logged["ok"] = False
             return self.send("<cbCheckLogout><Result>0</Result></cbCheckLogout>")
         if p == "/cgi-bin/cbCheckSession.xml":
-            # Hipótesis tras el fallo real de la receta 0.2.0: la sesión se valida con las cookies
+            # Hipótesis tras los fallos reales de 0.2.0-0.3.1 (también exige una cookie HttpOnly del router): la sesión se valida con las cookies
             # que el JavaScript crea a partir de la respuesta del login (fecha y hora de entrada).
             ck = self.headers.get("Cookie", "")
-            ok = logged["ok"] and "LoginTime=09%3A59" in ck and "LoginDate=11%2F06" in ck and "SessionID=NotUsed" in ck
+            ok = logged["ok"] and "LoginTime=09%3A59" in ck and "LoginDate=11%2F06" in ck and "SessionID=NotUsed" in ck and "rtk=7f3a9c" in ck
             return self.send("<cbCheckSession><Result>%d</Result><LoginRole>admin</LoginRole></cbCheckSession>"
                              % (0 if ok else 1))
         if p == "/cgi-bin/cbGetLanHostList.xml":
@@ -62,7 +66,7 @@ class H(BaseHTTPRequestHandler):
                 self.send_header("Content-Length", "0")
                 self.end_headers()
                 return
-            if not logged["ok"]:
+            if not logged["ok"] or "rtk=7f3a9c" not in ck:
                 return self.send("<cbGetLanHostList><Result>1</Result></cbGetLanHostList>")
             items = "".join("<rtm_cfg_host><hostname>%s</hostname><mac_addr>%s</mac_addr><ipv4_addr>%s</ipv4_addr>"
                             "<intf_type>%s</intf_type><is_active>%s</is_active></rtm_cfg_host>" % h for h in HOSTS)

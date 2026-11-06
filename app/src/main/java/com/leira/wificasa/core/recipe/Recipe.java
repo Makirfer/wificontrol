@@ -32,7 +32,7 @@ public final class Recipe {
 
     public static final String FORMAT = "wificasa-recipe/1";
     /** Versión del motor de recetas de esta app. Una receta con "minEngine" mayor se rechaza. */
-    public static final int ENGINE_VERSION = 4;
+    public static final int ENGINE_VERSION = 5;
 
     static final int MAX_STEPS = 60;
     static final int MAX_REGEX = 500;
@@ -169,7 +169,8 @@ public final class Recipe {
             }
             if (root.containsKey("http")) {
                 Map<String, Object> h = objReq(root, "http");
-                allowed(h, "http", set("sessionCookie", "fixedCookies", "cookies", "headers"), set());
+                allowed(h, "http", set("sessionCookie", "fixedCookies", "cookies", "cookieJar", "headers"), set());
+                if (h.containsKey("cookieJar") && !(h.get("cookieJar") instanceof Boolean)) throw new RecipeException("http.cookieJar debe ser true o false.");
                 if (h.containsKey("sessionCookie")) matches(h.get("sessionCookie"), "[A-Za-z0-9_\\-]{1,40}", "http.sessionCookie");
                 if (h.containsKey("fixedCookies")) matches(h.get("fixedCookies"), "[A-Za-z0-9_\\-=;. %]{0,300}", "http.fixedCookies");
                 where = "http.headers";

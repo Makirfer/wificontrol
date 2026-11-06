@@ -190,6 +190,7 @@ public class LearnActivity extends Activity {
                     if (!u.matches("(?i).*\\.(png|gif|jpe?g|svg|ico|css|woff2?|ttf)(\\?.*)?$")) {
                         capture.record("{\"type\":\"request\",\"method\":" + quote(request.getMethod())
                                 + ",\"url\":" + quote(u) + "}");
+                        recordCookies(u);
                     }
                 } catch (Exception ignored) {
                     // solo es una anotación
@@ -206,6 +207,30 @@ public class LearnActivity extends Activity {
         web.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
         root.addView(web);
         setContentView(root);
+    }
+
+    private String lastCookies = "";
+
+    /**
+     * Cookies que el navegador enviará al router (también las HttpOnly, que el JavaScript no ve).
+     * Se anotan cuando cambian; los valores largos se ocultan (pueden ser tokens de sesión).
+     */
+    private void recordCookies(String url) {
+        String raw = android.webkit.CookieManager.getInstance().getCookie(url);
+        if (raw == null) raw = "";
+        StringBuilder sb = new StringBuilder();
+        for (String part : raw.split(";")) {
+            String p = part.trim();
+            int eq = p.indexOf('=');
+            if (eq <= 0) continue;
+            String name = p.substring(0, eq), val = p.substring(eq + 1);
+            if (sb.length() > 0) sb.append("; ");
+            sb.append(name).append('=').append(val.length() > 16 ? "«" + val.length() + " caracteres»" : val);
+        }
+        String now = sb.toString();
+        if (now.equals(lastCookies)) return;
+        lastCookies = now;
+        capture.record("{\"type\":\"cookies\",\"url\":" + quote(url) + ",\"cookies\":" + quote(now) + "}");
     }
 
     /** Puente que usa el grabador. Se llama desde un hilo del WebView. */
