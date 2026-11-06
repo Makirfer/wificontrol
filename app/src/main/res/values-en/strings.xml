@@ -283,6 +283,7 @@
     <string name="lock_removed">Lock removed.</string>
     <string name="lock_button">🔒 Protect the app with a PIN or fingerprint</string>
     <string name="lock_change">🔒 Change or remove the lock</string>
+    <string name="demo_name">🎬 Demo mode (no router)</string>
     <string-array name="welcome_titles">
         <item>Welcome to WiFi Time Control</item>
         <item>Pause Internet for whoever you want</item>

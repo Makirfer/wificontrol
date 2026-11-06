@@ -284,6 +284,7 @@
     <string name="lock_removed">Bloqueo quitado.</string>
     <string name="lock_button">🔒 Proteger la app con PIN o huella</string>
     <string name="lock_change">🔒 Cambiar o quitar el bloqueo</string>
+    <string name="demo_name">🎬 Modo demostración (sin router)</string>
     <string-array name="welcome_titles">
         <item>Bienvenido a WiFi Time Control</item>
         <item>Pausa Internet a quien quieras</item>

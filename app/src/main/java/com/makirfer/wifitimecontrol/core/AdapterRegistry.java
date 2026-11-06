@@ -17,6 +17,7 @@ public final class AdapterRegistry {
 
     static {
         register(new ZteF6640pAdapter());
+        register(new com.makirfer.wifitimecontrol.adapters.demo.DemoAdapter());
     }
 
     private AdapterRegistry() { }

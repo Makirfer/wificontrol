@@ -283,6 +283,7 @@
     <string name="lock_removed">Bloqueig tret.</string>
     <string name="lock_button">🔒 Protegeix l\'app amb PIN o empremta</string>
     <string name="lock_change">🔒 Canvia o treu el bloqueig</string>
+    <string name="demo_name">🎬 Mode demostració (sense router)</string>
     <string-array name="welcome_titles">
         <item>Benvingut a WiFi Time Control</item>
         <item>Pausa Internet a qui vulguis</item>

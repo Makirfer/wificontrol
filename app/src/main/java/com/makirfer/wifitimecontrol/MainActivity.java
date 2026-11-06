@@ -199,6 +199,11 @@ public class MainActivity extends Activity {
 
     // ------------------------------------------------------------------ interfaz
 
+    /** Nombre del router para mostrar (el de demostración, traducido). */
+    private String adapterName(RouterAdapter a) {
+        return com.makirfer.wifitimecontrol.adapters.demo.DemoAdapter.ID.equals(a.id()) ? t(R.string.demo_name) : a.displayName();
+    }
+
     /** Texto traducido (res/values/strings.xml y sus traducciones). */
     private String t(int id, Object... a) { return a.length == 0 ? getString(id) : getString(id, a); }
 
@@ -352,7 +357,7 @@ public class MainActivity extends Activity {
         // Se muestran enseguida los dispositivos recordados; Actualizar trae el estado real.
         devices = store.knownDevices(loc);
         present = new java.util.HashSet<>();
-        statusView.setText(devices.isEmpty() ? adapter().displayName()
+        statusView.setText(devices.isEmpty() ? adapterName(adapter())
                 : t(R.string.last_known));
         renderList();
     }
@@ -794,10 +799,10 @@ public class MainActivity extends Activity {
         final AlertDialog[] settingsDlg = new AlertDialog[1];
         final Button model = new Button(this);
         model.setAllCaps(false);
-        model.setText(AdapterRegistry.get(editing.adapterId).displayName() + "  ▾");
+        model.setText(adapterName(AdapterRegistry.get(editing.adapterId)) + "  ▾");
         model.setOnClickListener(v -> {
             String[] names = new String[adapters.size() + 1];
-            for (int i = 0; i < adapters.size(); i++) names[i] = adapters.get(i).displayName();
+            for (int i = 0; i < adapters.size(); i++) names[i] = adapterName(adapters.get(i));
             names[adapters.size()] = t(R.string.router_not_listed);
             new AlertDialog.Builder(this).setTitle(t(R.string.label_router_model))
                     .setItems(names, (dlg, which) -> {
@@ -876,6 +881,8 @@ public class MainActivity extends Activity {
                     String u = user.getText().toString().trim();
                     editing.user = u.isEmpty() ? a.defaultUser() : u;
                     String p = pass.getText().toString();
+                    // El router de demostración no tiene contraseña: se guarda una cualquiera.
+                    if (p.isEmpty() && !hasPass && com.makirfer.wifitimecontrol.adapters.demo.DemoAdapter.ID.equals(editing.adapterId)) p = "demo";
                     try {
                         store.save(editing, p.isEmpty() && hasPass ? null : p);
                     } catch (Exception e) {
