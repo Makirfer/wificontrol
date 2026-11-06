@@ -444,7 +444,15 @@ public final class RecipeAdapter implements RouterAdapter {
                 }
                 InputStream is = code >= 400 ? c.getErrorStream() : c.getInputStream();
                 String text = readAll(is);
-                if (code != expect) throw new RouterException("El router ha respondido HTTP " + code + ".");
+                if (code != expect) {
+                    // Se dice a qué petición y, si redirige, adónde: así la IA puede corregir la receta.
+                    String loc = c.getHeaderField("Location");
+                    String snippet = text.replaceAll("\\s+", " ").trim();
+                    if (snippet.length() > 160) snippet = snippet.substring(0, 160) + "…";
+                    throw new RouterException("El router ha respondido HTTP " + code + " a " + method + " " + path
+                            + (loc != null && !loc.isEmpty() ? " (redirige a " + loc + ")" : "")
+                            + (snippet.isEmpty() ? "" : ". Respuesta: " + snippet) + ".");
+                }
                 return text;
             } catch (RouterException e) {
                 throw e;

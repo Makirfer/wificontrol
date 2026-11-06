@@ -156,7 +156,7 @@
         },
         "fixedCookies": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9_=; -]{0,200}$"
+          "pattern": "^[A-Za-z0-9_=;. %-]{0,300}$"
         },
         "headers": {
           "type": "object",

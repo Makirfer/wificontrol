@@ -44,7 +44,19 @@ class H(BaseHTTPRequestHandler):
         if p == "/cgi-bin/cbCheckLogout.xml":
             logged["ok"] = False
             return self.send("<cbCheckLogout><Result>0</Result></cbCheckLogout>")
+        if p == "/cgi-bin/cbCheckSession.xml":
+            return self.send("<cbCheckSession><Result>%d</Result><LoginRole>admin</LoginRole></cbCheckSession>"
+                             % (0 if logged["ok"] else 1))
         if p == "/cgi-bin/cbGetLanHostList.xml":
+            # Hipótesis tras el fallo real de la receta 0.1.0 (HTTP 302): el panel exige las cookies
+            # que crea su JavaScript al entrar; sin ellas, redirige a la página de acceso.
+            ck = self.headers.get("Cookie", "")
+            if "LoginName=" not in ck or "TimeOut=" not in ck:
+                self.send_response(302)
+                self.send_header("Location", "/me_configuracion_avanzada.asp")
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
             if not logged["ok"]:
                 return self.send("<cbGetLanHostList><Result>1</Result></cbGetLanHostList>")
             items = "".join("<rtm_cfg_host><hostname>%s</hostname><mac_addr>%s</mac_addr><ipv4_addr>%s</ipv4_addr>"
