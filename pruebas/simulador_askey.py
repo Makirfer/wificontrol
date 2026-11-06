@@ -42,10 +42,15 @@ class H(BaseHTTPRequestHandler):
         if p == "/cgi-bin/te_acceso_router.cgi":
             # Panel básico de Movistar (grabación real del 06/11): sin esto, la sesión avanzada no vale.
             logged["basic"] = f.get("loginUsername") == xor(USER) and f.get("loginPassword") == xor(PASS)
-            self.send_response(302)
-            self.send_header("Location", f.get("curWebPage", "/te_wifi.asp") if logged["basic"] else "/")
-            self.send_header("Content-Length", "0")
+            # Responde 200 con una redirección en JavaScript (prueba real del 06/11, receta 0.5.0).
+            dest = f.get("curWebPage", "/te_wifi.asp") if logged["basic"] else "/te_acceso_router.asp"
+            b = ("<html> <head><title></title><script language='javascript'>location.href = \"%s\";</script>"
+                 "</head></html>" % dest).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html")
+            self.send_header("Content-Length", str(len(b)))
             self.end_headers()
+            self.wfile.write(b)
             return
         if p == "/cgi-bin/cbCheckLogin.xml":
             ok = f.get("rqUsername") == xor(USER) and f.get("rqPasswd") == xor(PASS)
