@@ -49,7 +49,7 @@ class H(BaseHTTPRequestHandler):
             # Hipótesis tras el fallo real de la receta 0.2.0: la sesión se valida con las cookies
             # que el JavaScript crea a partir de la respuesta del login (fecha y hora de entrada).
             ck = self.headers.get("Cookie", "")
-            ok = logged["ok"] and "LoginTime=09%3A59" in ck and "LoginDate=11-06" in ck and "SessionID=NotUsed" in ck
+            ok = logged["ok"] and "LoginTime=09%3A59" in ck and "LoginDate=11%2F06" in ck and "SessionID=NotUsed" in ck
             return self.send("<cbCheckSession><Result>%d</Result><LoginRole>admin</LoginRole></cbCheckSession>"
                              % (0 if ok else 1))
         if p == "/cgi-bin/cbGetLanHostList.xml":
