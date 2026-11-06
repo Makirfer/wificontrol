@@ -69,6 +69,9 @@ public class MainActivity extends Activity {
     private RecipeFlows flows;
     private HorarioUi horarios;
     private PegatinaScanner scanner;
+    private AppLock lock;
+    private boolean resumedOnce;
+    private static final int REQ_WELCOME = 56;
     private Button scheduleBtn;
 
     // ------------------------------------------------------------------ ciclo de vida
@@ -128,22 +131,63 @@ public class MainActivity extends Activity {
         final android.content.Context app = getApplicationContext();
         worker.execute(() -> { HorarioRunner.reprogram(app); AvisoJob.reprogram(app); });
         buildUi();
+        lock = new AppLock(this);
         loc = store.current();
         if (loc == null) {
             loc = store.create(t(R.string.loc_default));
             store.setCurrent(loc.id);
-            onLocationChanged();
-            showSettings(true);
-        } else {
-            onLocationChanged();
-            if (!store.hasPassword(loc)) showSettings(true); else refresh();
         }
+        onLocationChanged();
+        hideContent(true);
+        lock.requireUnlock(() -> {
+            hideContent(false);
+            if (!getSharedPreferences("bienvenida", MODE_PRIVATE).getBoolean("vista", false)) {
+                // Primera vez: fichas de bienvenida antes de configurar el router.
+                startActivityForResult(new Intent(this, GuideActivity.class)
+                        .putExtra(GuideActivity.EXTRA_WELCOME, true), REQ_WELCOME);
+            } else {
+                firstRun();
+            }
+        });
+    }
+
+    private void firstRun() {
+        if (!store.hasPassword(loc)) showSettings(true); else refresh();
+    }
+
+    /** Con la app bloqueada no se enseña la lista de aparatos detrás del PIN. */
+    private void hideContent(boolean hide) {
+        View c = findViewById(android.R.id.content);
+        if (c != null) c.setVisibility(hide ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!resumedOnce) { resumedOnce = true; return; } // el primer desbloqueo lo pide onCreate
+        if (lock.enabled()) {
+            hideContent(true);
+            lock.requireUnlock(() -> hideContent(false));
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        lock.onStop();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (scanner.onActivityResult(requestCode, resultCode, data)) return;
+        if (requestCode == REQ_WELCOME) {
+            getSharedPreferences("bienvenida", MODE_PRIVATE).edit().putBoolean("vista", true).apply();
+            boolean wantsLock = data != null
+                    && GuideActivity.ACTION_LOCK.equals(data.getStringExtra(GuideActivity.RESULT_ACTION));
+            if (wantsLock) lock.showSetup(this::firstRun); else firstRun();
+            return;
+        }
         flows.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -808,6 +852,12 @@ public class MainActivity extends Activity {
             }
         }));
         box.addView(photo);
+
+        Button lockBtn = new Button(this);
+        lockBtn.setAllCaps(false);
+        lockBtn.setText(t(lock.enabled() ? R.string.lock_change : R.string.lock_button));
+        lockBtn.setOnClickListener(v -> lock.showSetup(null));
+        box.addView(lockBtn);
 
         final CheckBox notifyNew = new CheckBox(this);
         notifyNew.setText(t(R.string.notify_new_devices));

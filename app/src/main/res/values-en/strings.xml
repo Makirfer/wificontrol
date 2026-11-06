@@ -264,6 +264,49 @@
     <string name="photo_isp">Provider</string>
     <string name="photo_use">Use these details</string>
     <string name="photo_copy_raw">Copy what was read</string>
+    <string name="welcome_start">Get started</string>
+    <string name="welcome_lock">🔒 Protect the app with a PIN or fingerprint</string>
+    <string name="lock_title">WiFi Time Control is locked</string>
+    <string name="lock_pin_hint">PIN</string>
+    <string name="lock_open">Open</string>
+    <string name="lock_use_bio">Fingerprint</string>
+    <string name="lock_use_pin">Use the PIN</string>
+    <string name="lock_wrong">Wrong PIN</string>
+    <string name="lock_setup_title">App lock</string>
+    <string name="lock_info">So nobody else (the kids, for example) can open the app or give themselves Internet back. It\'s asked when opening the app and when coming back after a minute. Schedules and alerts keep working.</string>
+    <string name="lock_new_pin">New PIN (4 digits or more)</string>
+    <string name="lock_repeat_pin">Repeat the PIN</string>
+    <string name="lock_bio_option">Also allow unlocking with fingerprint or face</string>
+    <string name="lock_pin_mismatch">The PIN must have at least 4 digits and match both times.</string>
+    <string name="lock_saved">Lock enabled.</string>
+    <string name="lock_remove">Remove lock</string>
+    <string name="lock_removed">Lock removed.</string>
+    <string name="lock_button">🔒 Protect the app with a PIN or fingerprint</string>
+    <string name="lock_change">🔒 Change or remove the lock</string>
+    <string-array name="welcome_titles">
+        <item>Welcome to WiFi Time Control</item>
+        <item>Pause Internet for whoever you want</item>
+        <item>Automatic schedules</item>
+        <item>Know who connects</item>
+        <item>Works with your router</item>
+        <item>Everything stays on your phone</item>
+    </string-array>
+    <string-array name="welcome_texts">
+        <item>Control from your phone which home devices have Internet, without turning WiFi off for everyone.</item>
+        <item>Pick the console, the tablet or the laptop and cut their Internet with one button. Another one brings it back.</item>
+        <item>«Monday to Friday, 21:00 to 8:00, no Internet»: the app does it by itself every day.</item>
+        <item>It alerts you when a specific device connects, or a new one you don\'t know.</item>
+        <item>It talks directly to your router. If yours isn\'t supported yet, you can teach it in a few minutes.</item>
+        <item>Passwords are stored encrypted on this phone. Nothing goes through anyone\'s servers.</item>
+    </string-array>
+    <string-array name="welcome_icons">
+        <item>📶</item>
+        <item>⏸️</item>
+        <item>⏰</item>
+        <item>🔔</item>
+        <item>🧾</item>
+        <item>🔒</item>
+    </string-array>
     <string-array name="learn_steps">
         <item>Log in to the router panel</item>
         <item>Open the list of connected devices</item>

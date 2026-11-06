@@ -265,6 +265,49 @@
     <string name="photo_isp">Compañía</string>
     <string name="photo_use">Usar estos datos</string>
     <string name="photo_copy_raw">Copiar lo leído</string>
+    <string name="welcome_start">Empezar</string>
+    <string name="welcome_lock">🔒 Proteger la app con PIN o huella</string>
+    <string name="lock_title">WiFi Time Control está bloqueada</string>
+    <string name="lock_pin_hint">PIN</string>
+    <string name="lock_open">Abrir</string>
+    <string name="lock_use_bio">Huella</string>
+    <string name="lock_use_pin">Usar el PIN</string>
+    <string name="lock_wrong">PIN incorrecto</string>
+    <string name="lock_setup_title">Bloqueo de la app</string>
+    <string name="lock_info">Así nadie más (por ejemplo, los niños) puede abrir la app ni devolverse Internet. Se pedirá al abrirla y al volver a ella tras un minuto. Los horarios y los avisos siguen funcionando igual.</string>
+    <string name="lock_new_pin">PIN nuevo (4 cifras o más)</string>
+    <string name="lock_repeat_pin">Repite el PIN</string>
+    <string name="lock_bio_option">Permitir abrir también con la huella o la cara</string>
+    <string name="lock_pin_mismatch">El PIN debe tener al menos 4 cifras y coincidir las dos veces.</string>
+    <string name="lock_saved">Bloqueo activado.</string>
+    <string name="lock_remove">Quitar el bloqueo</string>
+    <string name="lock_removed">Bloqueo quitado.</string>
+    <string name="lock_button">🔒 Proteger la app con PIN o huella</string>
+    <string name="lock_change">🔒 Cambiar o quitar el bloqueo</string>
+    <string-array name="welcome_titles">
+        <item>Bienvenido a WiFi Time Control</item>
+        <item>Pausa Internet a quien quieras</item>
+        <item>Horarios automáticos</item>
+        <item>Sabrás quién se conecta</item>
+        <item>Funciona con tu router</item>
+        <item>Todo se queda en tu móvil</item>
+    </string-array>
+    <string-array name="welcome_texts">
+        <item>Controla desde el móvil qué aparatos de casa tienen Internet, sin apagar el WiFi a todos.</item>
+        <item>Marca la consola, la tablet o el portátil y córtales Internet con un botón. Otro botón y vuelve.</item>
+        <item>«De lunes a viernes, de 21:00 a 8:00, sin Internet»: la app lo hace sola cada día.</item>
+        <item>Te avisa cuando se conecta un aparato concreto, o uno nuevo que no conoces.</item>
+        <item>Habla directamente con tu router. Si el tuyo aún no está, puedes enseñárselo en unos minutos.</item>
+        <item>Las contraseñas se guardan cifradas en este móvil. Nada pasa por servidores de nadie.</item>
+    </string-array>
+    <string-array name="welcome_icons">
+        <item>📶</item>
+        <item>⏸️</item>
+        <item>⏰</item>
+        <item>🔔</item>
+        <item>🧾</item>
+        <item>🔒</item>
+    </string-array>
     <string-array name="learn_steps">
         <item>Inicia sesión en el panel del router</item>
         <item>Abre la lista de dispositivos conectados</item>

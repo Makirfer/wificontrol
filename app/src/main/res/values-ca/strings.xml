@@ -264,6 +264,49 @@
     <string name="photo_isp">Companyia</string>
     <string name="photo_use">Fes servir aquestes dades</string>
     <string name="photo_copy_raw">Copia el que s\'ha llegit</string>
+    <string name="welcome_start">Comença</string>
+    <string name="welcome_lock">🔒 Protegeix l\'app amb PIN o empremta</string>
+    <string name="lock_title">WiFi Time Control està bloquejada</string>
+    <string name="lock_pin_hint">PIN</string>
+    <string name="lock_open">Obre</string>
+    <string name="lock_use_bio">Empremta</string>
+    <string name="lock_use_pin">Fes servir el PIN</string>
+    <string name="lock_wrong">PIN incorrecte</string>
+    <string name="lock_setup_title">Bloqueig de l\'app</string>
+    <string name="lock_info">Així ningú més (per exemple, els nens) pot obrir l\'app ni tornar-se Internet. Es demanarà en obrir-la i en tornar-hi després d\'un minut. Els horaris i els avisos continuen funcionant igual.</string>
+    <string name="lock_new_pin">PIN nou (4 xifres o més)</string>
+    <string name="lock_repeat_pin">Repeteix el PIN</string>
+    <string name="lock_bio_option">Permet obrir també amb l\'empremta o la cara</string>
+    <string name="lock_pin_mismatch">El PIN ha de tenir almenys 4 xifres i coincidir les dues vegades.</string>
+    <string name="lock_saved">Bloqueig activat.</string>
+    <string name="lock_remove">Treu el bloqueig</string>
+    <string name="lock_removed">Bloqueig tret.</string>
+    <string name="lock_button">🔒 Protegeix l\'app amb PIN o empremta</string>
+    <string name="lock_change">🔒 Canvia o treu el bloqueig</string>
+    <string-array name="welcome_titles">
+        <item>Benvingut a WiFi Time Control</item>
+        <item>Pausa Internet a qui vulguis</item>
+        <item>Horaris automàtics</item>
+        <item>Sabràs qui es connecta</item>
+        <item>Funciona amb el teu router</item>
+        <item>Tot es queda al teu mòbil</item>
+    </string-array>
+    <string-array name="welcome_texts">
+        <item>Controla des del mòbil quins aparells de casa tenen Internet, sense apagar el WiFi a tothom.</item>
+        <item>Marca la consola, la tauleta o el portàtil i talla\'ls Internet amb un botó. Un altre botó i torna.</item>
+        <item>«De dilluns a divendres, de 21:00 a 8:00, sense Internet»: l\'app ho fa sola cada dia.</item>
+        <item>T\'avisa quan es connecta un aparell concret, o un de nou que no coneixes.</item>
+        <item>Parla directament amb el teu router. Si el teu encara no hi és, li pots ensenyar en uns minuts.</item>
+        <item>Les contrasenyes es desen xifrades en aquest mòbil. Res no passa per servidors de ningú.</item>
+    </string-array>
+    <string-array name="welcome_icons">
+        <item>📶</item>
+        <item>⏸️</item>
+        <item>⏰</item>
+        <item>🔔</item>
+        <item>🧾</item>
+        <item>🔒</item>
+    </string-array>
     <string-array name="learn_steps">
         <item>Inicia sessió al panell del router</item>
         <item>Obre la llista de dispositius connectats</item>

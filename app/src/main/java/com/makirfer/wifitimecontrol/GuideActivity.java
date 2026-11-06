@@ -25,6 +25,10 @@ public class GuideActivity extends Activity {
     public static final String RESULT_ACTION = "accion";
     public static final String ACTION_SEARCH = "buscar";
     public static final String ACTION_LEARN = "grabar";
+    /** Modo bienvenida (primera vez que se abre la app): fichas de qué hace la app. */
+    public static final String EXTRA_WELCOME = "bienvenida";
+    public static final String ACTION_START = "empezar";
+    public static final String ACTION_LOCK = "bloqueo";
 
     private static final int C_BG = Color.parseColor("#F4F1EC");
     private static final int C_TEXT = Color.parseColor("#1F1D1A");
@@ -39,6 +43,11 @@ public class GuideActivity extends Activity {
     /** Título y frase de cada tarjeta, en el idioma del móvil (res/values/strings.xml y sus traducciones). */
     private String[] titles, texts;
 
+    private boolean welcome;
+    private String[] icons;
+    private TextView icon;
+    private int pages;
+
     private int page = 0;
     private ImageView image;
     private TextView title, text;
@@ -51,8 +60,11 @@ public class GuideActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        titles = getResources().getStringArray(R.array.guide_titles);
-        texts = getResources().getStringArray(R.array.guide_texts);
+        welcome = getIntent().getBooleanExtra(EXTRA_WELCOME, false);
+        titles = getResources().getStringArray(welcome ? R.array.welcome_titles : R.array.guide_titles);
+        texts = getResources().getStringArray(welcome ? R.array.welcome_texts : R.array.guide_texts);
+        icons = getResources().getStringArray(R.array.welcome_icons);
+        pages = welcome ? titles.length : IMAGES.length;
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(C_BG);
@@ -64,13 +76,17 @@ public class GuideActivity extends Activity {
         skip.setTextSize(15);
         skip.setGravity(Gravity.END);
         skip.setPadding(0, dp(8), 0, dp(8));
-        skip.setOnClickListener(v -> finish());
+        skip.setOnClickListener(v -> { if (welcome) done(ACTION_START); else finish(); });
         root.addView(skip, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
         image = new ImageView(this);
         image.setAdjustViewBounds(true);
-        root.addView(image, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+        icon = new TextView(this);
+        icon.setTextSize(110);
+        icon.setGravity(Gravity.CENTER);
+        if (welcome) root.addView(icon, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+        else root.addView(image, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
 
         title = new TextView(this);
         title.setTextSize(26);
@@ -99,14 +115,14 @@ public class GuideActivity extends Activity {
         back.setOnClickListener(v -> go(page - 1));
         next = button(getString(R.string.next), true);
         next.setOnClickListener(v -> {
-            if (page < IMAGES.length - 1) go(page + 1); else done(ACTION_SEARCH);
+            if (page < pages - 1) go(page + 1); else done(welcome ? ACTION_START : ACTION_SEARCH);
         });
         row.addView(back);
         row.addView(next);
         root.addView(row);
 
-        second = button(getString(R.string.record_my_router), false);
-        second.setOnClickListener(v -> done(ACTION_LEARN));
+        second = button(getString(welcome ? R.string.welcome_lock : R.string.record_my_router), false);
+        second.setOnClickListener(v -> done(welcome ? ACTION_LOCK : ACTION_LEARN));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.topMargin = dp(8);
@@ -146,17 +162,17 @@ public class GuideActivity extends Activity {
     }
 
     private void go(int p) {
-        if (p < 0 || p >= IMAGES.length) return;
+        if (p < 0 || p >= pages) return;
         page = p;
-        image.setImageResource(IMAGES[p]);
+        if (welcome) icon.setText(icons[Math.min(p, icons.length - 1)]); else image.setImageResource(IMAGES[p]);
         title.setText(titles[p]);
         text.setText(texts[p]);
-        boolean last = p == IMAGES.length - 1;
+        boolean last = p == pages - 1;
         back.setVisibility(p == 0 ? View.INVISIBLE : View.VISIBLE);
-        next.setText(getString(last ? R.string.find_my_router : R.string.next));
+        next.setText(getString(!last ? R.string.next : welcome ? R.string.welcome_start : R.string.find_my_router));
         second.setVisibility(last ? View.VISIBLE : View.GONE);
         dots.removeAllViews();
-        for (int i = 0; i < IMAGES.length; i++) {
+        for (int i = 0; i < pages; i++) {
             View d = new View(this);
             GradientDrawable g = new GradientDrawable();
             g.setColor(i == p ? C_ACCENT : C_DOT);
