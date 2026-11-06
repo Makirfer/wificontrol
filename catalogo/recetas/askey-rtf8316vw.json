@@ -1,0 +1,371 @@
+{
+  "format": "wificasa-recipe/1",
+  "id": "askey-rtf8316vw",
+  "version": "0.5.1",
+  "minEngine": 5,
+  "router": {
+    "vendor": "Askey",
+    "model": "RTF8316VW",
+    "commercialName": "Router Movistar WiFi 7",
+    "isps": [
+      "Movistar"
+    ],
+    "firmware": [
+      "GL_g1.18_R8316_V2.19"
+    ],
+    "detect": [
+      "<title>movistar</title>[\\s\\S]*te_wifi\\.asp[\\s\\S]*te_footer\\.asp"
+    ]
+  },
+  "defaults": {
+    "host": "192.168.1.1",
+    "user": "1234"
+  },
+  "capabilities": [
+    "LIST_DEVICES"
+  ],
+  "limitations": [
+    "Usuario 1234 y la contraseña de acceso al router (la de la pegatina), que es la que usa la Configuración avanzada.",
+    "De momento solo lista los dispositivos: falta grabar el método correcto para cortar Internet a un aparato.",
+    "El bloqueo grabado en Network Setting → Bridging → Filtering no corta Internet: esa página asigna puertos a puentes (bridges)."
+  ],
+  "validation": {
+    "date": "2026-11-06",
+    "status": "tested-device",
+    "notes": "Probada con la app WiFi Casa en un RTF8316VW real (firmware GL_g1.18_R8316_V2.19): inicio de sesión y lista de 4 dispositivos. Entra primero en el panel básico de Movistar y después en la configuración avanzada, como el navegador."
+  },
+  "changelog": [
+    {
+      "version": "0.1.0",
+      "date": "2026-11-04",
+      "changes": "Inicio de sesión y lista de dispositivos."
+    },
+    {
+      "version": "0.2.0",
+      "date": "2026-11-06",
+      "changes": "Cookies que crea el panel (TimeOut, LoginName, LoginRole), Referer de cada página, cbCheckSession antes de listar y sin cierre de sesión inventado."
+    },
+    {
+      "version": "0.3.0",
+      "date": "2026-11-06",
+      "changes": "Cookies SessionID, LoginDate y LoginTime sacadas de la respuesta de inicio de sesión (motor v4), visita a avanzada.asp tras entrar, y la comprobación de sesión ya no corta la prueba."
+    },
+    {
+      "version": "0.3.1",
+      "date": "2026-11-06",
+      "changes": "LoginDate con el formato exacto del panel (MM/DD)."
+    },
+    {
+      "version": "0.4.0",
+      "date": "2026-11-06",
+      "changes": "Guarda y reenvía las cookies que pone el router (motor v5); si falla, el informe dice qué cookies recibió."
+    },
+    {
+      "version": "0.4.1",
+      "date": "2026-11-06",
+      "changes": "User-Agent de navegador y visita a me_configuracion_avanzada.asp antes del inicio de sesión."
+    },
+    {
+      "version": "0.5.0",
+      "date": "2026-11-06",
+      "changes": "Primero entra en el panel básico de Movistar (te_acceso_router.cgi, como el navegador) y después en la configuración avanzada; cierra sesión con cbCheckLogout."
+    },
+    {
+      "version": "0.5.1",
+      "date": "2026-11-06",
+      "changes": "El acceso al panel básico responde 200 (redirige con JavaScript); avisa si la contraseña es incorrecta."
+    }
+  ],
+  "http": {
+    "fixedCookies": "TimeOut=600; LoginName=.-%2C%2B; SessionStatus=Valid; LoginRole=admin",
+    "headers": {
+      "X-Requested-With": "XMLHttpRequest",
+      "Accept": "application/xml, text/xml, */*; q=0.01",
+      "User-Agent": "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36"
+    },
+    "cookies": {
+      "SessionID": "${sid|url}",
+      "LoginDate": "${loginDate|url}",
+      "LoginTime": "${loginTime|url}"
+    },
+    "cookieJar": true
+  },
+  "operations": {
+    "login": {
+      "steps": [
+        {
+          "compute": {
+            "fn": "xorChars",
+            "args": [
+              "${cred.user}",
+              "0x1f"
+            ],
+            "save": "userX"
+          }
+        },
+        {
+          "compute": {
+            "fn": "xorChars",
+            "args": [
+              "${cred.password}",
+              "0x1f"
+            ],
+            "save": "passX"
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "path": "/",
+            "save": "root"
+          }
+        },
+        {
+          "request": {
+            "method": "POST",
+            "path": "/cgi-bin/te_acceso_router.cgi",
+            "headers": {
+              "Referer": "${base}/te_acceso_router.asp",
+              "X-Requested-With": "",
+              "Accept": "text/html,application/xhtml+xml,*/*;q=0.8"
+            },
+            "form": [
+              [
+                "Password",
+                "${cred.password}"
+              ],
+              [
+                "curWebPage",
+                "/te_wifi.asp"
+              ],
+              [
+                "loginUsername",
+                "${userX}"
+              ],
+              [
+                "loginPassword",
+                "${passX}"
+              ]
+            ],
+            "save": "basicResp"
+          }
+        },
+        {
+          "fail": {
+            "from": "basicResp",
+            "regex": "location\\.href\\s*=\\s*\"/te_acceso_router",
+            "error": "La contraseña de acceso al router no es correcta (el panel básico vuelve a pedirla)."
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "path": "/te_wifi.asp",
+            "headers": {
+              "Referer": "${base}/te_acceso_router.asp",
+              "X-Requested-With": "",
+              "Accept": "text/html,*/*;q=0.8"
+            },
+            "save": "wifiPage"
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "path": "/me_configuracion_avanzada.asp",
+            "headers": {
+              "Referer": "${base}/te_wifi.asp",
+              "X-Requested-With": "",
+              "Accept": "text/html,*/*;q=0.8"
+            },
+            "save": "loginPage"
+          }
+        },
+        {
+          "request": {
+            "method": "POST",
+            "path": "/cgi-bin/cbCheckLogin.xml",
+            "form": [
+              [
+                "rqUsername",
+                "${userX}"
+              ],
+              [
+                "rqPasswd",
+                "${passX}"
+              ],
+              [
+                "rqTimeout",
+                "600"
+              ]
+            ],
+            "save": "loginResp",
+            "headers": {
+              "Referer": "${base}/me_configuracion_avanzada.asp"
+            }
+          }
+        },
+        {
+          "fail": {
+            "from": "loginResp",
+            "regex": "<BruteTime>([1-9][0-9]*)</BruteTime>",
+            "error": "El router ha bloqueado el acceso durante ${match} segundos por demasiados intentos fallidos."
+          }
+        },
+        {
+          "require": {
+            "from": "loginResp",
+            "regex": "<cbCheckLogin>[\\s\\S]*?<Result>0</Result>",
+            "error": "No se pudo iniciar sesión en el router: revisa el usuario (1234) y la contraseña de acceso de la pegatina."
+          }
+        },
+        {
+          "extract": {
+            "from": "loginResp",
+            "regex": "<SessionID>([^<]*)</SessionID>",
+            "save": "sid",
+            "required": false,
+            "default": "NotUsed"
+          }
+        },
+        {
+          "extract": {
+            "from": "loginResp",
+            "regex": "<LoginTime>\\d{4}(\\d{2})\\d{2}",
+            "save": "ltMonth",
+            "required": false,
+            "default": "01"
+          }
+        },
+        {
+          "extract": {
+            "from": "loginResp",
+            "regex": "<LoginTime>\\d{6}(\\d{2})",
+            "save": "ltDay",
+            "required": false,
+            "default": "01"
+          }
+        },
+        {
+          "extract": {
+            "from": "loginResp",
+            "regex": "<LoginTime>\\d{8}(\\d{2})",
+            "save": "ltHour",
+            "required": false,
+            "default": "00"
+          }
+        },
+        {
+          "extract": {
+            "from": "loginResp",
+            "regex": "<LoginTime>\\d{10}(\\d{2})",
+            "save": "ltMin",
+            "required": false,
+            "default": "00"
+          }
+        },
+        {
+          "set": {
+            "save": "loginDate",
+            "value": "${ltMonth}/${ltDay}"
+          }
+        },
+        {
+          "set": {
+            "save": "loginTime",
+            "value": "${ltHour}:${ltMin}"
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "path": "/avanzada.asp",
+            "headers": {
+              "Referer": "${base}/me_configuracion_avanzada.asp"
+            },
+            "save": "home"
+          }
+        }
+      ]
+    },
+    "listDevices": {
+      "steps": [
+        {
+          "request": {
+            "method": "POST",
+            "path": "/cgi-bin/cbCheckSession.xml?path=/hoststats.asp",
+            "headers": {
+              "Referer": "${base}/avanzada.asp"
+            },
+            "save": "sess"
+          }
+        },
+        {
+          "extract": {
+            "from": "sess",
+            "regex": "<cbCheckSession>[\\s\\S]*?<Result>(\\d+)</Result>",
+            "save": "sessResult",
+            "required": false,
+            "default": "?"
+          }
+        },
+        {
+          "request": {
+            "method": "POST",
+            "path": "/cgi-bin/cbGetLanHostList.xml",
+            "headers": {
+              "Referer": "${base}/hoststats.asp"
+            },
+            "save": "hosts"
+          }
+        },
+        {
+          "require": {
+            "from": "hosts",
+            "regex": "<Result>0</Result>",
+            "error": "El router no ha devuelto la lista de dispositivos (comprobación de sesión: ${sessResult}). Cierra el panel del router si lo tienes abierto en otro sitio."
+          }
+        }
+      ],
+      "devices": {
+        "from": "hosts",
+        "each": "<rtm_cfg_host>(.*?)</rtm_cfg_host>",
+        "fields": {
+          "mac": {
+            "regex": "<mac_addr>([^<]*)</mac_addr>",
+            "transform": [
+              "trim",
+              "lower"
+            ]
+          },
+          "hostName": {
+            "regex": "<hostname>([^<]*)</hostname>",
+            "transform": [
+              "xmlUnescape"
+            ]
+          },
+          "ip": {
+            "regex": "<ipv4_addr>([^<]*)</ipv4_addr>"
+          },
+          "active": {
+            "regex": "<is_active>([^<]*)</is_active>",
+            "trueIf": "1"
+          },
+          "extra.intfType": {
+            "regex": "<intf_type>([^<]*)</intf_type>"
+          }
+        }
+      }
+    },
+    "logout": {
+      "steps": [
+        {
+          "request": {
+            "method": "POST",
+            "path": "/cgi-bin/cbCheckLogout.xml"
+          }
+        }
+      ]
+    }
+  }
+}

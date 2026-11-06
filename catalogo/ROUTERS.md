@@ -11,7 +11,7 @@ Generado automáticamente a partir de `catalogo/routers/`. ¿Falta el tuyo o alg
 | Digi | ZTE ZXHN H3600P | ✅ Sí, desde el panel | Internet (menú de arriba) → Controles Parentales (menú de la izquierda) | — | Según Internet |
 | Digi | Zyxel EX3301 | ✅ Sí, desde el panel | Icono de menú → Seguridad → Filtro MAC (bloquear el tráfico de una MAC) → o Seguridad → Control Parental (días y horas, y webs concretas) | — | Ayuda oficial |
 | Digi | Zyxel EX3501 | ✅ Sí, desde el panel | Icono de la parte superior derecha del panel → Seguridad → Control parental → activa «Control parental» | — | Ayuda oficial |
-| Movistar | Askey RTF8316VW (Router Movistar WiFi 7) | ⛔ Solo desde la app de la compañía | — | — | Comprobado con la app |
+| Movistar | Askey RTF8316VW (Router Movistar WiFi 7) | ⛔ Solo desde la app de la compañía | — | ✅ | Comprobado con la app |
 | Movistar | MitraStar GPT-6841JL4L4 (Router Movistar WiFi 7) | ⛔ Solo desde la app de la compañía | — | — | Deducido |
 | Movistar, O2 | Askey RTF3505VW (Router Smart WiFi (HGU)) | ❔ Sin datos | — | — | Deducido |
 | Movistar, O2 | Askey RTF8225VW (Smart WiFi 6 Go) | ❔ Sin datos | — | — | Deducido |

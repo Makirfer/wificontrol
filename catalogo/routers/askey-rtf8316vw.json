@@ -32,9 +32,10 @@
     "Wireless LAN → AP Setting y Associated Clients: no tienen filtro ni bloqueo."
   ],
   "reports": 1,
-  "updated": "2026-11-05",
+  "updated": "2026-11-06",
   "confidence": "confirmed",
   "sources": [
     "https://www.telefonica.com/es/sala-comunicacion/prensa/movistar-incorpora-el-control-parental-de-la-red-wifi-en-su-app-movil-smart-wifi/"
-  ]
+  ],
+  "recipe": "askey-rtf8316vw"
 }

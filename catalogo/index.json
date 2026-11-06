@@ -2,6 +2,25 @@
   "format": "wificasa-catalog/1",
   "recipes": [
     {
+      "id": "askey-rtf8316vw",
+      "version": "0.5.1",
+      "vendor": "Askey",
+      "model": "RTF8316VW",
+      "commercialName": "Router Movistar WiFi 7",
+      "isps": [
+        "Movistar"
+      ],
+      "detect": [
+        "<title>movistar</title>[\\s\\S]*te_wifi\\.asp[\\s\\S]*te_footer\\.asp"
+      ],
+      "capabilities": [
+        "LIST_DEVICES"
+      ],
+      "status": "tested-device",
+      "sha256": "ff0976f8b78ab87daba9817fdf732684277531f46f1f87137ae953fb590d2571",
+      "path": "recetas/askey-rtf8316vw.json"
+    },
+    {
       "id": "zte-zxhn-f6640p",
       "version": "1.0.1",
       "vendor": "ZTE",
@@ -240,11 +259,12 @@
         "Wireless LAN → AP Setting y Associated Clients: no tienen filtro ni bloqueo."
       ],
       "reports": 1,
-      "updated": "2026-11-05",
+      "updated": "2026-11-06",
       "confidence": "confirmed",
       "sources": [
         "https://www.telefonica.com/es/sala-comunicacion/prensa/movistar-incorpora-el-control-parental-de-la-red-wifi-en-su-app-movil-smart-wifi/"
-      ]
+      ],
+      "recipe": "askey-rtf8316vw"
     },
     {
       "format": "wificasa-router/1",
