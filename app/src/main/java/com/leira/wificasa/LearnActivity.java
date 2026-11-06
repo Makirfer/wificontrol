@@ -83,6 +83,9 @@ public class LearnActivity extends Activity {
         support = nz(getIntent().getStringExtra(EXTRA_SUPPORT));
         buildUi();
         showStep();
+        // Muchos routers están en la misma dirección (192.168.1.1): se borran las cookies que dejó
+        // otro router o una grabación anterior, para que la grabación muestre solo las de este.
+        android.webkit.CookieManager.getInstance().removeAllCookies(null);
         web.loadUrl(host + "/");
     }
 

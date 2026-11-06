@@ -10,8 +10,8 @@ android {
         applicationId 'com.leira.wificasa'
         minSdk 26
         targetSdk 35
-        versionCode 22
-        versionName '2.9.6'
+        versionCode 23
+        versionName '2.9.7'
     }
 
     buildTypes {
