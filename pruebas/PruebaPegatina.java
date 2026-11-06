@@ -24,6 +24,18 @@ public class PruebaPegatina {
         p = Pegatina.parse("TP-Link\nArcher C6\nDefault Access: http://tplinkwifi.net\nWireless Password/PIN: 12345678");
         ok(p.vendor.equals("TP-Link") && p.password.isEmpty() && p.host.equals("tplinkwifi.net"), "la clave del WiFi no se toma por la del router");
 
+        // Pegatina real del Askey RTF8316VW (06/11), con contraseña inventada; el lector la devolvió así.
+        p = Pegatina.parse("Productor: TD SYNNEX SPAIN, S.L.U.\nCIF: B58728585 Nº RII-AEE: 744\nFabricante: Askey Computer Corp.\n"
+                + "movistar\nASKEY\nMod.\nRouter Smart WiFi 7 Askey RTF8316VW\n00413012\nN.R.C\n0128\nID: 8833745AFBA0\n"
+                + "Datos de acceso al equipo\nCONFIGURA tu Router en\nhttp://192.168.1.1 con la contraseña:\nQa7Zr2Lm");
+        ok(p.model.equals("RTF8316VW"), "Askey: el modelo, no el CIF (" + p.model + ")");
+        ok(p.password.equals("Qa7Zr2Lm") && p.host.equals("192.168.1.1"), "«con la contraseña:» y la clave en otra línea (" + p.password + ")");
+        p = Pegatina.parse("CIF: B58728585\nMod.: Router Smart WiFi 7 Askey RTF8316VW\nhttp://192.168.1.1 con la contraseña: Qa7Zr2Lm");
+        ok(p.model.equals("RTF8316VW") && p.password.equals("Qa7Zr2Lm"), "lo mismo en una sola línea (" + p.model + "/" + p.password + ")");
+
+        p = Pegatina.parse("CIF: B58728585\nNº RII-AEE: 744\nRouter Smart WiFi 7 Askey RTF8316VW\nMod.\n00413012\nRed: MOVISTAR-WIFI7-FBA0");
+        ok(p.model.equals("RTF8316VW"), "con los recuadros desordenados, el código del modelo igualmente (" + p.model + ")");
+
         ok(Pegatina.parse("").isEmpty() && Pegatina.parse(null).isEmpty(), "sin texto, sin datos");
         System.out.println(f == 0 ? "TODO CORRECTO" : f + " FALLOS");
         System.exit(f == 0 ? 0 : 1);

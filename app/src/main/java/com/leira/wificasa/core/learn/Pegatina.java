@@ -30,12 +30,13 @@ public final class Pegatina {
     };
 
     // Etiquetas habituales (castellano, catalán e inglés): el valor va detrás de ":" o en la línea siguiente.
-    private static final Pattern LBL_MODEL = Pattern.compile("(?i)^(model[oe]?|mod\\.|product)\\b.*");
+    private static final Pattern LBL_MODEL = Pattern.compile("(?i)^(?:(?:model[oe]?|product)\\b|mod\\.).*");
     private static final Pattern LBL_USER = Pattern.compile("(?i).*\\b(usuario|usuari|user(?:name)?|login)\\b.*");
     private static final Pattern LBL_PASS = Pattern.compile("(?i).*\\b(contrase(?:ñ|n)a|contrasenya|clave|password|pass|pwd)\\b.*");
     /** La clave del WiFi no sirve para entrar al router: estas etiquetas se descartan. */
     private static final Pattern WIFI = Pattern.compile("(?i)wi-?fi|wpa|wlan|ssid|wireless|\\bred\\b|network\\s*key|psk|pin");
-    private static final Pattern NOT_MODEL = Pattern.compile("(?i)wi-?fi|wpa|ssid|s/n|serial|mac|imei|gpon|pon\\b|pin|key|clave|contrase");
+    private static final Pattern NOT_MODEL = Pattern.compile(
+            "(?i)wpa|ssid|s/n|serial|mac|imei|gpon|pon\\b|pin|key|clave|contrase|\\bcif\\b|\\bnif\\b|rii|\\bid\\b|n\\.?r\\.?c|sace|f\\.?fab|\\bce\\b");
     private static final Pattern IP = Pattern.compile("\\b(?:https?://)?((?:192\\.168|10\\.\\d{1,3}|172\\.(?:1[6-9]|2\\d|3[01]))\\.\\d{1,3}\\.\\d{1,3})\\b");
     private static final Pattern HOSTNAME = Pattern.compile("(?i)\\bhttps?://([a-z][a-z0-9.\\-]{2,40})\\b");
     private static final Pattern MODEL_CODE = Pattern.compile("\\b([A-Z]{1,6}[- ]?[0-9]{3,5}[A-Z0-9\\-]{0,8})\\b");
@@ -60,18 +61,38 @@ public final class Pegatina {
 
         for (int k = 0; k < lines.size(); k++) {
             String l = lines.get(k);
-            int c = l.indexOf(':');
+            int c = colon(l);
             String label = (c > 0 ? l.substring(0, c) : l).trim();
             String val = c > 0 ? l.substring(c + 1).trim() : "";
-            if (label.length() > 45) continue; // no es una etiqueta
+            if (label.length() > 60) continue; // no es una etiqueta
             boolean isModel = LBL_MODEL.matcher(label).matches();
             boolean isPass = !isModel && LBL_PASS.matcher(label).matches();
             boolean isUser = !isModel && !isPass && LBL_USER.matcher(label).matches();
             if (!isModel && !isPass && !isUser) continue;
             if (c < 0 && label.length() > 25) continue; // frase, no etiqueta
             if (val.isEmpty() && k + 1 < lines.size() && !isLabel(lines.get(k + 1))) val = lines.get(k + 1).trim();
+            if (val.isEmpty() && isPass && !WIFI.matcher(label).find()) {
+                // «… con la contraseña:» y la clave en otro recuadro: la primera palabra con letras y números.
+                for (int j = k + 1; j < Math.min(lines.size(), k + 4) && val.isEmpty(); j++) {
+                    for (String tok : lines.get(j).split("\\s+")) {
+                        if (tok.matches("[A-Za-z0-9!#$%&*+.=?@_\\-]{6,24}") && tok.matches(".*[A-Za-z].*") && tok.matches(".*\\d.*")
+                                && !tok.toLowerCase(Locale.ROOT).startsWith("http")) { val = tok; break; }
+                    }
+                }
+            }
             if (val.isEmpty() || val.toLowerCase(Locale.ROOT).startsWith("http")) continue;
-            if (isModel) { if (p.model.isEmpty()) p.model = val.length() > 40 ? val.substring(0, 40) : val; continue; }
+            if (isModel) {
+                if (p.model.isEmpty()) {
+                    // «Mod.: Router Smart WiFi 7 Askey RTF8316VW» → el código del modelo, si lo hay.
+                    Matcher mc = MODEL_CODE.matcher(val);
+                    String code = null;
+                    while (mc.find()) if (goodCode(mc.group(1))) { code = mc.group(1); break; }
+                    if (code != null) p.model = code.replace(' ', '-');
+                    else if (val.replaceAll("[^A-Za-z]", "").length() >= 2) p.model = val.length() > 40 ? val.substring(0, 40) : val;
+                    // si no (p. ej. «00413012», otro recuadro), se busca el código más abajo
+                }
+                continue;
+            }
             if (WIFI.matcher(label).find()) continue; // «Clave WiFi», «WPA key»…: no es la del router
             if (isPass && p.password.isEmpty()) p.password = firstToken(val);
             if (isUser && p.user.isEmpty()) p.user = firstToken(val);
@@ -89,6 +110,7 @@ public final class Pegatina {
                 if (NOT_MODEL.matcher(l).find()) continue;
                 Matcher mc = MODEL_CODE.matcher(l);
                 while (mc.find()) {
+                    if (!goodCode(mc.group(1))) continue;
                     p.model = mc.group(1).replace(' ', '-');
                     break outer;
                 }
@@ -97,11 +119,25 @@ public final class Pegatina {
         return p;
     }
 
+    /** Posición del «:» que separa etiqueta y valor (no el de «http://»). */
+    private static int colon(String l) {
+        for (int i = l.indexOf(':'); i >= 0; i = l.indexOf(':', i + 1)) {
+            if (!l.startsWith("//", i + 1)) return i;
+        }
+        return -1;
+    }
+
+    /** Un código de modelo tiene al menos dos letras (RTF8316VW, F6640P); descarta CIF y números de serie. */
+    private static boolean goodCode(String c) {
+        return c.replaceAll("[^A-Za-z]", "").length() >= 2;
+    }
+
     private static boolean isLabel(String l) {
-        int c = l.indexOf(':');
+        int c = colon(l);
         String label = (c > 0 ? l.substring(0, c) : l).trim();
+        if (c < 0 && label.length() > 25) return false; // una frase («Router Smart WiFi 7 Askey…»), no una etiqueta
         return LBL_MODEL.matcher(label).matches() || LBL_PASS.matcher(label).matches() || LBL_USER.matcher(label).matches()
-                || WIFI.matcher(label).find();
+                || (c > 0 && WIFI.matcher(label).find());
     }
 
     private static String firstToken(String v) {
