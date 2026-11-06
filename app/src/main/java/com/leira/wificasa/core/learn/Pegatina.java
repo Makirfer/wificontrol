@@ -34,9 +34,9 @@ public final class Pegatina {
     private static final Pattern LBL_USER = Pattern.compile("(?i).*\\b(usuario|usuari|user(?:name)?|login)\\b.*");
     private static final Pattern LBL_PASS = Pattern.compile("(?i).*\\b(contrase(?:ñ|n)a|contrasenya|clave|password|pass|pwd)\\b.*");
     /** La clave del WiFi no sirve para entrar al router: estas etiquetas se descartan. */
-    private static final Pattern WIFI = Pattern.compile("(?i)wi-?fi|wpa|wlan|ssid|wireless|\\bred\\b|network\\s*key|psk|pin");
+    private static final Pattern WIFI = Pattern.compile("(?i)wi-?fi|wpa|wlan|ssid|wireless|\\bred\\b|network\\s*key|psk|\\bpin\\b");
     private static final Pattern NOT_MODEL = Pattern.compile(
-            "(?i)wpa|ssid|s/n|serial|mac|imei|gpon|pon\\b|pin|key|clave|contrase|\\bcif\\b|\\bnif\\b|rii|\\bid\\b|n\\.?r\\.?c|sace|f\\.?fab|\\bce\\b");
+            "(?i)wpa|ssid|s/n|serial|\\bmac\\b|imei|gpon|\\bpon\\b|\\bpin\\b|\\bkey\\b|clave|contrase|\\bcif\\b|\\bnif\\b|rii|\\bid\\b|n\\.?r\\.?c|sace|f\\.?fab|\\bce\\b");
     private static final Pattern IP = Pattern.compile("\\b(?:https?://)?((?:192\\.168|10\\.\\d{1,3}|172\\.(?:1[6-9]|2\\d|3[01]))\\.\\d{1,3}\\.\\d{1,3})\\b");
     private static final Pattern HOSTNAME = Pattern.compile("(?i)\\bhttps?://([a-z][a-z0-9.\\-]{2,40})\\b");
     private static final Pattern MODEL_CODE = Pattern.compile("\\b([A-Z]{1,6}[- ]?[0-9]{3,5}[A-Z0-9\\-]{0,8})\\b");
