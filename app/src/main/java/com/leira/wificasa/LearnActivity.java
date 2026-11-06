@@ -120,11 +120,15 @@ public class LearnActivity extends Activity {
         counter.setTextSize(12);
         counter.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         row.addView(counter);
+        // «No lo encuentro» va en su propia fila: con Cancelar y Hecho no cabía en muchos móviles.
         notFoundBtn = new Button(this);
         notFoundBtn.setAllCaps(false);
         notFoundBtn.setText(t(R.string.not_found));
         notFoundBtn.setOnClickListener(v -> notFound());
-        row.addView(notFoundBtn);
+        LinearLayout.LayoutParams nfLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        nfLp.topMargin = dp(6);
+        notFoundBtn.setLayoutParams(nfLp);
         Button cancel = new Button(this);
         cancel.setAllCaps(false);
         cancel.setText(t(R.string.cancel));
@@ -137,6 +141,7 @@ public class LearnActivity extends Activity {
         nextBtn.setOnClickListener(v -> nextStep());
         row.addView(nextBtn);
         bar.addView(row);
+        bar.addView(notFoundBtn);
         root.addView(bar);
 
         web = new WebView(this);

@@ -10,7 +10,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs
 
 USER, PASS = "1234", "prueba-askey"
-logged = {"ok": False}
+logged = {"ok": False, "basic": False}
 xor = lambda s: "".join(chr(ord(c) ^ 0x1F) for c in s)
 HOSTS = [("Mac", "02:00:00:00:00:35", "192.168.1.35", "3", "1"),
          ("iPhone", "02:00:00:00:00:33", "192.168.1.33", "3", "1"),
@@ -39,10 +39,17 @@ class H(BaseHTTPRequestHandler):
         n = int(self.headers.get("Content-Length", "0") or 0)
         f = {k: v[0] for k, v in parse_qs(self.rfile.read(n).decode(), keep_blank_values=True).items()}
         p = self.path.split("?")[0]
+        if p == "/cgi-bin/te_acceso_router.cgi":
+            # Panel básico de Movistar (grabación real del 06/11): sin esto, la sesión avanzada no vale.
+            logged["basic"] = f.get("loginUsername") == xor(USER) and f.get("loginPassword") == xor(PASS)
+            self.send_response(302)
+            self.send_header("Location", f.get("curWebPage", "/te_wifi.asp") if logged["basic"] else "/")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
         if p == "/cgi-bin/cbCheckLogin.xml":
             ok = f.get("rqUsername") == xor(USER) and f.get("rqPasswd") == xor(PASS)
             logged["ok"] = ok
-            self.extra = [("Set-Cookie", "rtk=7f3a9c; Path=/; HttpOnly")] if ok else []
             return self.send("<cbCheckLogin><Result>%d</Result><SessionID>NotUsed</SessionID>"
                              "<LoginTime>20261106095900</LoginTime><LoginRole>admin</LoginRole><BruteTime>0</BruteTime>"
                              "</cbCheckLogin>" % (0 if ok else 1))
@@ -50,10 +57,10 @@ class H(BaseHTTPRequestHandler):
             logged["ok"] = False
             return self.send("<cbCheckLogout><Result>0</Result></cbCheckLogout>")
         if p == "/cgi-bin/cbCheckSession.xml":
-            # Hipótesis tras los fallos reales de 0.2.0-0.3.1 (también exige una cookie HttpOnly del router): la sesión se valida con las cookies
+            # La sesión se valida con las cookies que crea el JavaScript y exige el acceso al panel básico.: la sesión se valida con las cookies
             # que el JavaScript crea a partir de la respuesta del login (fecha y hora de entrada).
             ck = self.headers.get("Cookie", "")
-            ok = logged["ok"] and "LoginTime=09%3A59" in ck and "LoginDate=11%2F06" in ck and "SessionID=NotUsed" in ck and "rtk=7f3a9c" in ck
+            ok = logged["ok"] and logged["basic"] and "LoginTime=09%3A59" in ck and "LoginDate=11%2F06" in ck and "SessionID=NotUsed" in ck
             return self.send("<cbCheckSession><Result>%d</Result><LoginRole>admin</LoginRole></cbCheckSession>"
                              % (0 if ok else 1))
         if p == "/cgi-bin/cbGetLanHostList.xml":
@@ -66,7 +73,7 @@ class H(BaseHTTPRequestHandler):
                 self.send_header("Content-Length", "0")
                 self.end_headers()
                 return
-            if not logged["ok"] or "rtk=7f3a9c" not in ck:
+            if not logged["ok"] or not logged["basic"]:
                 return self.send("<cbGetLanHostList><Result>1</Result></cbGetLanHostList>")
             items = "".join("<rtm_cfg_host><hostname>%s</hostname><mac_addr>%s</mac_addr><ipv4_addr>%s</ipv4_addr>"
                             "<intf_type>%s</intf_type><is_active>%s</is_active></rtm_cfg_host>" % h for h in HOSTS)
@@ -76,7 +83,7 @@ class H(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        if self.path.split("?")[0] in ("/avanzada.asp", "/me_configuracion_avanzada.asp"):
+        if self.path.split("?")[0] in ("/", "/te_wifi.asp", "/avanzada.asp", "/me_configuracion_avanzada.asp"):
             b = b"<html><head><title>RTF8316VW</title></head><body>avanzada</body></html>"
             self.send_response(200)
             self.send_header("Content-Type", "text/html")
