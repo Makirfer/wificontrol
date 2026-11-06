@@ -12,7 +12,7 @@ actualizaciones después de publicar.
 | Licencia | **GPL-3.0**. El nombre y el logo no se pueden usar en copias. |
 | Repositorio | Público en GitHub (`Makirfer/wificontrol`); es lo que permite el catálogo compartido. |
 | Precio | App **gratis** en Google Play con **compra dentro de la app** (pago único 1,99–2,99 €). Gratis: ver todos los aparatos y cortar uno a uno. De pago: pausa del grupo, horarios, varias ubicaciones. |
-| Remoto | Más adelante, como **suscripción** (1–2 €/mes): puente en un servidor + «agente» en casa (Android viejo, Android TV o una cajita propia), con órdenes cifradas de punta a punta. |
+| Remoto | Más adelante, como **suscripción** (1,99 €/mes; ver «Precios»): puente en un servidor + «agente» en casa (Android viejo, Android TV o una cajita propia), con órdenes cifradas de punta a punta. |
 | Idiomas | Castellano, catalán e inglés; preparada para añadir más con un archivo por idioma (`docs/TRADUCIR.md`). |
 | Web y privacidad | GitHub Pages en `docs/` (es/ca/en). Correo de contacto: uno propio de la app (pendiente de crear). |
 | Material de la tienda | Textos, capturas y vídeo con el **modo demostración** (`docs/TIENDA.md`). |
@@ -65,8 +65,55 @@ Por fases:
 Otras pendientes: horarios guardados en el propio router (empezando por el ZTE F6640P), guía de Tailscale para
 acceso remoto sin desarrollo, icono 512 px y gráfico destacado 1024×500 para la tienda.
 
+## Precios (propuesta del 6 de noviembre de 2026)
+
+| Nivel | Precio | Qué incluye |
+|---|---|---|
+| Gratis | 0 € | Ver todos los aparatos, cortar uno a uno, avisos en casa |
+| Pago único | 1,99–2,99 € | Pausa del grupo, horarios, varias ubicaciones |
+| Suscripción «Remoto» | **1,99 €/mes** o **14,99–17,99 €/año** | Todo lo del pago único + pausar desde fuera, avisos fuera de casa, control compartido entre los padres |
+
+- La suscripción incluye lo del pago único (nadie paga dos veces). No bajar de 1,49 €/mes.
+- Neto por suscriptor tras la comisión de Google (15 %): ~1,69 €/mes. Coste de Firebase por casa: ~0 €
+  (Cloud Functions gratis hasta 2 M de invocaciones/mes ≈ 2.000 casas; después 0,40 $ por millón).
+- Vigilar las cuotas diarias de Firestore (20.000 escrituras, 50.000 lecturas): guardar solo la orden cifrada
+  y borrarla al ejecutarse. Alerta de presupuesto de 1 € en el plan Blaze.
+
+## Cobertura en España (objetivo: las principales compañías)
+
+El catálogo ya tiene **32 fichas** de los routers de Movistar/O2, Vodafone/Lowi, Orange/Jazztel,
+grupo MásMóvil (Yoigo, Pepephone), Digi, Parlem y Mundo R. Con **recetas probadas: 2** (ZTE F6640P y
+Askey RTF8316VW). Una ficha dice qué permite el router; la receta es lo que lo hace funcionar.
+
+Prioridad para conseguir recetas (con conocidos de cada compañía y el modo aprendizaje):
+1. **Movistar / O2:** Mitrastar GPT-2541GNAC y Askey RTF3505VW (HGU), Smart WiFi 6 (Mitrastar GPT-2841GX4X5, Askey RTF8225VW).
+2. **Orange / Jazztel / MásMóvil / Yoigo / Pepephone:** Livebox 6s Arcadyan, Livebox Fibra (Arltfibra6), ZTE H367A, Sagemcom Fast 5670, Livebox 6+ y 7.
+3. **Vodafone / Lowi:** Vodafone Station (Technicolor CGA6444VFES, Sercomm RHG3006). El H500-s no permite cortar: solo vigilar.
+4. **Digi:** ZTE H3600P, ZTE F6705, TP-Link XGB430V.
+
+Unos **15 modelos** cubren la gran mayoría de casas con fibra en España. Los Movistar WiFi 7 solo se
+gestionan bien desde la app del operador: ahí la app vigila y avisa.
+
 ## Frente a Fing (referencia)
 
-Fing es un escáner de red (50 M de descargas). Bloquear, pausar y horarios son de pago (~9 $/mes u 80 $/año) y
-necesitan un aparato encendido 24 h en casa. **Nuestro posicionamiento:** «control parental del WiFi de casa:
+| | Fing | WiFi Time Control |
+|---|---|---|
+| Qué es | Escáner de red | Control parental del WiFi de casa |
+| Gratis | Ver aparatos, velocidad, puertos | Ver aparatos y cortar uno a uno |
+| Pago único | No hay | 1,99–2,99 €: grupo, horarios, varias casas |
+| Suscripción | ~9 $/mes u 80 $/año | 1,99 €/mes: remoto, avisos fuera, control compartido |
+| Cómo corta | Aparato suyo (Fingbox o agente) en medio de la red | Se lo ordena al propio router |
+| Aparato extra | Imprescindible para bloquear | No para lo básico; para lo remoto, un móvil viejo o Android TV |
+| Privacidad | Cuenta y datos en sus servidores | Sin cuenta; remoto cifrado de punta a punta |
+| Plataformas | Android, iOS, escritorio | Solo Android |
+| Compatibilidad | Cualquier red | Solo routers con receta (punto débil) |
+| Reconocer aparatos | Excelente | Básico (mejora en la próxima versión) |
+
+Mensaje para web y redes (sin nombrar a Fing; en Google Play no se puede citar a la competencia):
+«Lo que otros cobran a 9 $ al mes, aquí es gratis o por un pago único. Y desde fuera, 1,99 €.»
+Riesgo a cubrir: si el operador actualiza el firmware y una receta deja de ir, avisar claro
+(«tu router ha cambiado, vuelve a aprender la receta»).
+
+
+**Nuestro posicionamiento:** «control parental del WiFi de casa:
 pausa, horarios y avisos, sin suscripción y sin aparatos extra». No competir como escáner de red.
