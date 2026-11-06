@@ -170,6 +170,18 @@
             "type": "string",
             "description": "Texto con variables ${nombre|filtro}. Ver docs/RECETAS.md."
           }
+        },
+        "cookies": {
+          "type": "object",
+          "description": "Motor v4: cookies que el panel crea con JavaScript; el valor admite ${variables} (nunca la contraseña).",
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 200,
+            "pattern": "^[^;\\r\\n]*$"
+          },
+          "propertyNames": {
+            "pattern": "^[A-Za-z0-9_-]{1,40}$"
+          }
         }
       },
       "required": []

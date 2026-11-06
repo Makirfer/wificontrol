@@ -39,14 +39,19 @@ class H(BaseHTTPRequestHandler):
         if p == "/cgi-bin/cbCheckLogin.xml":
             ok = f.get("rqUsername") == xor(USER) and f.get("rqPasswd") == xor(PASS)
             logged["ok"] = ok
-            return self.send("<cbCheckLogin><Result>%d</Result><SessionID>NotUsed</SessionID><BruteTime>0</BruteTime>"
+            return self.send("<cbCheckLogin><Result>%d</Result><SessionID>NotUsed</SessionID>"
+                             "<LoginTime>20261106095900</LoginTime><LoginRole>admin</LoginRole><BruteTime>0</BruteTime>"
                              "</cbCheckLogin>" % (0 if ok else 1))
         if p == "/cgi-bin/cbCheckLogout.xml":
             logged["ok"] = False
             return self.send("<cbCheckLogout><Result>0</Result></cbCheckLogout>")
         if p == "/cgi-bin/cbCheckSession.xml":
+            # Hipótesis tras el fallo real de la receta 0.2.0: la sesión se valida con las cookies
+            # que el JavaScript crea a partir de la respuesta del login (fecha y hora de entrada).
+            ck = self.headers.get("Cookie", "")
+            ok = logged["ok"] and "LoginTime=09%3A59" in ck and "LoginDate=11-06" in ck and "SessionID=NotUsed" in ck
             return self.send("<cbCheckSession><Result>%d</Result><LoginRole>admin</LoginRole></cbCheckSession>"
-                             % (0 if logged["ok"] else 1))
+                             % (0 if ok else 1))
         if p == "/cgi-bin/cbGetLanHostList.xml":
             # Hipótesis tras el fallo real de la receta 0.1.0 (HTTP 302): el panel exige las cookies
             # que crea su JavaScript al entrar; sin ellas, redirige a la página de acceso.
@@ -62,6 +67,19 @@ class H(BaseHTTPRequestHandler):
             items = "".join("<rtm_cfg_host><hostname>%s</hostname><mac_addr>%s</mac_addr><ipv4_addr>%s</ipv4_addr>"
                             "<intf_type>%s</intf_type><is_active>%s</is_active></rtm_cfg_host>" % h for h in HOSTS)
             return self.send("<cbGetLanHostList><Result>0</Result>" + items + "</cbGetLanHostList>")
+        self.send_response(404)
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
+    def do_GET(self):
+        if self.path.split("?")[0] == "/avanzada.asp":
+            b = b"<html><head><title>RTF8316VW</title></head><body>avanzada</body></html>"
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html")
+            self.send_header("Content-Length", str(len(b)))
+            self.end_headers()
+            self.wfile.write(b)
+            return
         self.send_response(404)
         self.send_header("Content-Length", "0")
         self.end_headers()

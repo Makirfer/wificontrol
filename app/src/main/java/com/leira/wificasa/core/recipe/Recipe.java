@@ -32,7 +32,7 @@ public final class Recipe {
 
     public static final String FORMAT = "wificasa-recipe/1";
     /** Versión del motor de recetas de esta app. Una receta con "minEngine" mayor se rechaza. */
-    public static final int ENGINE_VERSION = 3;
+    public static final int ENGINE_VERSION = 4;
 
     static final int MAX_STEPS = 60;
     static final int MAX_REGEX = 500;
@@ -169,11 +169,23 @@ public final class Recipe {
             }
             if (root.containsKey("http")) {
                 Map<String, Object> h = objReq(root, "http");
-                allowed(h, "http", set("sessionCookie", "fixedCookies", "headers"), set());
+                allowed(h, "http", set("sessionCookie", "fixedCookies", "cookies", "headers"), set());
                 if (h.containsKey("sessionCookie")) matches(h.get("sessionCookie"), "[A-Za-z0-9_\\-]{1,40}", "http.sessionCookie");
                 if (h.containsKey("fixedCookies")) matches(h.get("fixedCookies"), "[A-Za-z0-9_\\-=;. %]{0,300}", "http.fixedCookies");
                 where = "http.headers";
                 if (h.containsKey("headers")) headers(objReq(h, "headers"), "http.headers");
+                // Motor v4: cookies que el panel crea con JavaScript a partir de variables de la sesión.
+                if (h.containsKey("cookies")) {
+                    where = "http.cookies";
+                    for (Map.Entry<String, Object> e : objReq(h, "cookies").entrySet()) {
+                        matches(e.getKey(), "[A-Za-z0-9_\\-]{1,40}", "nombre de cookie");
+                        if (!(e.getValue() instanceof String) || ((String) e.getValue()).length() > 200
+                                || ((String) e.getValue()).matches("(?s).*[;\\r\\n].*")) {
+                            throw new RecipeException("http.cookies." + e.getKey() + ": valor no válido.");
+                        }
+                        template((String) e.getValue(), false);
+                    }
+                }
             }
             if (root.containsKey("keys")) {
                 for (Map.Entry<String, Object> e : objReq(root, "keys").entrySet()) {

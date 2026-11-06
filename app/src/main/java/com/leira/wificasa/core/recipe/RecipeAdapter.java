@@ -417,6 +417,16 @@ public final class RecipeAdapter implements RouterAdapter {
                 if (cookieName != null && cookieValue != null) {
                     cookie = cookieName + "=" + cookieValue + (fixed.isEmpty() ? "" : "; " + fixed);
                 }
+                // Cookies con variables (motor v4): las que aún no tienen valor (antes del login) no se envían.
+                for (Map.Entry<String, Object> e : Recipe.obj(recipe.http(), "cookies").entrySet()) {
+                    String v;
+                    try {
+                        v = fill((String) e.getValue());
+                    } catch (RouterException notYet) {
+                        continue;
+                    }
+                    cookie = (cookie.isEmpty() ? "" : cookie + "; ") + e.getKey() + "=" + v.replaceAll("[;\\r\\n]", "");
+                }
                 if (!cookie.isEmpty()) c.setRequestProperty("Cookie", cookie);
                 if (body == null && "POST".equals(method)) {
                     // POST sin formulario (como $.post sin datos): cuerpo vacío con Content-Length: 0
