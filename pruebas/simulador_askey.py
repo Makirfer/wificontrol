@@ -76,7 +76,7 @@ class H(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        if self.path.split("?")[0] == "/avanzada.asp":
+        if self.path.split("?")[0] in ("/avanzada.asp", "/me_configuracion_avanzada.asp"):
             b = b"<html><head><title>RTF8316VW</title></head><body>avanzada</body></html>"
             self.send_response(200)
             self.send_header("Content-Type", "text/html")
