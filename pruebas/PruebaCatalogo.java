@@ -1,6 +1,6 @@
-import com.leira.wificasa.core.*;
-import com.leira.wificasa.core.catalog.Catalog;
-import com.leira.wificasa.core.recipe.*;
+import com.makirfer.wifitimecontrol.core.*;
+import com.makirfer.wifitimecontrol.core.catalog.Catalog;
+import com.makirfer.wifitimecontrol.core.recipe.*;
 import com.sun.net.httpserver.HttpServer;
 import java.net.InetSocketAddress;
 import java.nio.file.*;

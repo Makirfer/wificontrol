@@ -24,7 +24,7 @@
     "where": [],
     "how": "El panel web no permite bloquear un aparato concreto. El Filtrado MAC de la página de WiFi remite a la app de Movistar (Smart WiFi), que funciona a través de los servidores de Movistar.",
     "scope": "unknown",
-    "notes": "WiFi Casa puede listar los aparatos de este router, pero no cortarles Internet."
+    "notes": "WiFi Time Control puede listar los aparatos de este router, pero no cortarles Internet."
   },
   "avoid": [
     "Configuración avanzada → Network Setting → Bridging → Filtering (L2 Ingress Filtering): no bloquea aparatos; reparte puertos y redes WiFi entre Internet, Voz e IPTV. Cambiarlo puede dejar sin servicio a toda la casa.",

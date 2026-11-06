@@ -1,4 +1,4 @@
-# WiFi Casa
+# WiFi Time Control
 
 App Android para **pausar y reanudar Internet a dispositivos concretos** de casa desde el móvil,
 sin cortar el WiFi a todos, hablando directamente con el router.

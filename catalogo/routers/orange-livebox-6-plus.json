@@ -26,7 +26,7 @@
       "Pulsa el aparato → «Restricción de acceso a Internet»",
       "Elige «Bloquear Internet de forma permanente» (o «Programar acceso» por franjas) y pulsa «guardar»"
     ],
-    "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Casa: «Bloquear de forma permanente» y «Permitir de forma permanente».",
+    "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Time Control: «Bloquear de forma permanente» y «Permitir de forma permanente».",
     "notes": "Según la ayuda de Mundo R para el Livebox 6+ (WiFi 6, puerto WAN 2,5 GbE). El fabricante no se indica. Sale también en «mi red local» un aparato conectado por cable, así que probablemente sirva para WiFi y cable."
   },
   "avoid": [

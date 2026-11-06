@@ -3,7 +3,7 @@ const fs = require('fs');
 (async () => {
   const rec = fs.readFileSync(process.argv[2], 'utf8');
   const b = await chromium.launch(); const page = await b.newPage();
-  await page.addInitScript(() => { window.__ev = []; window.WifiCasaRec = { record: s => window.__ev.push(s) }; });
+  await page.addInitScript(() => { window.__ev = []; window.WtcRec = { record: s => window.__ev.push(s) }; });
   page.on('load', () => {});
   await page.goto('http://127.0.0.1:8790/index.html');
   await page.evaluate(rec);            // como onPageFinished en Android

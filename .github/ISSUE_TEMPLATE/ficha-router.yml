@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        La app WiFi Casa rellena este formulario por ti. Solo tienes que revisarlo y enviarlo.
+        La app WiFi Time Control rellena este formulario por ti. Solo tienes que revisarlo y enviarlo.
         **No escribas contraseñas.**
   - type: input
     id: marca

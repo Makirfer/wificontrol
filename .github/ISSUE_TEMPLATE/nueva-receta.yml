@@ -1,12 +1,12 @@
 name: Nueva receta de router
-description: Propón una receta para que otros usuarios de WiFi Casa puedan usar su router.
+description: Propón una receta para que otros usuarios de WiFi Time Control puedan usar su router.
 title: "Receta: "
 labels: ["nueva-receta"]
 body:
   - type: markdown
     attributes:
       value: |
-        Gracias por compartir tu receta. La app WiFi Casa rellena este formulario y copia la receta al portapapeles:
+        Gracias por compartir tu receta. La app WiFi Time Control rellena este formulario y copia la receta al portapapeles:
         solo tienes que pegarla en el recuadro **Receta** y enviar. Una validación automática la revisará y,
         si es correcta, preparará su incorporación al catálogo.
   - type: textarea

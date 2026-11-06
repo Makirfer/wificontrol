@@ -27,7 +27,7 @@
       "Pulsa el aparato → «Restricción de acceso a Internet»",
       "Elige «Bloquear Internet de forma permanente» (o «Programar acceso» por franjas) y pulsa «guardar»"
     ],
-    "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Casa: «Bloquear de forma permanente» y «Permitir de forma permanente».",
+    "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Time Control: «Bloquear de forma permanente» y «Permitir de forma permanente».",
     "notes": "Según la ayuda de Mundo R para el Livebox 6s (Arcadyan): mismo panel de Orange que el Livebox 7 y el Livebox 6s de ZTE. La lista de equipos WiFi guarda como máximo 50 aparatos."
   },
   "avoid": [

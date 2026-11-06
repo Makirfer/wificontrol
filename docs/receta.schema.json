@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://wificasa.example/schemas/wificasa-recipe-1.json",
-  "title": "Receta de router para WiFi Casa (formato wificasa-recipe/1)",
+  "title": "Receta de router para WiFi Time Control (formato wificasa-recipe/1)",
   "description": "Describe cómo hablar con el panel web de un modelo de router usando solo pasos declarativos. La app aplica además reglas que el esquema no puede expresar (contraseña solo en formularios y funciones, claves RSA definidas, minEngine, tamaño máximo). Ver docs/RECETAS.md.",
   "type": "object",
   "additionalProperties": false,

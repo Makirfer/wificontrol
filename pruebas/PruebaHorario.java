@@ -1,4 +1,4 @@
-import com.leira.wificasa.core.Horario;
+import com.makirfer.wifitimecontrol.core.Horario;
 import java.time.LocalDateTime;
 import java.util.*;
 

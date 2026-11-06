@@ -32,7 +32,7 @@
   "validation": {
     "date": "2026-11-06",
     "status": "tested-device",
-    "notes": "Probada con la app WiFi Casa en un RTF8316VW real (firmware GL_g1.18_R8316_V2.19): inicio de sesión y lista de 4 dispositivos. Entra primero en el panel básico de Movistar y después en la configuración avanzada, como el navegador."
+    "notes": "Probada con la app WiFi Time Control en un RTF8316VW real (firmware GL_g1.18_R8316_V2.19): inicio de sesión y lista de 4 dispositivos. Entra primero en el panel básico de Movistar y después en la configuración avanzada, como el navegador."
   },
   "changelog": [
     {

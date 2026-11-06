@@ -1,4 +1,4 @@
-# Traducir WiFi Casa
+# Traducir WiFi Time Control
 
 Todos los textos de la app están en `app/src/main/res/values/strings.xml` (castellano, el idioma
 principal). Cada traducción es una copia de ese archivo en su carpeta:

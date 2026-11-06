@@ -1,4 +1,4 @@
-# WiFi Casa 2.6.2
+# WiFi Time Control 2.6.2
 
 ## Novedades de la 2.6.2
 
@@ -90,7 +90,7 @@ App Android para cortar o devolver Internet a dispositivos concretos desde el m�
 Primer router compatible: **ZTE Livebox 6s (ZXHN F6640P)** de Parlem.
 Solo funciona con el móvil conectado al WiFi de la ubicación que controlas.
 
-## Novedades de la 2.0 (Fase 1 de "WiFi Casa Universal")
+## Novedades de la 2.0 (Fase 1 de "WiFi Time Control Universal")
 
 - **Varias ubicaciones** (casa, segunda residencia…): botón 📍 arriba a la derecha. Cada una
   tiene su router, su contraseña, sus nombres de dispositivos y su grupo de modo estudio.
@@ -105,8 +105,8 @@ Solo funciona con el móvil conectado al WiFi de la ubicación que controlas.
 ## Cómo generar el APK (en tu ordenador, una sola vez)
 
 1. Instala **Android Studio** desde https://developer.android.com/studio (opciones por defecto).
-2. Descomprime `WifiCasa.zip` en una carpeta, por ejemplo `Documentos\WifiCasa`.
-3. Abre Android Studio → **Open** → elige la carpeta `WifiCasa`.
+2. Descomprime `WiFiTimeControl-<versión>.zip` en una carpeta, por ejemplo `Documentos\WiFiTimeControl`.
+3. Abre Android Studio → **Open** → elige la carpeta `WiFiTimeControl`.
    La primera vez tarda (descarga Gradle y el SDK de Android): espera a que la barra inferior termine.
    Si te propone actualizar el "Android Gradle Plugin", acepta.
 4. Menú **Build → Build App Bundle(s) / APK(s) → Build APK(s)**
@@ -148,7 +148,7 @@ Solo funciona con el móvil conectado al WiFi de la ubicación que controlas.
 ## Cómo está organizado el código
 
 ```
-app/src/main/java/com/leira/wificasa/
+app/src/main/java/com/makirfer/wifitimecontrol/
 ├── MainActivity.java          Pantalla (solo interfaz)
 ├── core/                      Motor común (Java puro, sin Android)
 │   ├── RouterAdapter.java     Contrato que implementa cada familia de routers

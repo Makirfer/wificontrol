@@ -37,7 +37,7 @@
             android:screenOrientation="portrait" />
         <provider
             android:name=".ShareProvider"
-            android:authorities="com.leira.wificasa.compartir"
+            android:authorities="com.makirfer.wifitimecontrol.compartir"
             android:exported="false"
             android:grantUriPermissions="true" />
         <receiver
@@ -47,7 +47,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
                 <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
-                <action android:name="com.leira.wificasa.HORARIO" />
+                <action android:name="com.makirfer.wifitimecontrol.HORARIO" />
             </intent-filter>
         </receiver>
         <service

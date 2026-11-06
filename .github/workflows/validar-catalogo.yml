@@ -2,7 +2,7 @@ name: Validar catálogo
 
 on:
   pull_request:
-    paths: ["catalogo/**", "docs/receta.schema.json", "app/src/main/java/com/leira/wificasa/core/**"]
+    paths: ["catalogo/**", "docs/receta.schema.json", "app/src/main/java/com/makirfer/wifitimecontrol/core/**"]
   push:
     branches: [main]
     paths: ["catalogo/**", "docs/receta.schema.json"]

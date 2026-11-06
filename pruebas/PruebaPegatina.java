@@ -1,4 +1,4 @@
-import com.leira.wificasa.core.learn.Pegatina;
+import com.makirfer.wifitimecontrol.core.learn.Pegatina;
 
 /** Lectura de pegatinas: texto como el que devuelve el reconocimiento de texto del móvil. */
 public class PruebaPegatina {

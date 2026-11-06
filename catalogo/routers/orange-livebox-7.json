@@ -26,7 +26,7 @@
       "Pulsa el aparato → «Restricción de acceso a Internet»",
       "Elige «Bloquear Internet de forma permanente» (o «Programar acceso» por franjas) y pulsa «guardar»"
     ],
-    "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Casa: «Bloquear Internet de forma permanente» y «Permitir Internet de forma permanente».",
+    "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Time Control: «Bloquear Internet de forma permanente» y «Permitir Internet de forma permanente».",
     "scope": "unknown",
     "notes": "El Livebox 7 existe en versión Arcadyan y ZTE; la ayuda de Orange describe el mismo panel para ambas. Orange documenta el mismo procedimiento para su ZTE ZXHN F8748."
   },

@@ -23,7 +23,7 @@
       "Controles Parentales (desplegable de la izquierda)",
       "Abre el desplegable, pon el interruptor en Encendido, elige el aparato y la política de días y horas → «Prohibir el acceso completo a internet» → Aplicar"
     ],
-    "how": "Control parental por dispositivo con política de días y horas: prohibir todo Internet, o listas blanca/negra de webs. Para la pausa de WiFi Casa, una política que cubra todo el día.",
+    "how": "Control parental por dispositivo con política de días y horas: prohibir todo Internet, o listas blanca/negra de webs. Para la pausa de WiFi Time Control, una política que cubra todo el día.",
     "notes": "Fuente: manual de usuario de Digi (aportado en PDF)."
   },
   "avoid": [

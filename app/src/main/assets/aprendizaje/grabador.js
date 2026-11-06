@@ -1,9 +1,9 @@
 /*
- * Grabador de WiFi Casa (modo aprendizaje).
+ * Grabador de WiFi Time Control (modo aprendizaje).
  * Se inyecta en el panel del router dentro de la app y anota lo que el panel envía y recibe
  * (peticiones XHR y fetch, formularios, páginas y scripts propios del panel), para poder
  * escribir después la receta de ese router. No envía nada a Internet: todo va a la app
- * a través de window.WifiCasaRec, y la app lo sanea antes de guardarlo.
+ * a través de window.WtcRec, y la app lo sanea antes de guardarlo.
  */
 (function () {
   var MAX = 20000;
@@ -13,7 +13,7 @@
   }
   function out(o) {
     try {
-      var bridge = window.WifiCasaRec || (window.top && window.top.WifiCasaRec);
+      var bridge = window.WtcRec || (window.top && window.top.WtcRec);
       if (bridge) bridge.record(JSON.stringify(o));
     } catch (e) { /* nada */ }
   }

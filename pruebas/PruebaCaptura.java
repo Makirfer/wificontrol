@@ -1,5 +1,5 @@
-import com.leira.wificasa.core.learn.Capture;
-import com.leira.wificasa.core.recipe.Json;
+import com.makirfer.wifitimecontrol.core.learn.Capture;
+import com.makirfer.wifitimecontrol.core.recipe.Json;
 import java.nio.file.*;
 import java.util.*;
 

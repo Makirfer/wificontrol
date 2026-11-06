@@ -17,7 +17,7 @@
         "LIST_DEVICES"
       ],
       "status": "tested-device",
-      "sha256": "ff0976f8b78ab87daba9817fdf732684277531f46f1f87137ae953fb590d2571",
+      "sha256": "ca94c94ad5bfb6a0b3ca744feb2ac51e3c4b761f6a4a19c859ed25d5c26ece3c",
       "path": "recetas/askey-rtf8316vw.json"
     },
     {
@@ -38,7 +38,7 @@
         "UNBLOCK"
       ],
       "status": "tested-device",
-      "sha256": "61f43e5849f4654e7408959261ad76bfb0094c29ee784cdd830f400d7b887eac",
+      "sha256": "03a00902fecf9236ef2f77c2333271858da1916135452c8a94037c4e805c1b15",
       "path": "recetas/zte-zxhn-f6640p.json"
     }
   ],
@@ -138,7 +138,7 @@
           "Pulsa el aparato → «Restricción de acceso a Internet»",
           "Elige «Bloquear Internet de forma permanente» (o «Programar acceso» por franjas) y pulsa «guardar»"
         ],
-        "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Casa: «Bloquear de forma permanente» y «Permitir de forma permanente».",
+        "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Time Control: «Bloquear de forma permanente» y «Permitir de forma permanente».",
         "notes": "Según la ayuda de Mundo R para el Livebox 6s (Arcadyan): mismo panel de Orange que el Livebox 7 y el Livebox 6s de ZTE. La lista de equipos WiFi guarda como máximo 50 aparatos."
       },
       "avoid": [
@@ -251,7 +251,7 @@
         "where": [],
         "how": "El panel web no permite bloquear un aparato concreto. El Filtrado MAC de la página de WiFi remite a la app de Movistar (Smart WiFi), que funciona a través de los servidores de Movistar.",
         "scope": "unknown",
-        "notes": "WiFi Casa puede listar los aparatos de este router, pero no cortarles Internet."
+        "notes": "WiFi Time Control puede listar los aparatos de este router, pero no cortarles Internet."
       },
       "avoid": [
         "Configuración avanzada → Network Setting → Bridging → Filtering (L2 Ingress Filtering): no bloquea aparatos; reparte puertos y redes WiFi entre Internet, Voz e IPTV. Cambiarlo puede dejar sin servicio a toda la casa.",
@@ -508,7 +508,7 @@
           "Pulsa el aparato → «Restricción de acceso a Internet»",
           "Elige «Bloquear Internet de forma permanente» (o «Programar acceso» por franjas) y pulsa «guardar»"
         ],
-        "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Casa: «Bloquear de forma permanente» y «Permitir de forma permanente».",
+        "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Time Control: «Bloquear de forma permanente» y «Permitir de forma permanente».",
         "notes": "Según la ayuda de Mundo R para el Livebox 6+ (WiFi 6, puerto WAN 2,5 GbE). El fabricante no se indica. Sale también en «mi red local» un aparato conectado por cable, así que probablemente sirva para WiFi y cable."
       },
       "avoid": [
@@ -551,7 +551,7 @@
           "Pulsa el aparato → «Restricción de acceso a Internet»",
           "Elige «Bloquear Internet de forma permanente» (o «Programar acceso» por franjas) y pulsa «guardar»"
         ],
-        "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Casa: «Bloquear Internet de forma permanente» y «Permitir Internet de forma permanente».",
+        "how": "Cada aparato puede tener tres modos: permitir siempre, bloquear siempre o programar por franjas horarias y días. Para la pausa de WiFi Time Control: «Bloquear Internet de forma permanente» y «Permitir Internet de forma permanente».",
         "scope": "unknown",
         "notes": "El Livebox 7 existe en versión Arcadyan y ZTE; la ayuda de Orange describe el mismo panel para ambas. Orange documenta el mismo procedimiento para su ZTE ZXHN F8748."
       },
@@ -961,7 +961,7 @@
           "Controles Parentales (desplegable de la izquierda)",
           "Abre el desplegable, pon el interruptor en Encendido, elige el aparato y la política de días y horas → «Prohibir el acceso completo a internet» → Aplicar"
         ],
-        "how": "Control parental por dispositivo con política de días y horas: prohibir todo Internet, o listas blanca/negra de webs. Para la pausa de WiFi Casa, una política que cubra todo el día.",
+        "how": "Control parental por dispositivo con política de días y horas: prohibir todo Internet, o listas blanca/negra de webs. Para la pausa de WiFi Time Control, una política que cubra todo el día.",
         "notes": "Fuente: manual de usuario de Digi (aportado en PDF)."
       },
       "avoid": [
@@ -1058,7 +1058,7 @@
           "Internet (menú de arriba)",
           "Controles Parentales (menú de la izquierda)"
         ],
-        "how": "Se elige el dispositivo y se le aplica un horario por días: bloquear todo Internet, o solo una lista de webs. Para la pausa de WiFi Casa, un horario que bloquee todo el día.",
+        "how": "Se elige el dispositivo y se le aplica un horario por días: bloquear todo Internet, o solo una lista de webs. Para la pausa de WiFi Time Control, un horario que bloquee todo el día.",
         "scope": "unknown",
         "notes": "El manual del ZTE F6705 de Digi describe el mismo menú."
       },

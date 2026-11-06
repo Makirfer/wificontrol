@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Makirfer/wificontrol/docs/ficha.schema.json",
-  "title": "Ficha de router para WiFi Casa (formato wificasa-router/1)",
+  "title": "Ficha de router para WiFi Time Control (formato wificasa-router/1)",
   "description": "Qué se sabe de un modelo de router: si permite bloquear aparatos desde su panel, dónde, qué no tocar y si tiene receta. La app la consulta antes de grabar.",
   "type": "object",
   "additionalProperties": false,

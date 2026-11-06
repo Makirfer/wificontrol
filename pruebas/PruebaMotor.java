@@ -1,4 +1,4 @@
-import com.leira.wificasa.core.*;
+import com.makirfer.wifitimecontrol.core.*;
 import java.util.*;
 
 /**
@@ -22,8 +22,8 @@ public class PruebaMotor {
         String host = a[0];
         String id = a.length > 1 ? a[1] : AdapterRegistry.DEFAULT_ID;
         if (id.endsWith(".json")) { // probar una receta en lugar del adaptador nativo
-            com.leira.wificasa.core.recipe.RecipeAdapter ra = new com.leira.wificasa.core.recipe.RecipeAdapter(
-                    com.leira.wificasa.core.recipe.Recipe.parse(new String(java.nio.file.Files.readAllBytes(
+            com.makirfer.wifitimecontrol.core.recipe.RecipeAdapter ra = new com.makirfer.wifitimecontrol.core.recipe.RecipeAdapter(
+                    com.makirfer.wifitimecontrol.core.recipe.Recipe.parse(new String(java.nio.file.Files.readAllBytes(
                             java.nio.file.Paths.get(id)), java.nio.charset.StandardCharsets.UTF_8)));
             AdapterRegistry.register(ra);
             id = ra.id();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Textos de la app. Para otro idioma: copia este archivo a values-XX/strings.xml y traduce el texto (no las claves name="…" ni los %1$s). -->
 <resources>
-    <string name="app_name" translatable="false">WiFi Casa</string>
+    <string name="app_name" translatable="false">WiFi Time Control</string>
     <string name="ok">Vale</string>
     <string name="cancel">Cancelar</string>
     <string name="close">Cerrar</string>
@@ -96,10 +96,10 @@
     <string name="status_tested">probada en un router real</string>
     <string name="status_simulator">solo probada en simulador</string>
     <string name="status_untested">sin probar</string>
-    <string name="conf_confirmed">Comprobado con WiFi Casa por %1$d persona(s).</string>
-    <string name="conf_official">Según la ayuda oficial de la compañía o el fabricante. Sin comprobar aún con WiFi Casa.</string>
+    <string name="conf_confirmed">Comprobado con WiFi Time Control por %1$d persona(s).</string>
+    <string name="conf_official">Según la ayuda oficial de la compañía o el fabricante. Sin comprobar aún con WiFi Time Control.</string>
     <string name="conf_probable">Deducido (por ejemplo, usa el mismo panel que otro modelo comprobado). Sin confirmar.</string>
-    <string name="conf_web">Según información publicada en Internet. Sin confirmar con WiFi Casa.</string>
+    <string name="conf_web">Según información publicada en Internet. Sin confirmar con WiFi Time Control.</string>
     <string name="learn_sticker">Mira la pegatina del router (debajo o detrás). Con estos datos se nombrarán la grabación y la receta, para que otros usuarios la encuentren.</string>
     <string name="hint_vendor">Marca (p. ej. Askey, ZTE, TP-Link)</string>
     <string name="hint_model">Modelo (p. ej. RTF8316VW, Archer C6)</string>
@@ -114,7 +114,7 @@
     <string name="sheet_app_only_prob">⛔ Este router probablemente no permite cortar Internet a un aparato desde su panel: solo desde la app de la compañía.</string>
     <string name="sheet_none">⛔ Este router no permite cortar Internet a un aparato concreto.</string>
     <string name="sheet_none_prob">⛔ Este router probablemente no permite cortar Internet a un aparato concreto.</string>
-    <string name="sheet_list_only">WiFi Casa no podrá pausarlos, pero sí enseñarte sus aparatos y avisarte cuando se conecte uno concreto o uno nuevo que no conozcas. Grabar el panel sirve para eso.</string>
+    <string name="sheet_list_only">WiFi Time Control no podrá pausarlos, pero sí enseñarte sus aparatos y avisarte cuando se conecte uno concreto o uno nuevo que no conozcas. Grabar el panel sirve para eso.</string>
     <string name="record_list_only">Grabar para ver y vigilar</string>
     <string name="sheet_unchecked">Aún nadie lo ha comprobado con la app. Si lo compruebas tú, ayudarás a todos: si encuentras el bloqueo, grábalo; si no, pulsa «No lo encuentro» y avisa.</string>
     <string name="check_myself">Comprobarlo yo</string>
@@ -187,14 +187,14 @@
     <string name="recording_counter">● Grabando · %1$d anotaciones</string>
     <string name="limit_reached"> (límite alcanzado)</string>
     <string name="recording_ready">Grabación lista · %1$s</string>
-    <string name="recording_ready_msg">%1$d anotaciones en «%2$s». La contraseña del router y las claves WiFi se han borrado.\n\nSiguientes pasos:\n1. Pulsa «Compartir con una IA» y elige Claude, ChatGPT o Gemini. El archivo ya lleva las instrucciones; si te pide un mensaje, escribe: «Lee las instrucciones del archivo y hazme la receta».\n2. La IA te responderá con un bloque de texto que empieza por { : cópialo entero (botón «Copiar» del bloque).\n3. En WiFi Casa: Ajustes → Modelo de router → Mi router no está → Importar una receta → Pegar.\n\nTambién puedes guardar el archivo en el móvil para hacerlo más tarde (receta-%3$s).</string>
+    <string name="recording_ready_msg">%1$d anotaciones en «%2$s». La contraseña del router y las claves WiFi se han borrado.\n\nSiguientes pasos:\n1. Pulsa «Compartir con una IA» y elige Claude, ChatGPT o Gemini. El archivo ya lleva las instrucciones; si te pide un mensaje, escribe: «Lee las instrucciones del archivo y hazme la receta».\n2. La IA te responderá con un bloque de texto que empieza por { : cópialo entero (botón «Copiar» del bloque).\n3. En WiFi Time Control: Ajustes → Modelo de router → Mi router no está → Importar una receta → Pegar.\n\nTambién puedes guardar el archivo en el móvil para hacerlo más tarde (receta-%3$s).</string>
     <string name="share_ai">Compartir con una IA</string>
     <string name="save_phone">Guardar en el móvil</string>
     <string name="keep_recording">Seguir grabando</string>
     <string name="report_q">¿Avisas al catálogo?</string>
     <string name="report_msg">Así, quien tenga un %1$s sabrá antes de empezar que su panel no permite bloquear aparatos. Se abrirá GitHub con todo rellenado: solo tienes que enviarlo.</string>
     <string name="report">Avisar</string>
-    <string name="share_ai_msg">Lee las instrucciones del archivo y hazme la receta de WiFi Casa para mi router %1$s.</string>
+    <string name="share_ai_msg">Lee las instrucciones del archivo y hazme la receta de WiFi Time Control para mi router %1$s.</string>
     <string name="share_error">⚠ No se pudo compartir (%1$s). Guárdalo en el móvil.</string>
     <string name="recording_saved">Grabación guardada.</string>
     <string name="save_error">⚠ No se pudo guardar: %1$s</string>

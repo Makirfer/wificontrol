@@ -1,4 +1,4 @@
-# Routers en el catálogo de WiFi Casa
+# Routers en el catálogo de WiFi Time Control
 
 Generado automáticamente a partir de `catalogo/routers/`. ¿Falta el tuyo o algo no es correcto? Usa el modo aprendizaje de la app o el formulario [Ficha de router](../../../issues/new?template=ficha-router.yml).
 

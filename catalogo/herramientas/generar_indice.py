@@ -76,7 +76,7 @@ def tabla() -> str:
         donde = " → ".join(f["block"].get("where", [])[:2])
         filas.append(f"| {', '.join(f.get('isps', [])) or '—'} | {nombre} | {SOPORTE[f['block']['support']]} | "
                      f"{donde or '—'} | {'✅' if f.get('recipe') else '—'} | {CONFIANZA.get(f.get('confidence', 'web'))} |")
-    return ("# Routers en el catálogo de WiFi Casa\n\n"
+    return ("# Routers en el catálogo de WiFi Time Control\n\n"
             "Generado automáticamente a partir de `catalogo/routers/`. ¿Falta el tuyo o algo no es correcto? "
             "Usa el modo aprendizaje de la app o el formulario [Ficha de router](../../../issues/new?template=ficha-router.yml).\n\n"
             "| Compañía | Router | ¿Bloquear un aparato? | Dónde | Receta | Fuente |\n|---|---|---|---|---|---|\n"

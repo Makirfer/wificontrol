@@ -1,6 +1,6 @@
 # Recetas de router — formato `wificasa-recipe/1`
 
-Una receta le explica a WiFi Casa cómo hablar con el panel web de un modelo de router:
+Una receta le explica a WiFi Time Control cómo hablar con el panel web de un modelo de router:
 qué páginas pedir, qué datos enviar y cómo leer las respuestas. Es un archivo JSON que
 **describe** pasos; no contiene código. Así una receta escrita por otra persona o generada
 con una IA se puede revisar, validar y compartir sin riesgo de que ejecute nada en el móvil.

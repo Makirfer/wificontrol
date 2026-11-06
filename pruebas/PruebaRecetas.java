@@ -1,4 +1,4 @@
-import com.leira.wificasa.core.recipe.*;
+import com.makirfer.wifitimecontrol.core.recipe.*;
 import java.nio.file.*;
 
 /**

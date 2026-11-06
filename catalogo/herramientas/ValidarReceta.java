@@ -1,4 +1,4 @@
-import com.leira.wificasa.core.recipe.Recipe;
+import com.makirfer.wifitimecontrol.core.recipe.Recipe;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

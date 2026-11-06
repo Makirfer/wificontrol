@@ -81,7 +81,7 @@ def main():
         r["validation"] = {
             "date": f"{fecha.group(3)}-{fecha.group(2)}-{fecha.group(1)}" if fecha else "",
             "status": "tested-device",
-            "notes": "Probada con la app WiFi Casa en un router real ("
+            "notes": "Probada con la app WiFi Time Control en un router real ("
                      + ("listar dispositivos)." if solo_lectura else "listar, cortar y devolver Internet)."),
         }
         if not r["validation"]["date"]:
