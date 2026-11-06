@@ -20,7 +20,7 @@
     <string name="refresh">⟳  Actualizar</string>
     <string name="settings">⚙  Ajustes</string>
     <string name="hint_can_switch">Toca un dispositivo para ponerle nombre e incluirlo en la pausa.</string>
-    <string name="hint_list_only">Este router solo permite consultar los dispositivos.</string>
+    <string name="hint_list_only">Este router solo deja ver los aparatos, no cortarles Internet. Sí puedes recibir avisos: toca un aparato para que te avise cuando se conecte, o activa en Ajustes el aviso de aparatos nuevos.</string>
     <string name="last_known">Último estado conocido · pulsa Actualizar para comprobarlo</string>
     <string name="done_no_refresh">(El cambio está hecho, pero no se pudo refrescar la lista: pulsa Actualizar.)</string>
     <string name="connecting">Conectando con el router de %1$s…</string>
@@ -84,7 +84,7 @@
     <string name="with_recipe">con receta</string>
     <string name="catalog_routers">Routers del catálogo (%1$d)</string>
     <string name="mine_not_listed">No está el mío</string>
-    <string name="catalog_legend">🧾 con receta · ✅ se puede bloquear · ⛔ no se puede · ❔ sin datos</string>
+    <string name="catalog_legend_unused">🧾 con receta · ✅ se puede bloquear · ⛔ no se puede · ❔ sin datos</string>
     <string name="catalog_empty">Catálogo vacío</string>
     <string name="catalog_empty_msg">Todavía no hay recetas en el catálogo. Puedes ser el primero: aprende tu router y publícalo.</string>
     <string name="learn_my_router">Aprender mi router</string>
@@ -114,8 +114,8 @@
     <string name="sheet_app_only_prob">⛔ Este router probablemente no permite cortar Internet a un aparato desde su panel: solo desde la app de la compañía.</string>
     <string name="sheet_none">⛔ Este router no permite cortar Internet a un aparato concreto.</string>
     <string name="sheet_none_prob">⛔ Este router probablemente no permite cortar Internet a un aparato concreto.</string>
-    <string name="sheet_list_only">WiFi Casa podrá enseñarte sus aparatos, pero no pausarlos. Grabar el panel solo sirve para eso.</string>
-    <string name="record_list_only">Grabar solo para ver aparatos</string>
+    <string name="sheet_list_only">WiFi Casa no podrá pausarlos, pero sí enseñarte sus aparatos y avisarte cuando se conecte uno concreto o uno nuevo que no conozcas. Grabar el panel sirve para eso.</string>
+    <string name="record_list_only">Grabar para ver y vigilar</string>
     <string name="sheet_unchecked">Aún nadie lo ha comprobado con la app. Si lo compruebas tú, ayudarás a todos: si encuentras el bloqueo, grábalo; si no, pulsa «No lo encuentro» y avisa.</string>
     <string name="check_myself">Comprobarlo yo</string>
     <string name="dont_record">No grabar</string>
@@ -129,7 +129,7 @@
     <string name="no_sheet">Todavía no hay ficha de este router: serás el primero.\n\nAntes de grabar, dedica 5 minutos a buscar el bloqueo en su panel. Suele llamarse:\n• Control parental\n• Control de acceso\n• Filtro MAC / Filtrado MAC\n• Bloquear dispositivo\n\n⚠ No sirven y pueden cortar a todos: apagar el WiFi (Disable), cambiar el modo del router, o tablas de puertos, puentes (bridging) o VLAN.\n\nSi no lo encuentras, en la grabación pulsa «No lo encuentro»: se guardará igualmente y podrás avisar al catálogo para que nadie más pierda el tiempo.</string>
     <string name="confirm_learning">Se abrirá el panel de tu router dentro de la app y te guiaré en 5 pasos: entrar, ver los aparatos, cortar Internet a uno, devolvérselo y salir.\n\nLa app graba lo que hace el panel para poder escribir su receta. La contraseña y las claves WiFi se borran de la grabación. Nada se envía a ningún sitio hasta que tú decidas compartirla.\n\nHazlo conectado al WiFi de ese router, y no cortes Internet a tu propio móvil.</string>
     <string name="start">Empezar</string>
-    <string name="import_help">Pega aquí la receta (el JSON que te ha dado la IA) o ábrela desde un archivo.</string>
+    <string name="import_help">La IA te habrá respondido con un bloque de texto que empieza por { : es la receta. Cópialo entero (botón «Copiar» del bloque, o mantén pulsado → Copiar) y pulsa «Pegar».\n\nSi te dio un archivo .json, puedes abrirlo con «Abrir archivo».</string>
     <string name="paste">📋 Pegar</string>
     <string name="open_file">📂 Abrir archivo</string>
     <string name="import_title">Importar receta</string>
@@ -187,7 +187,7 @@
     <string name="recording_counter">● Grabando · %1$d anotaciones</string>
     <string name="limit_reached"> (límite alcanzado)</string>
     <string name="recording_ready">Grabación lista · %1$s</string>
-    <string name="recording_ready_msg">%1$d anotaciones en «%2$s». La contraseña del router y las claves WiFi se han borrado.\n\nSiguientes pasos:\n1. Pulsa «Compartir con una IA» y elige Claude, ChatGPT o Gemini. El archivo ya lleva las instrucciones; si te pide un mensaje, escribe: «Lee las instrucciones del archivo y hazme la receta».\n2. Guarda la receta que te devuelva (receta-%3$s.json) o copia su texto.\n3. En WiFi Casa: Ajustes → Modelo de router → Mi router no está → Importar una receta.\n\nTambién puedes guardar el archivo en el móvil para hacerlo más tarde.</string>
+    <string name="recording_ready_msg">%1$d anotaciones en «%2$s». La contraseña del router y las claves WiFi se han borrado.\n\nSiguientes pasos:\n1. Pulsa «Compartir con una IA» y elige Claude, ChatGPT o Gemini. El archivo ya lleva las instrucciones; si te pide un mensaje, escribe: «Lee las instrucciones del archivo y hazme la receta».\n2. La IA te responderá con un bloque de texto que empieza por { : cópialo entero (botón «Copiar» del bloque).\n3. En WiFi Casa: Ajustes → Modelo de router → Mi router no está → Importar una receta → Pegar.\n\nTambién puedes guardar el archivo en el móvil para hacerlo más tarde (receta-%3$s).</string>
     <string name="share_ai">Compartir con una IA</string>
     <string name="save_phone">Guardar en el móvil</string>
     <string name="keep_recording">Seguir grabando</string>
@@ -242,6 +242,14 @@
     <string name="notify_new_info">Te avisaré cuando aparezca en el WiFi de %1$s un aparato que nunca se había visto. Puede tardar hasta 15 minutos y solo funciona con este móvil en ese WiFi.</string>
     <string name="notif_new_title">Aparato nuevo en %1$s</string>
     <string name="notif_new_text">%1$s se ha conectado por primera vez. Si no lo conoces, cambia la clave del WiFi.</string>
+    <string name="cred_title">Datos de acceso al router</string>
+    <string name="cred_intro">Para probar la receta de %1$s, la app tiene que entrar en el router. Son los mismos datos que usas para entrar en su panel desde el navegador (no la clave del WiFi).</string>
+    <string name="cred_sticker">Si nunca los has cambiado, suelen estar en la pegatina del router (debajo o detrás), como «Usuario» y «Contraseña» o «Clave de acceso».</string>
+    <string name="check_wifi">¿Está este móvil conectado al WiFi de %1$s? El router solo responde desde dentro.</string>
+    <string name="cat_recipe">🧾 Funciona con la app: ver, pausar y avisar</string>
+    <string name="cat_can_block">✅ Se puede bloquear desde su panel (falta grabarlo)</string>
+    <string name="cat_cannot_block">⛔ No deja bloquear: solo ver y avisar</string>
+    <string name="cat_unknown">❔ Aún no se sabe</string>
     <string-array name="learn_steps">
         <item>Inicia sesión en el panel del router</item>
         <item>Abre la lista de dispositivos conectados</item>

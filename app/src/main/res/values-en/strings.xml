@@ -19,7 +19,7 @@
     <string name="refresh">⟳  Refresh</string>
     <string name="settings">⚙  Settings</string>
     <string name="hint_can_switch">Tap a device to name it and add it to the pause.</string>
-    <string name="hint_list_only">This router only lets you view the devices.</string>
+    <string name="hint_list_only">This router only lets you see devices, not cut their Internet. You can still get alerts: tap a device to be notified when it connects, or turn on new-device alerts in Settings.</string>
     <string name="last_known">Last known status · tap Refresh to check</string>
     <string name="done_no_refresh">(The change is done, but the list could not be refreshed: tap Refresh.)</string>
     <string name="connecting">Connecting to the router at %1$s…</string>
@@ -83,7 +83,7 @@
     <string name="with_recipe">with recipe</string>
     <string name="catalog_routers">Catalog routers (%1$d)</string>
     <string name="mine_not_listed">Mine isn\'t listed</string>
-    <string name="catalog_legend">🧾 recipe · ✅ can block · ⛔ cannot block · ❔ no data</string>
+    <string name="catalog_legend_unused">🧾 recipe · ✅ can block · ⛔ cannot block · ❔ no data</string>
     <string name="catalog_empty">Empty catalog</string>
     <string name="catalog_empty_msg">There are no recipes in the catalog yet. Be the first: learn your router and publish it.</string>
     <string name="learn_my_router">Learn my router</string>
@@ -113,8 +113,8 @@
     <string name="sheet_app_only_prob">⛔ This router probably does not let you cut a device\'s Internet from its panel: only from the provider\'s app.</string>
     <string name="sheet_none">⛔ This router cannot cut Internet to a single device.</string>
     <string name="sheet_none_prob">⛔ This router probably cannot cut Internet to a single device.</string>
-    <string name="sheet_list_only">WiFi Casa can show you its devices, but not pause them. Recording the panel is only useful for that.</string>
-    <string name="record_list_only">Record just to see devices</string>
+    <string name="sheet_list_only">WiFi Casa won\'t be able to pause them, but it can show you the devices and notify you when a specific one or an unknown new one connects. Recording the panel is useful for that.</string>
+    <string name="record_list_only">Record to see and watch</string>
     <string name="sheet_unchecked">Nobody has checked it with the app yet. If you do, you\'ll help everyone: if you find the block option, record it; if not, tap «I can\'t find it» and report it.</string>
     <string name="check_myself">Check it myself</string>
     <string name="dont_record">Don\'t record</string>
@@ -128,7 +128,7 @@
     <string name="no_sheet">There\'s no sheet for this router yet: you\'ll be the first.\n\nBefore recording, spend 5 minutes looking for the block option in its panel. It\'s usually called:\n• Parental control\n• Access control\n• MAC filter / MAC filtering\n• Block device\n\n⚠ These don\'t work and may cut everyone off: turning WiFi off (Disable), changing the router mode, or port tables, bridging or VLAN.\n\nIf you can\'t find it, tap «I can\'t find it» during recording: it will still be saved and you can report it to the catalog so nobody else wastes their time.</string>
     <string name="confirm_learning">Your router\'s panel will open inside the app and I\'ll guide you through 5 steps: log in, see the devices, cut Internet to one, give it back and log out.\n\nThe app records what the panel does so its recipe can be written. The password and WiFi keys are removed from the recording. Nothing is sent anywhere until you decide to share it.\n\nDo it while connected to that router\'s WiFi, and don\'t cut Internet to your own phone.</string>
     <string name="start">Start</string>
-    <string name="import_help">Paste the recipe here (the JSON the AI gave you) or open it from a file.</string>
+    <string name="import_help">The AI will have replied with a block of text starting with { : that\'s the recipe. Copy all of it (the block\'s «Copy» button, or long-press → Copy) and tap «Paste».\n\nIf it gave you a .json file, you can open it with «Open file».</string>
     <string name="paste">📋 Paste</string>
     <string name="open_file">📂 Open file</string>
     <string name="import_title">Import recipe</string>
@@ -186,7 +186,7 @@
     <string name="recording_counter">● Recording · %1$d entries</string>
     <string name="limit_reached"> (limit reached)</string>
     <string name="recording_ready">Recording ready · %1$s</string>
-    <string name="recording_ready_msg">%1$d entries in «%2$s». The router password and WiFi keys have been removed.\n\nNext steps:\n1. Tap «Share with an AI» and choose Claude, ChatGPT or Gemini. The file already includes the instructions; if it asks for a message, write: «Read the instructions in the file and make me the recipe».\n2. Save the recipe it gives you (receta-%3$s.json) or copy its text.\n3. In WiFi Casa: Settings → Router model → My router is not listed → Import a recipe.\n\nYou can also save the file on your phone to do it later.</string>
+    <string name="recording_ready_msg">%1$d entries in «%2$s». The router password and WiFi keys have been removed.\n\nNext steps:\n1. Tap «Share with an AI» and choose Claude, ChatGPT or Gemini. The file already includes the instructions; if it asks for a message, write: «Read the instructions in the file and make me the recipe».\n2. The AI will reply with a block of text starting with { : copy all of it (the block\'s «Copy» button).\n3. In WiFi Casa: Settings → Router model → My router is not listed → Import a recipe → Paste.\n\nYou can also save the file on your phone to do it later (receta-%3$s).</string>
     <string name="share_ai">Share with an AI</string>
     <string name="save_phone">Save on the phone</string>
     <string name="keep_recording">Keep recording</string>
@@ -241,6 +241,14 @@
     <string name="notify_new_info">I\'ll notify you when a never-seen device appears on the WiFi at %1$s. It can take up to 15 minutes and only works with this phone on that WiFi.</string>
     <string name="notif_new_title">New device at %1$s</string>
     <string name="notif_new_text">%1$s connected for the first time. If you don\'t recognise it, change the WiFi password.</string>
+    <string name="cred_title">Router login details</string>
+    <string name="cred_intro">To test the %1$s recipe, the app has to log into the router. These are the same details you use to open its panel in a browser (not the WiFi password).</string>
+    <string name="cred_sticker">If you never changed them, they\'re usually on the router\'s sticker (underneath or on the back), as «User» and «Password» or «Access key».</string>
+    <string name="check_wifi">Is this phone connected to the WiFi at %1$s? The router only answers from inside.</string>
+    <string name="cat_recipe">🧾 Works with the app: see, pause and alert</string>
+    <string name="cat_can_block">✅ Can block from its panel (needs recording)</string>
+    <string name="cat_cannot_block">⛔ No blocking: only see and alert</string>
+    <string name="cat_unknown">❔ Not known yet</string>
     <string-array name="learn_steps">
         <item>Log in to the router panel</item>
         <item>Open the list of connected devices</item>

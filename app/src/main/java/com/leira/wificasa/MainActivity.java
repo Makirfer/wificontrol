@@ -96,6 +96,21 @@ public class MainActivity extends Activity {
                 switchTo(l);
                 refresh();
             }
+
+            @Override public String savedHost() { return loc == null ? "" : loc.host; }
+
+            @Override public String savedUser() { return loc == null ? "" : loc.user; }
+
+            @Override public boolean hasPassword() { return loc != null && store.hasPassword(loc); }
+
+            @Override
+            public void saveCredentials(String h, String u, String p) throws Exception {
+                Location l = store.get(loc.id);
+                l.host = h;
+                l.user = u;
+                store.save(l, p.isEmpty() ? null : p);
+                loc = l;
+            }
         }, worker, recipeStore);
         horarios = new HorarioUi(this, store, new HorarioUi.Host() {
             @Override public Location location() { return loc; }
@@ -342,7 +357,8 @@ public class MainActivity extends Activity {
                     fresh = holder;
                 }
             } catch (Exception e) {
-                result = "⚠ " + e.getMessage();
+                // Lo más habitual: el móvil no está en el WiFi de esa ubicación y responde otro router.
+                result = "⚠ " + e.getMessage() + "\n" + t(R.string.check_wifi, jobLoc.name);
             }
             final String msg = result;
             final List<NetDevice> list = fresh;

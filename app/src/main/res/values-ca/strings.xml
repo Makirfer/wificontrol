@@ -19,7 +19,7 @@
     <string name="refresh">⟳  Actualitza</string>
     <string name="settings">⚙  Configuració</string>
     <string name="hint_can_switch">Toca un dispositiu per posar-li nom i incloure\'l a la pausa.</string>
-    <string name="hint_list_only">Aquest router només permet consultar els dispositius.</string>
+    <string name="hint_list_only">Aquest router només deixa veure els aparells, no tallar-los Internet. Sí que pots rebre avisos: toca un aparell perquè t\'avisi quan es connecti, o activa a Configuració l\'avís d\'aparells nous.</string>
     <string name="last_known">Últim estat conegut · prem Actualitza per comprovar-ho</string>
     <string name="done_no_refresh">(El canvi està fet, però no s\'ha pogut actualitzar la llista: prem Actualitza.)</string>
     <string name="connecting">Connectant amb el router de %1$s…</string>
@@ -83,7 +83,7 @@
     <string name="with_recipe">amb recepta</string>
     <string name="catalog_routers">Routers del catàleg (%1$d)</string>
     <string name="mine_not_listed">No hi és el meu</string>
-    <string name="catalog_legend">🧾 amb recepta · ✅ es pot bloquejar · ⛔ no es pot · ❔ sense dades</string>
+    <string name="catalog_legend_unused">🧾 amb recepta · ✅ es pot bloquejar · ⛔ no es pot · ❔ sense dades</string>
     <string name="catalog_empty">Catàleg buit</string>
     <string name="catalog_empty_msg">Encara no hi ha receptes al catàleg. Pots ser el primer: aprèn el teu router i publica\'l.</string>
     <string name="learn_my_router">Aprendre el meu router</string>
@@ -113,8 +113,8 @@
     <string name="sheet_app_only_prob">⛔ Aquest router probablement no permet tallar Internet a un aparell des del panell: només des de l\'app de la companyia.</string>
     <string name="sheet_none">⛔ Aquest router no permet tallar Internet a un aparell concret.</string>
     <string name="sheet_none_prob">⛔ Aquest router probablement no permet tallar Internet a un aparell concret.</string>
-    <string name="sheet_list_only">WiFi Casa et podrà mostrar els aparells, però no pausar-los. Gravar el panell només serveix per a això.</string>
-    <string name="record_list_only">Grava només per veure aparells</string>
+    <string name="sheet_list_only">WiFi Casa no els podrà pausar, però sí mostrar-te\'n els aparells i avisar-te quan se\'n connecti un de concret o un de nou que no coneguis. Gravar el panell serveix per a això.</string>
+    <string name="record_list_only">Grava per veure i vigilar</string>
     <string name="sheet_unchecked">Encara ningú ho ha comprovat amb l\'app. Si ho comproves tu, ajudaràs tothom: si trobes el bloqueig, grava\'l; si no, prem «No ho trobo» i avisa.</string>
     <string name="check_myself">Comprova-ho jo</string>
     <string name="dont_record">No gravis</string>
@@ -128,7 +128,7 @@
     <string name="no_sheet">Encara no hi ha fitxa d\'aquest router: seràs el primer.\n\nAbans de gravar, dedica 5 minuts a buscar el bloqueig al panell. Sol dir-se:\n• Control parental\n• Control d\'accés\n• Filtre MAC / Filtratge MAC\n• Bloquejar dispositiu\n\n⚠ No serveixen i poden tallar a tothom: apagar el WiFi (Disable), canviar el mode del router, o taules de ports, ponts (bridging) o VLAN.\n\nSi no el trobes, a la gravació prem «No ho trobo»: es desarà igualment i podràs avisar el catàleg perquè ningú més hi perdi el temps.</string>
     <string name="confirm_learning">S\'obrirà el panell del teu router dins l\'app i et guiaré en 5 passos: entrar, veure els aparells, tallar Internet a un, tornar-l\'hi i sortir.\n\nL\'app grava el que fa el panell per poder escriure\'n la recepta. La contrasenya i les claus WiFi s\'esborren de la gravació. No s\'envia res enlloc fins que tu decideixis compartir-la.\n\nFes-ho connectat al WiFi d\'aquest router, i no tallis Internet al teu propi mòbil.</string>
     <string name="start">Comença</string>
-    <string name="import_help">Enganxa aquí la recepta (el JSON que t\'ha donat la IA) o obre-la des d\'un fitxer.</string>
+    <string name="import_help">La IA t\'haurà respost amb un bloc de text que comença per { : és la recepta. Copia\'l sencer (botó «Copiar» del bloc, o mantén premut → Copiar) i prem «Enganxa».\n\nSi et va donar un fitxer .json, el pots obrir amb «Obre un fitxer».</string>
     <string name="paste">📋 Enganxa</string>
     <string name="open_file">📂 Obre un fitxer</string>
     <string name="import_title">Importa una recepta</string>
@@ -186,7 +186,7 @@
     <string name="recording_counter">● Gravant · %1$d anotacions</string>
     <string name="limit_reached"> (límit assolit)</string>
     <string name="recording_ready">Gravació llesta · %1$s</string>
-    <string name="recording_ready_msg">%1$d anotacions a «%2$s». La contrasenya del router i les claus WiFi s\'han esborrat.\n\nPassos següents:\n1. Prem «Comparteix amb una IA» i tria Claude, ChatGPT o Gemini. El fitxer ja porta les instruccions; si et demana un missatge, escriu: «Llegeix les instruccions del fitxer i fes-me la recepta».\n2. Desa la recepta que et torni (receta-%3$s.json) o copia\'n el text.\n3. A WiFi Casa: Configuració → Model de router → El meu router no hi és → Importar una recepta.\n\nTambé pots desar el fitxer al mòbil per fer-ho més tard.</string>
+    <string name="recording_ready_msg">%1$d anotacions a «%2$s». La contrasenya del router i les claus WiFi s\'han esborrat.\n\nPassos següents:\n1. Prem «Comparteix amb una IA» i tria Claude, ChatGPT o Gemini. El fitxer ja porta les instruccions; si et demana un missatge, escriu: «Llegeix les instruccions del fitxer i fes-me la recepta».\n2. La IA et respondrà amb un bloc de text que comença per { : copia\'l sencer (botó «Copiar» del bloc).\n3. A WiFi Casa: Configuració → Model de router → El meu router no hi és → Importar una recepta → Enganxa.\n\nTambé pots desar el fitxer al mòbil per fer-ho més tard (receta-%3$s).</string>
     <string name="share_ai">Comparteix amb una IA</string>
     <string name="save_phone">Desa al mòbil</string>
     <string name="keep_recording">Continua gravant</string>
@@ -241,6 +241,14 @@
     <string name="notify_new_info">T\'avisaré quan aparegui al WiFi de %1$s un aparell que no s\'havia vist mai. Pot trigar fins a 15 minuts i només funciona amb aquest mòbil en aquest WiFi.</string>
     <string name="notif_new_title">Aparell nou a %1$s</string>
     <string name="notif_new_text">%1$s s\'ha connectat per primera vegada. Si no el coneixes, canvia la clau del WiFi.</string>
+    <string name="cred_title">Dades d\'accés al router</string>
+    <string name="cred_intro">Per provar la recepta de %1$s, l\'app ha d\'entrar al router. Són les mateixes dades que fas servir per entrar al seu panell des del navegador (no la clau del WiFi).</string>
+    <string name="cred_sticker">Si no les has canviat mai, solen ser a l\'adhesiu del router (a sota o al darrere), com «Usuari» i «Contrasenya» o «Clau d\'accés».</string>
+    <string name="check_wifi">Aquest mòbil està connectat al WiFi de %1$s? El router només respon des de dins.</string>
+    <string name="cat_recipe">🧾 Funciona amb l\'app: veure, pausar i avisar</string>
+    <string name="cat_can_block">✅ Es pot bloquejar des del panell (cal gravar-lo)</string>
+    <string name="cat_cannot_block">⛔ No deixa bloquejar: només veure i avisar</string>
+    <string name="cat_unknown">❔ Encara no se sap</string>
     <string-array name="learn_steps">
         <item>Inicia sessió al panell del router</item>
         <item>Obre la llista de dispositius connectats</item>

@@ -70,6 +70,10 @@ public final class Recipe {
     public String fingerprint() { return fingerprint; }
     public Set<Capability> capabilities() { return capabilities; }
 
+    public String vendor() { return str(obj(root, "router"), "vendor"); }
+
+    public String model() { return str(obj(root, "router"), "model"); }
+
     public String displayName() {
         Map<String, Object> r = obj(root, "router");
         String commercial = str(r, "commercialName");

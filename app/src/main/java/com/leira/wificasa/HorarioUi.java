@@ -23,10 +23,8 @@ import com.leira.wificasa.core.NetDevice;
 import com.leira.wificasa.data.Location;
 import com.leira.wificasa.data.LocationStore;
 
-import java.text.DateFormatSymbols;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -64,16 +62,19 @@ final class HorarioUi {
 
     private int dp(int v) { return Math.round(v * a.getResources().getDisplayMetrics().density); }
 
-    /** Nombres cortos de los días, de lunes a domingo, en el idioma del móvil. */
-    private static String[] dayNames() {
-        String[] w = DateFormatSymbols.getInstance().getShortWeekdays(); // índice Calendar.SUNDAY=1…
+    /** Nombres de los días, de lunes a domingo, en el idioma del móvil (corto o de 1-2 letras). */
+    private static String[] dayNames(boolean narrow) {
         String[] out = new String[7];
-        for (int i = 0; i < 7; i++) out[i] = w[i == 6 ? Calendar.SUNDAY : Calendar.MONDAY + i].replace(".", "");
+        for (int i = 0; i < 7; i++) {
+            out[i] = java.time.DayOfWeek.of(i + 1).getDisplayName(
+                    narrow ? java.time.format.TextStyle.NARROW_STANDALONE : java.time.format.TextStyle.SHORT_STANDALONE,
+                    java.util.Locale.getDefault()).replace(".", "");
+        }
         return out;
     }
 
     String summary(Horario h) {
-        String[] dn = dayNames();
+        String[] dn = dayNames(false);
         List<String> ds = new ArrayList<>();
         for (int i = 0; i < 7; i++) if (h.hasDay(i)) ds.add(dn[i]);
         String days = h.days == 0b1111111 ? t(R.string.sched_every_day)
@@ -180,16 +181,23 @@ final class HorarioUi {
         devices.setOnClickListener(v -> pickDevices(macs, devices));
         box.addView(devices);
 
+        // Días como botones redondos de una o dos letras (L M X J V S D): caben en cualquier móvil.
         LinearLayout daysRow = new LinearLayout(a);
         daysRow.setOrientation(LinearLayout.HORIZONTAL);
-        final CheckBox[] dayBoxes = new CheckBox[7];
-        String[] dn = dayNames();
+        final boolean[] dayOn = new boolean[7];
+        String[] dn = dayNames(true);
         for (int i = 0; i < 7; i++) {
-            CheckBox c = new CheckBox(a);
-            c.setText(dn[i].substring(0, Math.min(2, dn[i].length())));
-            c.setChecked(h.hasDay(i));
-            c.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-            dayBoxes[i] = c;
+            final int idx = i;
+            dayOn[i] = h.hasDay(i);
+            final TextView c = new TextView(a);
+            c.setText(dn[i]);
+            c.setGravity(android.view.Gravity.CENTER);
+            c.setTextSize(15);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, dp(40), 1f);
+            lp.setMargins(dp(2), dp(4), dp(2), dp(4));
+            c.setLayoutParams(lp);
+            paintDay(c, dayOn[i]);
+            c.setOnClickListener(v -> { dayOn[idx] = !dayOn[idx]; paintDay(c, dayOn[idx]); });
             daysRow.addView(c);
         }
         TextView daysLabel = new TextView(a);
@@ -239,7 +247,7 @@ final class HorarioUi {
                 .setView(sv)
                 .setPositiveButton(t(R.string.save), (d, w) -> {
                     int days = 0;
-                    for (int i = 0; i < 7; i++) if (dayBoxes[i].isChecked()) days |= 1 << i;
+                    for (int i = 0; i < 7; i++) if (dayOn[i]) days |= 1 << i;
                     if (macs.isEmpty() || days == 0) {
                         Toast.makeText(a, t(R.string.sched_need_devices_days), Toast.LENGTH_LONG).show();
                         h.name = name.getText().toString().trim();
@@ -289,6 +297,14 @@ final class HorarioUi {
         else if (!unblock.isEmpty()) host.applyNow(unblock, false);
         final android.content.Context ctx = a.getApplicationContext();
         new Thread(() -> HorarioRunner.reprogram(ctx)).start();
+    }
+
+    private void paintDay(TextView c, boolean on) {
+        GradientDrawable g = new GradientDrawable();
+        g.setColor(on ? C_ACCENT : C_CHIP);
+        g.setCornerRadius(dp(20));
+        c.setBackground(g);
+        c.setTextColor(on ? Color.WHITE : C_MUTED);
     }
 
     private String devicesText(Set<String> macs) {

@@ -45,6 +45,12 @@ final class RecipeFlows {
         RouterCredentials credentials();
         /** Usa este adaptador en la ubicación actual y actualiza. */
         void useAdapter(String adapterId);
+        /** Dirección y usuario guardados en la ubicación actual ("" si no hay). */
+        String savedHost();
+        String savedUser();
+        boolean hasPassword();
+        /** Guarda los datos de acceso en la ubicación actual (contraseña vacía = no cambiarla). */
+        void saveCredentials(String host, String user, String pass) throws Exception;
     }
 
     static final int REQ_OPEN_RECIPE = 52;
@@ -171,11 +177,13 @@ final class RecipeFlows {
         String[] items = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {
             Catalog.Sheet sh = list.get(i);
-            String icon = !sh.recipe.isEmpty() ? "🧾" : sh.canBlock() ? "✅"
-                    : ("app-only".equals(sh.support) || "none".equals(sh.support)) ? "⛔" : "❔";
-            String sub = sh.isps.isEmpty() ? "" : android.text.TextUtils.join(", ", sh.isps);
-            if (!sh.recipe.isEmpty()) sub += (sub.isEmpty() ? "" : " · ") + t(R.string.with_recipe);
-            items[i] = (det.contains(sh.recipe) ? "★ " : "") + icon + " " + sh.title() + (sub.isEmpty() ? "" : "\n" + sub);
+            // Cada router dice con palabras qué se puede hacer con él, sin tener que recordar iconos.
+            String what = !sh.recipe.isEmpty() ? t(R.string.cat_recipe) : sh.canBlock() ? t(R.string.cat_can_block)
+                    : ("app-only".equals(sh.support) || "none".equals(sh.support)) ? t(R.string.cat_cannot_block)
+                    : t(R.string.cat_unknown);
+            String isps = sh.isps.isEmpty() ? "" : android.text.TextUtils.join(", ", sh.isps);
+            items[i] = (det.contains(sh.recipe) ? "★ " : "") + sh.title() + (isps.isEmpty() ? "" : " · " + isps)
+                    + "\n" + what;
         }
         new AlertDialog.Builder(a)
                 .setTitle(t(R.string.catalog_routers, list.size()))
@@ -188,9 +196,6 @@ final class RecipeFlows {
                 .setNeutralButton(t(R.string.mine_not_listed), (d, w) -> startLearning())
                 .setNegativeButton(t(R.string.close), null)
                 .show();
-        if (list.size() > 0)
-            android.widget.Toast.makeText(a, t(R.string.catalog_legend),
-                    android.widget.Toast.LENGTH_LONG).show();
     }
 
     private void showCatalogList(Catalog cat, List<Catalog.Entry> detected, List<Catalog.Entry> all) {
@@ -472,12 +477,75 @@ final class RecipeFlows {
 
     // ================================================================== pruebas
 
+    /**
+     * Antes de probar una receta se piden los datos de acceso del router en la misma pantalla,
+     * con lo que diga su ficha del catálogo (dirección, usuario, dónde está la contraseña).
+     */
     private void testRead(final RecipeAdapter ad, final boolean imported) {
-        final RouterCredentials c = host.credentials();
-        if (c == null) {
+        final AlertDialog wait = waiting(t(R.string.looking_sheet));
+        worker.execute(() -> {
+            Catalog.Sheet sh = null;
+            try {
+                if (CatalogConfig.configured()) sh = new Catalog().findSheet(ad.recipe().vendor(), ad.recipe().model());
+            } catch (Exception ignored) {
+                // sin catálogo: se piden los datos sin pistas
+            }
+            final Catalog.Sheet fSh = sh;
+            a.runOnUiThread(() -> { wait.dismiss(); askCredentials(ad, imported, fSh); });
+        });
+    }
+
+    private void askCredentials(final RecipeAdapter ad, final boolean imported, Catalog.Sheet sh) {
+        LinearLayout box = new LinearLayout(a);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.setPadding(dp(20), dp(8), dp(20), 0);
+        TextView info = new TextView(a);
+        StringBuilder sb = new StringBuilder(t(R.string.cred_intro, ad.recipe().displayName()));
+        if (sh != null && !sh.passwordHint.isEmpty()) sb.append("\n\n🔑 ").append(sh.passwordHint);
+        else sb.append("\n\n").append(t(R.string.cred_sticker));
+        info.setText(sb.toString());
+        box.addView(info);
+        String hostVal = !host.savedHost().isEmpty() ? host.savedHost()
+                : sh != null && !sh.loginAddress.isEmpty() ? sh.loginAddress : ad.defaultHost();
+        String userVal = !host.savedUser().isEmpty() ? host.savedUser()
+                : sh != null && !sh.loginUser.isEmpty() ? sh.loginUser : ad.defaultUser();
+        final EditText hostF = field(box, t(R.string.label_host));
+        hostF.setText(hostVal);
+        final EditText userF = field(box, t(R.string.label_user));
+        userF.setText(userVal);
+        final EditText passF = field(box, host.hasPassword() ? t(R.string.password_saved_hint) : t(R.string.password));
+        passF.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        new AlertDialog.Builder(a)
+                .setTitle(t(R.string.cred_title))
+                .setView(box)
+                .setPositiveButton(t(R.string.test), (d, w) -> {
+                    String p = passF.getText().toString();
+                    if (p.isEmpty() && !host.hasPassword()) {
+                        Toast.makeText(a, t(R.string.missing_password), Toast.LENGTH_LONG).show();
+                        askCredentials(ad, imported, sh);
+                        return;
+                    }
+                    try {
+                        host.saveCredentials(hostF.getText().toString().trim(), userF.getText().toString().trim(), p);
+                    } catch (Exception e) {
+                        info(t(R.string.missing_password), "⚠ " + e.getMessage());
+                        return;
+                    }
+                    runReadTest(ad, imported);
+                })
+                .setNegativeButton(t(R.string.cancel), null)
+                .show();
+    }
+
+    private void runReadTest(final RecipeAdapter ad, final boolean imported) {
+        final RouterCredentials c0 = host.credentials();
+        if (c0 == null) {
             info(t(R.string.missing_password), t(R.string.missing_password_msg));
             return;
         }
+        // Si la ubicación no tenía dirección o usuario, se usan los de la receta.
+        final RouterCredentials c = new RouterCredentials(host.savedHost().isEmpty() ? ad.defaultHost() : c0.host,
+                host.savedUser().isEmpty() ? ad.defaultUser() : c0.user, c0.password);
         final AlertDialog wait = waiting(t(R.string.testing_read));
         worker.execute(() -> {
             final RecipeTester.Report rep = RecipeTester.readTest(ad, c);
