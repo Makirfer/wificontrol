@@ -46,6 +46,8 @@ final class RecipeFlows {
         /** Usa este adaptador en la ubicación actual y actualiza. */
         void useAdapter(String adapterId);
         /** Dirección y usuario guardados en la ubicación actual ("" si no hay). */
+        /** Id del adaptador que usa ahora la ubicación actual. */
+        String currentAdapterId();
         String savedHost();
         String savedUser();
         boolean hasPassword();
@@ -370,6 +372,15 @@ final class RecipeFlows {
                 .show();
     }
 
+    private TextView smallLabel(String text) {
+        TextView l = new TextView(a);
+        l.setText(text);
+        l.setTextSize(12);
+        l.setTextColor(Color.parseColor("#6B665E"));
+        l.setPadding(0, dp(10), 0, 0);
+        return l;
+    }
+
     private EditText field(LinearLayout box, String hint) {
         EditText e = new EditText(a);
         e.setHint(hint);
@@ -505,22 +516,29 @@ final class RecipeFlows {
         else sb.append("\n\n").append(t(R.string.cred_sticker));
         info.setText(sb.toString());
         box.addView(info);
-        String hostVal = !host.savedHost().isEmpty() ? host.savedHost()
+        // Los datos guardados solo valen si son de este mismo router; si la ubicación usaba otro
+        // (p. ej. el ZTE con usuario admin), se proponen los de la receta y su ficha.
+        boolean same = ad.id().equals(host.currentAdapterId());
+        String hostVal = same && !host.savedHost().isEmpty() ? host.savedHost()
                 : sh != null && !sh.loginAddress.isEmpty() ? sh.loginAddress : ad.defaultHost();
-        String userVal = !host.savedUser().isEmpty() ? host.savedUser()
+        String userVal = same && !host.savedUser().isEmpty() ? host.savedUser()
                 : sh != null && !sh.loginUser.isEmpty() ? sh.loginUser : ad.defaultUser();
+        final boolean keepPass = same && host.hasPassword();
+        box.addView(smallLabel(t(R.string.label_host)));
         final EditText hostF = field(box, t(R.string.label_host));
         hostF.setText(hostVal);
+        box.addView(smallLabel(t(R.string.label_user)));
         final EditText userF = field(box, t(R.string.label_user));
         userF.setText(userVal);
-        final EditText passF = field(box, host.hasPassword() ? t(R.string.password_saved_hint) : t(R.string.password));
+        box.addView(smallLabel(t(R.string.label_password)));
+        final EditText passF = field(box, keepPass ? t(R.string.password_saved_hint) : t(R.string.password));
         passF.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
         new AlertDialog.Builder(a)
                 .setTitle(t(R.string.cred_title))
                 .setView(box)
                 .setPositiveButton(t(R.string.test), (d, w) -> {
                     String p = passF.getText().toString();
-                    if (p.isEmpty() && !host.hasPassword()) {
+                    if (p.isEmpty() && !keepPass) {
                         Toast.makeText(a, t(R.string.missing_password), Toast.LENGTH_LONG).show();
                         askCredentials(ad, imported, sh);
                         return;

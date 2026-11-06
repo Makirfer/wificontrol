@@ -97,6 +97,8 @@ public class MainActivity extends Activity {
                 refresh();
             }
 
+            @Override public String currentAdapterId() { return loc == null ? "" : loc.adapterId; }
+
             @Override public String savedHost() { return loc == null ? "" : loc.host; }
 
             @Override public String savedUser() { return loc == null ? "" : loc.user; }
