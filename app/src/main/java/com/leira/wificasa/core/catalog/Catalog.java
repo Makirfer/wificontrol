@@ -154,7 +154,7 @@ public final class Catalog {
 
     static String norm(String s) {
         return s == null ? "" : java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "").toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]", "");
+                .replaceAll("\\p{M}", "").toLowerCase(Locale.ROOT).replace("+", "plus").replaceAll("[^a-z0-9]", "");
     }
 
     /**
