@@ -36,7 +36,7 @@ public final class Pegatina {
     /** La clave del WiFi no sirve para entrar al router: estas etiquetas se descartan. */
     private static final Pattern WIFI = Pattern.compile("(?i)wi-?fi|wpa|wlan|ssid|wireless|\\bred\\b|network\\s*key|psk|\\bpin\\b");
     private static final Pattern NOT_MODEL = Pattern.compile(
-            "(?i)wpa|ssid|s/n|serial|\\bmac\\b|imei|gpon|\\bpon\\b|\\bpin\\b|\\bkey\\b|clave|contrase|\\bcif\\b|\\bnif\\b|rii|\\bid\\b|n\\.?r\\.?c|sace|f\\.?fab|\\bce\\b");
+            "(?i)wpa|ssid|s/n|serial|\\bmac\\b|imei|gpon|\\bpon\\b|\\bpin\\b|\\bkey\\b|clave|contrase|\\bcif\\b|\\bnif\\b|rii|\\bid\\b|n\\.?r\\.?c|sace|f\\.?fab|\\bce\\b|productor|fabricante|distribu|importador|direcci|address|dist\\.|\\brd\\.");
     private static final Pattern IP = Pattern.compile("\\b(?:https?://)?((?:192\\.168|10\\.\\d{1,3}|172\\.(?:1[6-9]|2\\d|3[01]))\\.\\d{1,3}\\.\\d{1,3})\\b");
     private static final Pattern HOSTNAME = Pattern.compile("(?i)\\bhttps?://([a-z][a-z0-9.\\-]{2,40})\\b");
     private static final Pattern MODEL_CODE = Pattern.compile("\\b([A-Z]{1,6}[- ]?[0-9]{3,5}[A-Z0-9\\-]{0,8})\\b");
@@ -59,6 +59,7 @@ public final class Pegatina {
             if (Pattern.compile("(?i)(?<![a-z])" + Pattern.quote(i[0]) + "(?![a-z])").matcher(low).find()) { p.isp = i[1]; break; }
         }
 
+        String modelText = "";
         for (int k = 0; k < lines.size(); k++) {
             String l = lines.get(k);
             int c = colon(l);
@@ -80,16 +81,22 @@ public final class Pegatina {
                     }
                 }
             }
-            if (val.isEmpty() || val.toLowerCase(Locale.ROOT).startsWith("http")) continue;
+            if (!isModel && (val.isEmpty() || val.toLowerCase(Locale.ROOT).startsWith("http"))) continue;
             if (isModel) {
                 if (p.model.isEmpty()) {
-                    // «Mod.: Router Smart WiFi 7 Askey RTF8316VW» → el código del modelo, si lo hay.
-                    Matcher mc = MODEL_CODE.matcher(val);
-                    String code = null;
-                    while (mc.find()) if (goodCode(mc.group(1))) { code = mc.group(1); break; }
-                    if (code != null) p.model = code.replace(' ', '-');
-                    else if (val.replaceAll("[^A-Za-z]", "").length() >= 2) p.model = val.length() > 40 ? val.substring(0, 40) : val;
-                    // si no (p. ej. «00413012», otro recuadro), se busca el código más abajo
+                    // El código del modelo («RTF8316VW») en la misma línea o en los recuadros de al lado.
+                    String sameLine = c > 0 ? l.substring(c + 1).trim() : "";
+                    String code = codeIn(sameLine);
+                    for (int j = k + 1; code == null && j < Math.min(lines.size(), k + 4); j++) {
+                        if (!NOT_MODEL.matcher(lines.get(j)).find()) code = codeIn(lines.get(j));
+                    }
+                    if (code != null) p.model = code;
+                    else if (modelText.isEmpty()) {
+                        // Sin código: el texto de la etiqueta («Model: Livebox 7») se usa solo si no hay nada mejor.
+                        String t = !sameLine.isEmpty() ? sameLine : val;
+                        if (t.replaceAll("[^A-Za-z]", "").length() >= 2 && colon(t) < 0 && !NOT_MODEL.matcher(t).find())
+                            modelText = t.length() > 40 ? t.substring(0, 40) : t;
+                    }
                 }
                 continue;
             }
@@ -116,6 +123,7 @@ public final class Pegatina {
                 }
             }
         }
+        if (p.model.isEmpty()) p.model = modelText;
         return p;
     }
 
@@ -125,6 +133,12 @@ public final class Pegatina {
             if (!l.startsWith("//", i + 1)) return i;
         }
         return -1;
+    }
+
+    private static String codeIn(String text) {
+        Matcher mc = MODEL_CODE.matcher(text);
+        while (mc.find()) if (goodCode(mc.group(1))) return mc.group(1).replace(' ', '-');
+        return null;
     }
 
     /** Un código de modelo tiene al menos dos letras (RTF8316VW, F6640P); descarta CIF y números de serie. */

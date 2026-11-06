@@ -259,6 +259,11 @@
     <string name="photo_nothing">Couldn\'t read any details in the photo. Try closer, with good light and no glare.</string>
     <string name="photo_check">Check what was read: 0/O or 1/l are sometimes mixed up.</string>
     <string name="photo_error">⚠ Couldn\'t read the photo: %1$s</string>
+    <string name="photo_vendor">Brand</string>
+    <string name="photo_model">Model</string>
+    <string name="photo_isp">Provider</string>
+    <string name="photo_use">Use these details</string>
+    <string name="photo_copy_raw">Copy what was read</string>
     <string-array name="learn_steps">
         <item>Log in to the router panel</item>
         <item>Open the list of connected devices</item>

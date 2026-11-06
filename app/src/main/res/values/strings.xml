@@ -260,6 +260,11 @@
     <string name="photo_nothing">No he podido leer datos en la foto. Prueba más cerca, con buena luz y sin reflejos.</string>
     <string name="photo_check">Revisa lo leído: a veces se confunden 0 y O, o 1 y l.</string>
     <string name="photo_error">⚠ No se pudo leer la foto: %1$s</string>
+    <string name="photo_vendor">Marca</string>
+    <string name="photo_model">Modelo</string>
+    <string name="photo_isp">Compañía</string>
+    <string name="photo_use">Usar estos datos</string>
+    <string name="photo_copy_raw">Copiar lo leído</string>
     <string-array name="learn_steps">
         <item>Inicia sesión en el panel del router</item>
         <item>Abre la lista de dispositivos conectados</item>

@@ -36,6 +36,11 @@ public class PruebaPegatina {
         p = Pegatina.parse("CIF: B58728585\nNº RII-AEE: 744\nRouter Smart WiFi 7 Askey RTF8316VW\nMod.\n00413012\nRed: MOVISTAR-WIFI7-FBA0");
         ok(p.model.equals("RTF8316VW"), "con los recuadros desordenados, el código del modelo igualmente (" + p.model + ")");
 
+        p = Pegatina.parse("Mod.\nProductor: TD SYNNEX SPAIN, S.L.U.\nRouter Smart WiFi 7 Askey RTF8316VW\nCIF: B58728585");
+        ok(p.model.equals("RTF8316VW"), "«Mod.» seguido de «Productor:»: no se toma el productor (" + p.model + ")");
+        p = Pegatina.parse("Productor: TD SYNNEX SPAIN, S.L.U.\nMod.\nFabricante: Askey Computer Corp.\n10F, No.119, Jiankang Rd.\nRouter Smart WiFi 7 Askey RTF8316VW");
+        ok(p.model.equals("RTF8316VW"), "ni el fabricante ni la dirección postal (" + p.model + ")");
+
         ok(Pegatina.parse("").isEmpty() && Pegatina.parse(null).isEmpty(), "sin texto, sin datos");
         System.out.println(f == 0 ? "TODO CORRECTO" : f + " FALLOS");
         System.exit(f == 0 ? 0 : 1);

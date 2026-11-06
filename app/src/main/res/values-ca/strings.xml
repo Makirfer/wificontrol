@@ -259,6 +259,11 @@
     <string name="photo_nothing">No he pogut llegir dades a la foto. Prova-ho més a prop, amb bona llum i sense reflexos.</string>
     <string name="photo_check">Revisa el que s\'ha llegit: de vegades es confonen 0 i O, o 1 i l.</string>
     <string name="photo_error">⚠ No s\'ha pogut llegir la foto: %1$s</string>
+    <string name="photo_vendor">Marca</string>
+    <string name="photo_model">Model</string>
+    <string name="photo_isp">Companyia</string>
+    <string name="photo_use">Fes servir aquestes dades</string>
+    <string name="photo_copy_raw">Copia el que s\'ha llegit</string>
     <string-array name="learn_steps">
         <item>Inicia sessió al panell del router</item>
         <item>Obre la llista de dispositius connectats</item>

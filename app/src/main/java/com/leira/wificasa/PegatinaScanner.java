@@ -90,13 +90,7 @@ final class PegatinaScanner {
                     .addOnSuccessListener(text -> {
                         wait.dismiss();
                         cleanup();
-                        Pegatina p = Pegatina.parse(text.getText());
-                        if (p.isEmpty()) {
-                            Toast.makeText(a, a.getString(R.string.photo_nothing), Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(a, a.getString(R.string.photo_check), Toast.LENGTH_LONG).show();
-                            cb.onRead(p);
-                        }
+                        review(text.getText(), cb);
                     })
                     .addOnFailureListener(e -> {
                         wait.dismiss();
@@ -109,6 +103,39 @@ final class PegatinaScanner {
             Toast.makeText(a, a.getString(R.string.photo_error, String.valueOf(e.getMessage())), Toast.LENGTH_LONG).show();
         }
         return true;
+    }
+
+    /**
+     * Enseña lo leído antes de usarlo. «Copiar lo que se ha leído» copia el texto reconocido, con la
+     * contraseña tapada, para poder mandarlo y mejorar la lectura de ese tipo de pegatina.
+     */
+    private void review(String raw, Callback cb) {
+        Pegatina p = Pegatina.parse(raw);
+        StringBuilder sb = new StringBuilder();
+        line(sb, R.string.photo_vendor, p.vendor);
+        line(sb, R.string.photo_model, p.model);
+        line(sb, R.string.photo_isp, p.isp);
+        line(sb, R.string.label_host, p.host);
+        line(sb, R.string.label_user, p.user);
+        line(sb, R.string.password, p.password);
+        sb.append("\n").append(a.getString(p.isEmpty() ? R.string.photo_nothing : R.string.photo_check));
+        String masked = p.password.isEmpty() ? raw : raw.replace(p.password, "«CONTRASEÑA»");
+        AlertDialog.Builder b = new AlertDialog.Builder(a)
+                .setTitle(a.getString(R.string.photo_title))
+                .setMessage(sb.toString().trim())
+                .setNeutralButton(a.getString(R.string.photo_copy_raw), (d, w) -> {
+                    android.content.ClipboardManager cm =
+                            (android.content.ClipboardManager) a.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                    if (cm != null) cm.setPrimaryClip(ClipData.newPlainText("pegatina", masked));
+                    Toast.makeText(a, a.getString(R.string.copied), Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(a.getString(R.string.cancel), null);
+        if (!p.isEmpty()) b.setPositiveButton(a.getString(R.string.photo_use), (d, w) -> cb.onRead(p));
+        b.show();
+    }
+
+    private void line(StringBuilder sb, int label, String value) {
+        sb.append(a.getString(label)).append(": ").append(value.isEmpty() ? "—" : value).append("\n");
     }
 
     private void cleanup() {
