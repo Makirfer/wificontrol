@@ -18,6 +18,20 @@ actualizaciones después de publicar.
 | Material de la tienda | Textos, capturas y vídeo con el **modo demostración** (`docs/TIENDA.md`). |
 | Orden | 1) conocidos con otros routers (APK a mano) → 2) cuenta de Play Console y prueba cerrada (12 personas, 14 días) → 3) compra dentro de la app. |
 
+## Aparato puente en casa (decidido: dejar las dos opciones preparadas)
+
+Una sola app con **modo agente**, que sirve para:
+1. **Un móvil Android viejo** enchufado en casa.
+2. **Un Android TV / Google TV** (Xiaomi Mi Box, Mi TV Stick, teles con Android TV): la misma app con una
+   pantalla adaptada al mando a distancia.
+
+Por fases:
+- **Fase 1 (sin servidor):** el agente ejecuta los horarios y vigila las conexiones 24 h desde casa, aunque el
+  móvil de los padres esté fuera o apagado.
+- **Fase 2 (suscripción):** puente en un servidor para pausar y recibir avisos desde fuera, con emparejamiento
+  por QR y órdenes cifradas de punta a punta.
+- Más adelante, si hay volumen: cajita propia con Raspberry Pi Zero 2 W (el motor Java se reutiliza).
+
 ## Próxima versión: identificar los aparatos
 
 - **Iconos por tipo**: 📱 móvil · 💻 ordenador · 🎮 consola · 📺 tele · 🔊 altavoz · 🖨 impresora · ⌚ reloj · 📷 cámara · ❔ desconocido.
