@@ -28,8 +28,10 @@ Una sola app con **modo agente**, que sirve para:
 Por fases:
 - **Fase 1 (sin servidor):** el agente ejecuta los horarios y vigila las conexiones 24 h desde casa, aunque el
   móvil de los padres esté fuera o apagado.
-- **Fase 2 (suscripción):** puente en un servidor para pausar y recibir avisos desde fuera, con emparejamiento
-  por QR y órdenes cifradas de punta a punta.
+- **Fase 2 (suscripción):** puente para pausar y recibir avisos desde fuera, con emparejamiento por QR y
+  órdenes cifradas de punta a punta. **Decidido: Firebase desde el principio**, en un único proyecto de la
+  app (cuenta de Google del proyecto), conectado desde la propia app sin que el usuario configure nada.
+  Datos en Europa (europe-west). Telegram queda como alternativa opcional.
 - Más adelante, si hay volumen: cajita propia con Raspberry Pi Zero 2 W (el motor Java se reutiliza).
 
 ## Próxima versión: identificar los aparatos
