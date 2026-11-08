@@ -63,6 +63,12 @@ public final class Pegatina {
         p.wifiName = ssid;
         p.wifiKey = key;
         for (String o : other) {
+            // Algunos QR llevan los datos de acceso («user=admin&pass=…», «Usuario: admin; Clave: …»):
+            // son exactos, así que mandan sobre lo leído en el texto.
+            String u = kv(o, QR_USER), pw = kv(o, QR_PASS), m = kv(o, QR_MODEL);
+            if (!u.isEmpty()) p.user = u;
+            if (!pw.isEmpty() && !sameKey(pw, key)) p.password = pw;
+            if (!m.isEmpty() && p.model.isEmpty()) p.model = m;
             if (p.host.isEmpty()) {
                 Matcher ip = IP.matcher(o);
                 if (ip.find()) p.host = ip.group(1);
@@ -71,6 +77,15 @@ public final class Pegatina {
             if (p.qrOther.isEmpty()) p.qrOther = o.length() > 200 ? o.substring(0, 200) : o;
         }
         return p;
+    }
+
+    private static final Pattern QR_USER = Pattern.compile("(?i)(?:^|[?&;,\\s{\"])(?:user(?:name)?|usuario|usuari|login|usr|admin_?user)\"?\\s*[=:]\\s*\"?([^&;,\\s\"}]+)");
+    private static final Pattern QR_PASS = Pattern.compile("(?i)(?:^|[?&;,\\s{\"])(?:pass(?:word)?|pwd|contrase(?:ñ|n)a|contrasenya|admin_?pass(?:word)?)\"?\\s*[=:]\\s*\"?([^&;,\\s\"}]+)");
+    private static final Pattern QR_MODEL = Pattern.compile("(?i)(?:^|[?&;,\\s{\"])(?:model[oe]?)\"?\\s*[=:]\\s*\"?([^&;,\"}]+)");
+
+    private static String kv(String text, Pattern p) {
+        Matcher m = p.matcher(text);
+        return m.find() ? m.group(1).trim() : "";
     }
 
     /**

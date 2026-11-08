@@ -190,6 +190,27 @@ public final class LocationStore {
         e.apply();
     }
 
+    // ------------------------------------------------------------------ WiFi de casa (opcional)
+
+    /** Nombre de la red WiFi (lo lee el QR de la pegatina; servirá para el QR de las visitas). */
+    public String wifiName(Location l) { return p.getString(k(l.id, "wifi_name"), ""); }
+
+    /** Clave del WiFi, descifrada; "" si no hay o no se puede descifrar. */
+    public String wifiKey(Location l) {
+        try {
+            String enc = p.getString(k(l.id, "wifi_key"), "");
+            return enc.isEmpty() ? "" : SecretBox.decrypt(enc);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /** Guarda la red y la clave (cifrada, como la contraseña del router). */
+    public void setWifi(Location l, String name, String key) throws Exception {
+        p.edit().putString(k(l.id, "wifi_name"), name == null ? "" : name.trim())
+                .putString(k(l.id, "wifi_key"), key == null || key.isEmpty() ? "" : SecretBox.encrypt(key)).apply();
+    }
+
     // ------------------------------------------------------------------ tipo de aparato y último acceso correcto
 
     /** Tipo elegido a mano ("phone", "console"…) o "" para deducirlo solo. */

@@ -264,7 +264,7 @@ final class RecipeFlows {
         })));
         new AlertDialog.Builder(a)
                 .setTitle(t(R.string.learn_new_title))
-                .setView(box)
+                .setView(scrolled(box))
                 .setPositiveButton(t(R.string.next), (d, w) -> {
                     String v = vendor.getText().toString().trim(), m = model.getText().toString().trim();
                     if (v.isEmpty() || m.isEmpty()) {
@@ -443,7 +443,7 @@ final class RecipeFlows {
         box.addView(text);
         dlg[0] = new AlertDialog.Builder(a)
                 .setTitle(t(R.string.import_title))
-                .setView(box)
+                .setView(scrolled(box))
                 .setPositiveButton(t(R.string.validate), (d, w) -> validate(stripFences(text.getText().toString())))
                 .setNegativeButton(t(R.string.cancel), null)
                 .show();
@@ -560,7 +560,7 @@ final class RecipeFlows {
         })));
         new AlertDialog.Builder(a)
                 .setTitle(t(R.string.cred_title))
-                .setView(box)
+                .setView(scrolled(box))
                 .setPositiveButton(t(R.string.test), (d, w) -> {
                     String p = passF.getText().toString();
                     if (p.isEmpty() && !keepPass) {
@@ -758,6 +758,12 @@ final class RecipeFlows {
         box.setOrientation(LinearLayout.VERTICAL);
         box.setPadding(dp(20), dp(8), dp(20), 0);
         return box;
+    }
+
+    private ScrollView scrolled(LinearLayout box) {
+        ScrollView sv = new ScrollView(a);
+        sv.addView(box, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        return sv;
     }
 
     private ScrollView scrollText(String s) {

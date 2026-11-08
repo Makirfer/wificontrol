@@ -334,6 +334,16 @@ public class MainActivity extends Activity {
         listBox.setOrientation(LinearLayout.VERTICAL);
         root.addView(listBox);
 
+        // Siempre a mano, sobre todo durante la prueba: escribir qué falla o qué falta.
+        TextView feedbackLink = new TextView(this);
+        feedbackLink.setText(t(R.string.feedback_button));
+        feedbackLink.setTextColor(C_ACCENT);
+        feedbackLink.setTextSize(15);
+        feedbackLink.setGravity(Gravity.CENTER_HORIZONTAL);
+        feedbackLink.setPadding(0, dp(24), 0, dp(8));
+        feedbackLink.setOnClickListener(v -> askFeedback(adapterName(adapter())));
+        root.addView(feedbackLink);
+
         setContentView(scroll);
     }
 
@@ -364,8 +374,8 @@ public class MainActivity extends Activity {
         String g = store.groupName(loc);
         studyOnBtn.setText(g.isEmpty() ? t(R.string.pause) : t(R.string.pause_group, g));
         studyOffBtn.setText(g.isEmpty() ? t(R.string.resume) : t(R.string.resume_group, g));
-        hintView.setText(canSwitch
-                ? t(R.string.hint_can_switch)
+        hintView.setText(isDemo(loc.adapterId) ? t(R.string.demo_banner)
+                : canSwitch ? t(R.string.hint_can_switch)
                 : t(R.string.hint_list_only));
         // Se muestran enseguida los dispositivos recordados; Actualizar trae el estado real.
         devices = store.knownDevices(loc);
@@ -378,6 +388,10 @@ public class MainActivity extends Activity {
     // ------------------------------------------------------------------ datos
 
     private RouterAdapter adapter() { return AdapterRegistry.get(loc.adapterId); }
+
+    private static boolean isDemo(String adapterId) {
+        return com.makirfer.wifitimecontrol.adapters.demo.DemoAdapter.ID.equals(adapterId);
+    }
 
     private boolean canSwitch() {
         Set<Capability> c = adapter().capabilities();
@@ -808,6 +822,13 @@ public class MainActivity extends Activity {
         return box;
     }
 
+    /** Las ventanas largas (Ajustes) se desplazan: si no, en móviles pequeños se cortan por abajo. */
+    private View scrolled(LinearLayout box) {
+        ScrollView sv = new ScrollView(this);
+        sv.addView(box, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        return sv;
+    }
+
     private TextView label(String text) {
         TextView t = new TextView(this);
         t.setText(text);
@@ -880,7 +901,7 @@ public class MainActivity extends Activity {
 
         AlertDialog.Builder b = new AlertDialog.Builder(this)
                 .setTitle(t(R.string.device))
-                .setView(box)
+                .setView(scrolled(box))
                 .setPositiveButton(t(R.string.save), (dialog, which) -> {
                     store.saveDevice(loc, d.mac, name.getText().toString().trim(), study.isChecked());
                     store.setDeviceType(loc, d.mac, chosenType[0]);
@@ -951,7 +972,7 @@ public class MainActivity extends Activity {
         box.addView(name);
         new AlertDialog.Builder(this)
                 .setTitle(t(R.string.new_location))
-                .setView(box)
+                .setView(scrolled(box))
                 .setPositiveButton(t(R.string.create), (dialog, which) -> {
                     String n = name.getText().toString().trim();
                     switchTo(store.create(n.isEmpty() ? t(R.string.loc_numbered, store.all().size() + 1) : n));
@@ -1001,6 +1022,10 @@ public class MainActivity extends Activity {
                         }
                         editing.adapterId = adapters.get(which).id();
                         model.setText(names[which] + "  ▾");
+                        if (isDemo(editing.adapterId)) {
+                            new AlertDialog.Builder(this).setTitle(t(R.string.demo_name))
+                                    .setMessage(t(R.string.demo_explain)).setPositiveButton(t(R.string.ok), null).show();
+                        }
                     }).show();
         });
         box.addView(model);
@@ -1033,6 +1058,19 @@ public class MainActivity extends Activity {
         pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         box.addView(pass);
 
+        box.addView(label(t(R.string.label_wifi)));
+        final EditText wifiName = new EditText(this);
+        wifiName.setText(store.wifiName(editing));
+        wifiName.setHint(t(R.string.photo_wifi_name));
+        wifiName.setInputType(InputType.TYPE_CLASS_TEXT);
+        box.addView(wifiName);
+        final EditText wifiKey = new EditText(this);
+        final String oldWifiKey = store.wifiKey(editing);
+        wifiKey.setText(oldWifiKey);
+        wifiKey.setHint(t(R.string.photo_wifi_key));
+        wifiKey.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        box.addView(wifiKey);
+
         Button photo = new Button(this);
         photo.setAllCaps(false);
         photo.setText(t(R.string.photo_button));
@@ -1043,8 +1081,14 @@ public class MainActivity extends Activity {
                 pass.setText(p.password);
                 pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
             }
+            if (!p.wifiName.isEmpty()) wifiName.setText(p.wifiName);
+            if (!p.wifiKey.isEmpty()) {
+                wifiKey.setText(p.wifiKey);
+                wifiKey.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            }
+            Toast.makeText(this, t(R.string.photo_filled), Toast.LENGTH_LONG).show();
         }));
-        box.addView(photo);
+        box.addView(photo, indexAfter(box, model)); // arriba, junto al modelo: se ve sin desplazar
 
         Button lockBtn = new Button(this);
         lockBtn.setAllCaps(false);
@@ -1065,7 +1109,7 @@ public class MainActivity extends Activity {
 
         AlertDialog.Builder b = new AlertDialog.Builder(this)
                 .setTitle(firstTime ? t(R.string.setup_router) : t(R.string.settings_of, editing.name))
-                .setView(box)
+                .setView(scrolled(box))
                 .setPositiveButton(t(R.string.save), (dialog, which) -> {
                     RouterAdapter a = AdapterRegistry.get(editing.adapterId);
                     String n = name.getText().toString().trim();
@@ -1084,6 +1128,11 @@ public class MainActivity extends Activity {
                         return;
                     }
                     store.setGroupName(editing, group.getText().toString());
+                    try {
+                        store.setWifi(editing, wifiName.getText().toString(), wifiKey.getText().toString());
+                    } catch (Exception e) {
+                        Toast.makeText(this, t(R.string.password_save_error, e.getMessage()), Toast.LENGTH_LONG).show();
+                    }
                     if (notifyNew.isChecked() != store.notifyNew(editing)) {
                         store.setNotifyNew(editing, notifyNew.isChecked());
                         final android.content.Context app = getApplicationContext();
@@ -1104,6 +1153,11 @@ public class MainActivity extends Activity {
         settingsDlg[0] = b.show();
     }
 
+    private static int indexAfter(LinearLayout box, View v) {
+        for (int i = 0; i < box.getChildCount(); i++) if (box.getChildAt(i) == v) return i + 1;
+        return box.getChildCount();
+    }
+
     /** «Enviar comentario»: texto libre + versión de la app, móvil y router (nada más). */
     private void askFeedback(final String router) {
         LinearLayout box = dialogBox();
@@ -1119,7 +1173,7 @@ public class MainActivity extends Activity {
         box.addView(text);
         new AlertDialog.Builder(this)
                 .setTitle(t(R.string.feedback_title))
-                .setView(box)
+                .setView(scrolled(box))
                 .setPositiveButton(t(R.string.feedback_send), (d, w) -> Feedback.send(this, t(R.string.feedback_subject),
                         text.getText().toString().trim() + "\n\n— " + Feedback.deviceInfo(this, router)))
                 .setNegativeButton(t(R.string.cancel), null)

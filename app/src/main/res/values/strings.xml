@@ -329,6 +329,12 @@
     <string name="feedback_hint">Escribe aquí…</string>
     <string name="feedback_send">Enviar</string>
     <string name="feedback_subject">Comentario sobre WiFi Time Control</string>
+    <string name="photo_scan_qr">🔳 Escanear el código QR</string>
+    <string name="photo_will_fill">«Usar estos datos» los pone en Ajustes (dirección, usuario, contraseña y WiFi de casa). Revisa y toca Guardar.</string>
+    <string name="photo_filled">Datos puestos. Revísalos y toca Guardar.</string>
+    <string name="label_wifi">WiFi de casa (opcional, para compartirlo con las visitas)</string>
+    <string name="demo_explain">Es un router imaginario con 6 aparatos de ejemplo (consola, tablet, tele…). Sirve para ver cómo funciona la app sin tocar tu router: puedes pausar, poner horarios y temporizadores, y nada afecta a tu red.\n\nPara usar tu router de verdad, vuelve a Ajustes y elige su modelo.</string>
+    <string name="demo_banner">🎬 Modo demostración: son aparatos de ejemplo y no se toca tu router. Pruébalo todo; para usar tu router de verdad, ve a Ajustes → Modelo de router.</string>
     <string-array name="welcome_titles">
         <item>Bienvenido a WiFi Time Control</item>
         <item>Pausa Internet a quien quieras</item>

@@ -60,5 +60,9 @@
             android:name=".AvisoJob"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+        <!-- El visor de códigos QR de Google se descarga al instalar la app, no la primera vez que se usa. -->
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode_ui" />
     </application>
 </manifest>

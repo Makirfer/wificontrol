@@ -55,6 +55,12 @@ public class PruebaPegatina {
                 "QR que no es de WiFi: se guarda el texto y se aprovechan compañía y dirección");
         ok(Pegatina.parse("", java.util.Arrays.asList("hola")).qrOther.equals("hola") && Pegatina.parse("", null).isEmpty(), "QR cualquiera / sin QR");
 
+        p = Pegatina.parse("Contraseña: Xx1Yy2Zz", java.util.Arrays.asList("http://192.168.1.1/?user=1234&pass=Qw3rTy12&model=F6640P"));
+        ok(p.user.equals("1234") && p.password.equals("Qw3rTy12") && p.model.equals("F6640P") && p.host.equals("192.168.1.1"),
+                "QR con datos de acceso: mandan sobre el texto (" + p.user + "/" + p.password + "/" + p.model + ")");
+        p = Pegatina.parse("", java.util.Arrays.asList("Usuario: admin; Contraseña: Hj5Kl8Pq"));
+        ok(p.user.equals("admin") && p.password.equals("Hj5Kl8Pq"), "QR con «Usuario: …; Contraseña: …»");
+
         ok(Pegatina.parse("").isEmpty() && Pegatina.parse(null).isEmpty(), "sin texto, sin datos");
         System.out.println(f == 0 ? "TODO CORRECTO" : f + " FALLOS");
         System.exit(f == 0 ? 0 : 1);

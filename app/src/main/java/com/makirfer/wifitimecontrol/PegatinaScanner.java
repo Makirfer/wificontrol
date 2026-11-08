@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
@@ -47,15 +49,20 @@ final class PegatinaScanner {
         return new File(dir, ShareProvider.PHOTO);
     }
 
-    /** Pregunta si hacer una foto o elegir una de la galería, y devuelve lo leído al callback. */
+    /**
+     * Pregunta cómo leer la pegatina (escanear el QR con el visor, hacer una foto o elegirla de la
+     * galería) y devuelve lo leído al callback.
+     */
     void scan(Callback cb) {
         pending = cb;
-        String[] items = { a.getString(R.string.photo_take), a.getString(R.string.photo_pick) };
+        String[] items = { a.getString(R.string.photo_scan_qr), a.getString(R.string.photo_take), a.getString(R.string.photo_pick) };
         new AlertDialog.Builder(a)
                 .setTitle(a.getString(R.string.photo_title))
                 .setItems(items, (d, w) -> {
                     try {
                         if (w == 0) {
+                            scanQr(cb);
+                        } else if (w == 1) {
                             File f = photo();
                             if (f.exists()) f.delete();
                             Uri out = Uri.parse("content://" + ShareProvider.AUTHORITY + "/" + ShareProvider.PHOTO);
@@ -76,6 +83,25 @@ final class PegatinaScanner {
                 })
                 .setNegativeButton(a.getString(R.string.cancel), null)
                 .show();
+    }
+
+    /**
+     * Visor de Google para códigos QR (el recuadro de siempre). No necesita permiso de cámara: lo
+     * pone Google Play Services y la app solo recibe el texto del código.
+     */
+    private void scanQr(Callback cb) {
+        GmsBarcodeScanning.getClient(a, new GmsBarcodeScannerOptions.Builder()
+                        .setBarcodeFormats(Barcode.FORMAT_QR_CODE, Barcode.FORMAT_DATA_MATRIX, Barcode.FORMAT_AZTEC)
+                        .enableAutoZoom()
+                        .build())
+                .startScan()
+                .addOnSuccessListener(code -> {
+                    List<String> values = new ArrayList<>();
+                    if (code.getRawValue() != null) values.add(code.getRawValue());
+                    review("", values, cb);
+                })
+                .addOnFailureListener(e -> Toast.makeText(a, a.getString(R.string.photo_error,
+                        String.valueOf(e.getMessage())), Toast.LENGTH_LONG).show());
     }
 
     /** true si el resultado era de este escáner. */
@@ -139,6 +165,7 @@ final class PegatinaScanner {
         line(sb, R.string.label_host, p.host);
         line(sb, R.string.label_user, p.user);
         line(sb, R.string.password, p.password);
+        if (!p.isEmpty()) sb.append("\n").append(a.getString(R.string.photo_will_fill)).append("\n");
         if (!p.wifiName.isEmpty() || !p.wifiKey.isEmpty()) {
             sb.append("\n").append(a.getString(R.string.photo_qr_wifi)).append("\n");
             line(sb, R.string.photo_wifi_name, p.wifiName);
