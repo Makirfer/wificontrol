@@ -550,6 +550,7 @@ final class RecipeFlows {
         final EditText passF = field(box, keepPass ? t(R.string.password_saved_hint) : t(R.string.password));
         passF.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
         box.addView(photoButton(() -> host.scanner().scan(p -> {
+            if (p.password.isEmpty()) Toast.makeText(a, t(R.string.photo_no_router_pass), Toast.LENGTH_LONG).show();
             if (!p.host.isEmpty()) hostF.setText(p.host);
             if (!p.user.isEmpty()) userF.setText(p.user);
             if (!p.password.isEmpty()) {

@@ -1075,18 +1075,23 @@ public class MainActivity extends Activity {
         photo.setAllCaps(false);
         photo.setText(t(R.string.photo_button));
         photo.setOnClickListener(v -> scanner.scan(p -> {
-            if (!p.host.isEmpty()) host.setText(p.host);
-            if (!p.user.isEmpty()) user.setText(p.user);
+            List<String> filled = new ArrayList<>();
+            if (!p.host.isEmpty()) { host.setText(p.host); filled.add(t(R.string.label_host)); }
+            if (!p.user.isEmpty()) { user.setText(p.user); filled.add(t(R.string.label_user)); }
             if (!p.password.isEmpty()) {
                 pass.setText(p.password);
                 pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                filled.add(t(R.string.password));
             }
-            if (!p.wifiName.isEmpty()) wifiName.setText(p.wifiName);
+            if (!p.wifiName.isEmpty()) { wifiName.setText(p.wifiName); filled.add(t(R.string.photo_wifi_name)); }
             if (!p.wifiKey.isEmpty()) {
                 wifiKey.setText(p.wifiKey);
                 wifiKey.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                filled.add(t(R.string.photo_wifi_key));
             }
-            Toast.makeText(this, t(R.string.photo_filled), Toast.LENGTH_LONG).show();
+            String msg = t(R.string.photo_filled, String.join(", ", filled));
+            if (p.password.isEmpty()) msg += "\n" + t(R.string.photo_no_router_pass);
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         }));
         box.addView(photo, indexAfter(box, model)); // arriba, junto al modelo: se ve sin desplazar
 

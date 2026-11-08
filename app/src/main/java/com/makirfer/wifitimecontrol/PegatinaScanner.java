@@ -98,7 +98,15 @@ final class PegatinaScanner {
                 .addOnSuccessListener(code -> {
                     List<String> values = new ArrayList<>();
                     if (code.getRawValue() != null) values.add(code.getRawValue());
-                    review("", values, cb);
+                    Pegatina p = Pegatina.parse("", values);
+                    // Lo que trae un QR es exacto: va directo a su sitio, sin ventana de revisión.
+                    // Si no trae nada aprovechable, se enseña lo leído.
+                    if (p.isEmpty() || (p.user.isEmpty() && p.password.isEmpty() && p.wifiName.isEmpty()
+                            && p.wifiKey.isEmpty() && p.host.isEmpty())) {
+                        review("", values, cb);
+                    } else {
+                        cb.onRead(p);
+                    }
                 })
                 .addOnFailureListener(e -> Toast.makeText(a, a.getString(R.string.photo_error,
                         String.valueOf(e.getMessage())), Toast.LENGTH_LONG).show());
