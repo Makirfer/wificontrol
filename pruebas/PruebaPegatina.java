@@ -41,6 +41,20 @@ public class PruebaPegatina {
         p = Pegatina.parse("Productor: TD SYNNEX SPAIN, S.L.U.\nMod.\nFabricante: Askey Computer Corp.\n10F, No.119, Jiankang Rd.\nRouter Smart WiFi 7 Askey RTF8316VW");
         ok(p.model.equals("RTF8316VW"), "ni el fabricante ni la dirección postal (" + p.model + ")");
 
+        // Código QR de WiFi en la misma foto (claves inventadas).
+        java.util.List<String> qr = java.util.Arrays.asList("WIFI:T:WPA;S:MOVISTAR-WIFI7-FBA0;P:Ab12Cd34Ef56Gh;;");
+        p = Pegatina.parse("movistar\nRouter Smart WiFi 7 Askey RTF8316VW\nhttp://192.168.1.1 con la contraseña:\nAb12Cd34Ef56Gh\nQa7Zr2Lm", qr);
+        ok(p.wifiName.equals("MOVISTAR-WIFI7-FBA0") && p.wifiKey.equals("Ab12Cd34Ef56Gh"), "QR: red y clave del WiFi exactas");
+        ok(p.password.equals("Qa7Zr2Lm"), "QR: la clave del WiFi no se toma por la del router (" + p.password + ")");
+        p = Pegatina.parse("Contraseña: AbI2Cd34Ef56Gh\nAdmin password: Hj5Kl8Pq", qr);
+        ok(p.password.equals("Hj5Kl8Pq"), "QR: tampoco si la lectura confunde 1 e I (" + p.password + ")");
+        p = Pegatina.parse("", java.util.Arrays.asList("WIFI:S:Casa\\;Pepe;T:WPA2;P:\"a\\:b\\\\c\";H:false;;"));
+        ok(p.wifiName.equals("Casa;Pepe") && p.wifiKey.equals("a:b\\c") && !p.isEmpty(), "QR: caracteres escapados y comillas (" + p.wifiName + " / " + p.wifiKey + ")");
+        p = Pegatina.parse("ZTE\nZXHN F6640P", java.util.Arrays.asList("https://www.orange.es/livebox?ip=192.168.1.1"));
+        ok(p.wifiKey.isEmpty() && p.qrOther.startsWith("https://www.orange.es") && p.isp.equals("Orange") && p.host.equals("192.168.1.1"),
+                "QR que no es de WiFi: se guarda el texto y se aprovechan compañía y dirección");
+        ok(Pegatina.parse("", java.util.Arrays.asList("hola")).qrOther.equals("hola") && Pegatina.parse("", null).isEmpty(), "QR cualquiera / sin QR");
+
         ok(Pegatina.parse("").isEmpty() && Pegatina.parse(null).isEmpty(), "sin texto, sin datos");
         System.out.println(f == 0 ? "TODO CORRECTO" : f + " FALLOS");
         System.exit(f == 0 ? 0 : 1);

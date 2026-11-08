@@ -163,6 +163,47 @@ public final class LocationStore {
 
     public void setScheduleResult(Location l, String text) { p.edit().putString(k(l.id, "sched_result"), text).apply(); }
 
+    // ------------------------------------------------------------------ pausas con temporizador
+
+    /** Aparatos en pausa con hora de vuelta: MAC → cuándo se les devuelve Internet (ms). */
+    public Map<String, Long> timers(Location l) {
+        Map<String, Long> out = new java.util.HashMap<>();
+        String prefix = k(l.id, "timer.");
+        for (Map.Entry<String, ?> en : p.getAll().entrySet()) {
+            if (en.getKey().startsWith(prefix) && en.getValue() instanceof Long) {
+                out.put(en.getKey().substring(prefix.length()), (Long) en.getValue());
+            }
+        }
+        return out;
+    }
+
+    public void setTimer(Location l, Set<String> macs, long resumeAtMs) {
+        SharedPreferences.Editor e = p.edit();
+        for (String mac : macs) e.putLong(k(l.id, "timer." + mac), resumeAtMs);
+        e.apply();
+    }
+
+    /** Quita la hora de vuelta (al devolver Internet a mano, o cuando ya ha vuelto). */
+    public void clearTimers(Location l, Set<String> macs) {
+        SharedPreferences.Editor e = p.edit();
+        for (String mac : macs) e.remove(k(l.id, "timer." + mac));
+        e.apply();
+    }
+
+    // ------------------------------------------------------------------ tipo de aparato y último acceso correcto
+
+    /** Tipo elegido a mano ("phone", "console"…) o "" para deducirlo solo. */
+    public String deviceType(Location l, String mac) { return p.getString(k(l.id, "type." + mac), ""); }
+
+    public void setDeviceType(Location l, String mac, String type) {
+        p.edit().putString(k(l.id, "type." + mac), type == null ? "" : type).apply();
+    }
+
+    /** Última vez que el router respondió bien en esta ubicación (para avisar si «ha cambiado»). */
+    public long lastOk(Location l) { return p.getLong(k(l.id, "last_ok"), 0); }
+
+    public void setLastOk(Location l, long ms) { p.edit().putLong(k(l.id, "last_ok"), ms).apply(); }
+
     // ------------------------------------------------------------------ avisos de conexión
 
     /** Aparatos de los que se avisa cuando se conectan. */
@@ -248,8 +289,8 @@ public final class LocationStore {
     public void forgetDevice(Location l, String mac) {
         Set<String> s = studySet(l);
         s.remove(mac);
-        p.edit().remove(k(l.id, "known." + mac)).remove(k(l.id, "alias." + mac))
-                .putStringSet(k(l.id, "study"), s).apply();
+        p.edit().remove(k(l.id, "known." + mac)).remove(k(l.id, "alias." + mac)).remove(k(l.id, "type." + mac))
+                .remove(k(l.id, "timer." + mac)).putStringSet(k(l.id, "study"), s).apply();
     }
 
     private static String clean(String s) {

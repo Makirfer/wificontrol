@@ -24,6 +24,8 @@ import android.widget.Toast;
 import com.makirfer.wifitimecontrol.core.AccessState;
 import com.makirfer.wifitimecontrol.core.AdapterRegistry;
 import com.makirfer.wifitimecontrol.core.Capability;
+import com.makirfer.wifitimecontrol.core.DeviceType;
+import com.makirfer.wifitimecontrol.core.Oui;
 import com.makirfer.wifitimecontrol.core.NetDevice;
 import com.makirfer.wifitimecontrol.core.RouterAdapter;
 import com.makirfer.wifitimecontrol.core.RouterCredentials;
@@ -72,7 +74,8 @@ public class MainActivity extends Activity {
     private AppLock lock;
     private boolean resumedOnce;
     private static final int REQ_WELCOME = 56;
-    private Button scheduleBtn;
+    private Button scheduleBtn, timerBtn;
+    private Oui oui;
 
     // ------------------------------------------------------------------ ciclo de vida
 
@@ -288,6 +291,14 @@ public class MainActivity extends Activity {
         studyOnBtn.setOnClickListener(v -> applyStudy(true));
         root.addView(studyOnBtn);
 
+        timerBtn = new Button(this);
+        timerBtn.setAllCaps(false);
+        timerBtn.setText(t(R.string.timer_group_button));
+        timerBtn.setTextColor(C_RED);
+        timerBtn.setBackground(rounded(Color.TRANSPARENT, 10));
+        timerBtn.setOnClickListener(v -> { if (!busy) askTimer(null); });
+        root.addView(timerBtn);
+
         studyOffBtn = bigButton(t(R.string.resume), C_GREEN);
         studyOffBtn.setOnClickListener(v -> applyStudy(false));
         root.addView(studyOffBtn);
@@ -331,6 +342,7 @@ public class MainActivity extends Activity {
         if (msg != null) statusView.setText(msg);
         studyOnBtn.setEnabled(!b);
         studyOffBtn.setEnabled(!b);
+        timerBtn.setEnabled(!b);
         refreshBtn.setEnabled(!b);
         locationBtn.setEnabled(!b);
         studyOnBtn.setAlpha(b ? 0.5f : 1f);
@@ -346,6 +358,7 @@ public class MainActivity extends Activity {
         boolean canSwitch = canSwitch();
         studyOnBtn.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
         studyOffBtn.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
+        timerBtn.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
         groupInfoView.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
         scheduleBtn.setVisibility(canSwitch ? View.VISIBLE : View.GONE);
         String g = store.groupName(loc);
@@ -373,6 +386,53 @@ public class MainActivity extends Activity {
 
     private String alias(NetDevice d) { return store.alias(loc, d.mac); }
 
+    /** Lista de marcas por MAC (assets/oui.txt); se carga la primera vez que hace falta. */
+    private Oui oui() {
+        if (oui == null) {
+            try (java.io.InputStream in = getAssets().open("oui.txt")) {
+                oui = new Oui(in);
+            } catch (Exception e) {
+                try { oui = new Oui(new java.io.ByteArrayInputStream(new byte[0])); } catch (Exception ignored) { }
+            }
+        }
+        return oui;
+    }
+
+    /** Tipo elegido a mano o, si no, el deducido del nombre puesto, el del router y la marca. */
+    private String typeOf(NetDevice d) {
+        String manual = store.deviceType(loc, d.mac);
+        return manual.isEmpty() ? autoType(d) : manual;
+    }
+
+    private String autoType(NetDevice d) {
+        String byAlias = DeviceType.fromName(alias(d));
+        if (!DeviceType.UNKNOWN.equals(byAlias)) return byAlias;
+        return DeviceType.guess(d.hostName, oui().hint(d.mac), d.mac);
+    }
+
+    private String typeName(String type) {
+        switch (type) {
+            case DeviceType.PHONE: return t(R.string.type_phone);
+            case DeviceType.TABLET: return t(R.string.type_tablet);
+            case DeviceType.COMPUTER: return t(R.string.type_computer);
+            case DeviceType.CONSOLE: return t(R.string.type_console);
+            case DeviceType.TV: return t(R.string.type_tv);
+            case DeviceType.SPEAKER: return t(R.string.type_speaker);
+            case DeviceType.PRINTER: return t(R.string.type_printer);
+            case DeviceType.WATCH: return t(R.string.type_watch);
+            case DeviceType.CAMERA: return t(R.string.type_camera);
+            case DeviceType.SMART: return t(R.string.type_smart);
+            case DeviceType.NETWORK: return t(R.string.type_network);
+            default: return t(R.string.type_unknown);
+        }
+    }
+
+    /** «Apple», o «dirección privada» si el aparato oculta su MAC real. */
+    private String brandText(NetDevice d) {
+        if (DeviceType.privateMac(d.mac)) return t(R.string.private_mac);
+        return oui().brand(d.mac);
+    }
+
     private String displayName(NetDevice d) {
         String a = alias(d);
         return a.isEmpty() ? (d.hostName.isEmpty() ? d.mac : d.hostName) : a;
@@ -395,6 +455,7 @@ public class MainActivity extends Activity {
         worker.execute(() -> {
             String result;
             List<NetDevice> fresh = null;
+            Exception failure = null;
             try {
                 if (writes) {
                     result = engine.run(job);
@@ -413,11 +474,16 @@ public class MainActivity extends Activity {
                     fresh = holder;
                 }
             } catch (Exception e) {
+                failure = e;
                 // Lo más habitual: el móvil no está en el WiFi de esa ubicación y responde otro router.
                 result = "⚠ " + e.getMessage() + "\n" + t(R.string.check_wifi, jobLoc.name);
             }
             final String msg = result;
             final List<NetDevice> list = fresh;
+            final Exception failed = failure;
+            final boolean changed = failed != null && looksChanged(failed) && store.lastOk(jobLoc) > 0
+                    && !com.makirfer.wifitimecontrol.adapters.demo.DemoAdapter.ID.equals(jobLoc.adapterId);
+            if (failed == null) store.setLastOk(jobLoc, System.currentTimeMillis());
             runOnUiThread(() -> {
                 if (isFinishing()) return;
                 if (list != null) store.rememberDevices(jobLoc, list, System.currentTimeMillis());
@@ -428,11 +494,39 @@ public class MainActivity extends Activity {
                 }
                 setBusy(false, msg);
                 renderList();
-                if (msg != null && msg.startsWith("⚠")) {
+                if (changed) {
+                    routerChanged(jobLoc, failed);
+                } else if (msg != null && msg.startsWith("⚠")) {
                     Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
                 }
             });
         });
+    }
+
+    /**
+     * ¿El router ha respondido, pero no como antes? (Si no responde, lo normal es que el móvil no
+     * esté en casa: eso no es un cambio del router.)
+     */
+    private static boolean looksChanged(Throwable e) {
+        for (Throwable c = e; c != null; c = c.getCause()) {
+            if (c instanceof java.io.IOException) return false;
+        }
+        String m = String.valueOf(e.getMessage());
+        return !m.contains("no permite") && !m.contains("se ha reintentado") && !m.contains("bloqueado el acceso");
+    }
+
+    /** Aviso claro cuando una receta que funcionaba deja de hacerlo. */
+    private void routerChanged(final Location l, final Exception e) {
+        final String router = adapterName(AdapterRegistry.get(l.adapterId));
+        new AlertDialog.Builder(this)
+                .setTitle(t(R.string.changed_title))
+                .setMessage(t(R.string.changed_msg, String.valueOf(e.getMessage())))
+                .setPositiveButton(t(R.string.send_report), (d, w) -> Feedback.send(this,
+                        t(R.string.report_subject, router),
+                        "Error: " + e.getMessage() + "\n\n" + Feedback.deviceInfo(this, router + " (" + l.adapterId + ")")))
+                .setNeutralButton(t(R.string.relearn), (d, w) -> flows.showAddRouterMenu())
+                .setNegativeButton(t(R.string.close), null)
+                .show();
     }
 
     private void refresh() {
@@ -445,6 +539,7 @@ public class MainActivity extends Activity {
             Toast.makeText(this, t(R.string.need_marked), Toast.LENGTH_LONG).show();
             return;
         }
+        if (!block) clearTimers(study);
         runJob(block ? t(R.string.cutting_marked) : t(R.string.restoring), true, ops -> {
             int n = 0;
             List<String> errors = new ArrayList<>();
@@ -477,6 +572,7 @@ public class MainActivity extends Activity {
 
     /** Corta o devuelve Internet a varios aparatos (lo usan los horarios al guardarlos). */
     private void applyMacs(final Set<String> macs, final boolean block) {
+        if (!block) clearTimers(macs);
         final List<NetDevice> knownList = new ArrayList<>(devices);
         runJob(block ? t(R.string.cutting_marked) : t(R.string.restoring), true, ops -> {
             java.util.Map<String, NetDevice> byMac = new java.util.HashMap<>();
@@ -494,6 +590,7 @@ public class MainActivity extends Activity {
     }
 
     private void toggleDevice(NetDevice target, boolean block) {
+        if (!block) clearTimers(java.util.Collections.singleton(target.mac));
         runJob(t(block ? R.string.cutting_one : R.string.restoring_one, displayName(target)), true, ops -> {
             NetDevice d = ops.buscar(target.mac);
             // Si ya no aparece en la lista, se intenta igualmente con los datos que teníamos.
@@ -501,6 +598,54 @@ public class MainActivity extends Activity {
             if (block) ops.bloquearDispositivo(d); else ops.desbloquearDispositivo(d);
             return t(block ? R.string.result_off : R.string.result_on, displayName(d), nowText());
         });
+    }
+
+    // ------------------------------------------------------------------ pausa con temporizador
+
+    private void clearTimers(Set<String> macs) {
+        store.clearTimers(loc, macs);
+        final android.content.Context app = getApplicationContext();
+        worker.execute(() -> HorarioRunner.reprogram(app));
+    }
+
+    /**
+     * «¿Cuánto tiempo?» y pausa: el grupo ({@code d} null) o un aparato. Internet vuelve sola a la
+     * hora elegida (la devuelve el móvil, igual que los horarios).
+     */
+    private void askTimer(final NetDevice d) {
+        final Set<String> macs = d == null ? store.studySet(loc) : java.util.Collections.singleton(d.mac);
+        if (macs.isEmpty()) {
+            Toast.makeText(this, t(R.string.need_marked), Toast.LENGTH_LONG).show();
+            return;
+        }
+        final int[] minutes = {15, 30, 60, 120, -1};
+        String[] items = {t(R.string.timer_15), t(R.string.timer_30), t(R.string.timer_60), t(R.string.timer_120),
+                t(R.string.timer_tomorrow)};
+        new AlertDialog.Builder(this)
+                .setTitle(d == null ? t(R.string.timer_title_group) : t(R.string.timer_title_one, displayName(d)))
+                .setItems(items, (dlg, w) -> {
+                    long at;
+                    if (minutes[w] > 0) {
+                        at = System.currentTimeMillis() + minutes[w] * 60_000L;
+                    } else {
+                        java.time.LocalDateTime t8 = java.time.LocalDate.now().plusDays(1).atTime(8, 0);
+                        at = t8.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+                    }
+                    final Set<String> fixed = new java.util.HashSet<>(macs);
+                    store.setTimer(loc, fixed, at);
+                    final android.content.Context app = getApplicationContext();
+                    worker.execute(() -> HorarioRunner.reprogram(app));
+                    if (!HorarioRunner.exactAllowed(this)) Toast.makeText(this, t(R.string.timer_inexact), Toast.LENGTH_LONG).show();
+                    if (d == null) applyStudy(true); else toggleDevice(d, true);
+                })
+                .setNegativeButton(t(R.string.cancel), null)
+                .show();
+    }
+
+    private String hhmm(long ms) {
+        java.text.SimpleDateFormat f = new java.text.SimpleDateFormat(
+                ms - System.currentTimeMillis() > 20 * 3600_000L ? "EEE HH:mm" : "HH:mm", java.util.Locale.getDefault());
+        return f.format(new java.util.Date(ms));
     }
 
     /** Lista del router + los recordados que el router ya no muestra. */
@@ -575,14 +720,16 @@ public class MainActivity extends Activity {
         texts.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 
         TextView name = new TextView(this);
-        name.setText((marked ? "⏸ " : "") + displayName(d));
+        name.setText(DeviceType.icon(typeOf(d)) + "  " + (marked ? "⏸ " : "") + displayName(d));
         name.setTextSize(17);
         name.setTypeface(Typeface.DEFAULT_BOLD);
         name.setTextColor(C_TEXT);
         texts.addView(name);
 
         TextView sub = new TextView(this);
-        String host = alias(d).isEmpty() ? "" : d.hostName + " · ";
+        String host = (alias(d).isEmpty() || d.hostName.isEmpty() ? "" : d.hostName + " · ");
+        String brand = brandText(d);
+        if (!brand.isEmpty()) host += brand + " · ";
         if (isPresent(d)) {
             sub.setText(host + d.ip + " · " + t(d.active ? R.string.connected : R.string.not_connected));
         } else {
@@ -607,6 +754,10 @@ public class MainActivity extends Activity {
         if (!isPresent(d) && d.access != AccessState.UNKNOWN) {
             state.setText(t(R.string.last_state, state.getText()));
             state.setAlpha(0.7f);
+        }
+        Long back = store.timers(loc).get(d.mac);
+        if (back != null && canSwitch) {
+            state.setText(state.getText() + "  ·  " + t(R.string.timer_back, hhmm(back)));
         }
         state.setTextSize(14);
         state.setTypeface(Typeface.DEFAULT_BOLD);
@@ -680,6 +831,30 @@ public class MainActivity extends Activity {
         name.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         box.addView(name);
 
+        final String[] chosenType = {store.deviceType(loc, d.mac)};
+        final Button typeBtn = new Button(this);
+        typeBtn.setAllCaps(false);
+        final Runnable showType = () -> {
+            String ty = chosenType[0].isEmpty() ? autoType(d) : chosenType[0];
+            typeBtn.setText(DeviceType.icon(ty) + "  " + (chosenType[0].isEmpty()
+                    ? t(R.string.type_probable, typeName(ty)) : typeName(ty)) + "  ▾");
+        };
+        showType.run();
+        typeBtn.setOnClickListener(v -> {
+            String[] items = new String[DeviceType.ALL.length + 1];
+            items[0] = t(R.string.type_auto);
+            for (int i = 0; i < DeviceType.ALL.length; i++) {
+                items[i + 1] = DeviceType.icon(DeviceType.ALL[i]) + "  " + typeName(DeviceType.ALL[i]);
+            }
+            new AlertDialog.Builder(this).setTitle(t(R.string.type_title))
+                    .setItems(items, (dlg, w) -> {
+                        chosenType[0] = w == 0 ? "" : DeviceType.ALL[w - 1];
+                        showType.run();
+                    }).show();
+        });
+        box.addView(label(t(R.string.type_title)));
+        box.addView(typeBtn);
+
         final CheckBox study = new CheckBox(this);
         String g = store.groupName(loc);
         study.setText(g.isEmpty() ? t(R.string.include_pause) : t(R.string.include_pause_named, g));
@@ -691,11 +866,24 @@ public class MainActivity extends Activity {
         notify.setChecked(store.notifySet(loc).contains(d.mac));
         box.addView(notify);
 
+        final AlertDialog[] self = new AlertDialog[1];
+        if (canSwitch()) {
+            Button timer = new Button(this);
+            timer.setAllCaps(false);
+            timer.setText(t(R.string.timer_one_button));
+            timer.setOnClickListener(v -> {
+                if (self[0] != null) self[0].dismiss();
+                askTimer(d);
+            });
+            box.addView(timer);
+        }
+
         AlertDialog.Builder b = new AlertDialog.Builder(this)
                 .setTitle(t(R.string.device))
                 .setView(box)
                 .setPositiveButton(t(R.string.save), (dialog, which) -> {
                     store.saveDevice(loc, d.mac, name.getText().toString().trim(), study.isChecked());
+                    store.setDeviceType(loc, d.mac, chosenType[0]);
                     boolean wasOn = store.notifySet(loc).contains(d.mac);
                     store.setNotify(loc, d.mac, notify.isChecked());
                     if (notify.isChecked() != wasOn) {
@@ -719,7 +907,7 @@ public class MainActivity extends Activity {
                 renderList();
             });
         }
-        b.show();
+        self[0] = b.show();
     }
 
     /** Android 13+ pide permiso para enseñar notificaciones. */
@@ -869,6 +1057,12 @@ public class MainActivity extends Activity {
         notifyNew.setChecked(store.notifyNew(editing));
         box.addView(notifyNew);
 
+        Button feedback = new Button(this);
+        feedback.setAllCaps(false);
+        feedback.setText(t(R.string.feedback_button));
+        feedback.setOnClickListener(v -> askFeedback(adapterName(AdapterRegistry.get(editing.adapterId))));
+        box.addView(feedback);
+
         AlertDialog.Builder b = new AlertDialog.Builder(this)
                 .setTitle(firstTime ? t(R.string.setup_router) : t(R.string.settings_of, editing.name))
                 .setView(box)
@@ -908,6 +1102,28 @@ public class MainActivity extends Activity {
         }
         b.setCancelable(!firstTime);
         settingsDlg[0] = b.show();
+    }
+
+    /** «Enviar comentario»: texto libre + versión de la app, móvil y router (nada más). */
+    private void askFeedback(final String router) {
+        LinearLayout box = dialogBox();
+        TextView info = new TextView(this);
+        info.setText(t(R.string.feedback_info));
+        info.setTextColor(C_MUTED);
+        box.addView(info);
+        final EditText text = new EditText(this);
+        text.setHint(t(R.string.feedback_hint));
+        text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        text.setMinLines(4);
+        text.setGravity(Gravity.TOP | Gravity.START);
+        box.addView(text);
+        new AlertDialog.Builder(this)
+                .setTitle(t(R.string.feedback_title))
+                .setView(box)
+                .setPositiveButton(t(R.string.feedback_send), (d, w) -> Feedback.send(this, t(R.string.feedback_subject),
+                        text.getText().toString().trim() + "\n\n— " + Feedback.deviceInfo(this, router)))
+                .setNegativeButton(t(R.string.cancel), null)
+                .show();
     }
 
     private void confirmDelete(final Location l) {

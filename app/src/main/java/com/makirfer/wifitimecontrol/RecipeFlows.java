@@ -604,7 +604,10 @@ final class RecipeFlows {
                 } else if (rep.readOk) {
                     b.setPositiveButton(t(R.string.install), (d, w) -> finishInstall(ad, rep, imported));
                 }
-                if (!rep.readOk) b.setNeutralButton(t(R.string.copy_report), (d, w) -> copy(reportForAi(rep)));
+                if (!rep.readOk) {
+                    b.setNeutralButton(t(R.string.copy_report), (d, w) -> copy(reportForAi(rep)));
+                    b.setPositiveButton(t(R.string.send_report), (d, w) -> sendReport(ad, rep));
+                }
                 b.setNegativeButton(t(rep.readOk ? R.string.cancel : R.string.close), null).show();
             });
         });
@@ -635,6 +638,7 @@ final class RecipeFlows {
                                 b.setPositiveButton(t(R.string.install_and_use), (x, y) -> finishInstall(ad, rep, imported));
                             } else {
                                 b.setNeutralButton(t(R.string.copy_report), (x, y) -> copy(reportForAi(rep)));
+                                b.setPositiveButton(t(R.string.send_report), (x, y) -> sendReport(ad, rep));
                             }
                             b.setNegativeButton(t(R.string.close), null).show();
                         });
@@ -703,6 +707,13 @@ final class RecipeFlows {
     }
 
     // ================================================================== utilidades
+
+    /** Manda el informe de la prueba (sin contraseñas) por WhatsApp, correo… con un toque. */
+    private void sendReport(RecipeAdapter ad, RecipeTester.Report rep) {
+        Recipe r = ad.recipe();
+        Feedback.send(a, t(R.string.report_subject, r.displayName()),
+                reportForAi(rep) + "\n\nReceta: " + r.id() + " " + r.version() + "\n" + Feedback.deviceInfo(a, r.displayName()));
+    }
 
     private String reportForAi(RecipeTester.Report rep) {
         return "La receta ha fallado al probarla en WiFi Time Control. Corrígela con este informe:\n" + rep.text();

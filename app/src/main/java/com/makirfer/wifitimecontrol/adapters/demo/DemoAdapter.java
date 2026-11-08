@@ -25,12 +25,12 @@ public final class DemoAdapter implements RouterAdapter {
     public static final String ID = "demo";
 
     private static final String[][] DEVICES = {
-            {"02:00:00:00:10:01", "Consola", "192.168.1.20", "1"},
-            {"02:00:00:00:10:02", "Tablet", "192.168.1.21", "1"},
-            {"02:00:00:00:10:03", "Portatil-cole", "192.168.1.22", "1"},
-            {"02:00:00:00:10:04", "Smart-TV", "192.168.1.23", "1"},
+            {"00:09:bf:00:10:01", "Consola", "192.168.1.20", "1"},
+            {"00:00:f0:00:10:02", "Tablet", "192.168.1.21", "1"},
+            {"00:12:fe:00:10:03", "Portatil-cole", "192.168.1.22", "1"},
+            {"00:05:c9:00:10:04", "Smart-TV", "192.168.1.23", "1"},
             {"02:00:00:00:10:05", "Movil-Ana", "192.168.1.24", "1"},
-            {"02:00:00:00:10:06", "Altavoz", "192.168.1.25", "0"},
+            {"00:71:47:00:10:06", "Altavoz", "192.168.1.25", "0"},
     };
     /** Estado simulado (mientras la app esté abierta). */
     private static final Map<String, Boolean> BLOCKED = new LinkedHashMap<>();

@@ -12,6 +12,9 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
@@ -19,10 +22,12 @@ import com.makirfer.wifitimecontrol.core.learn.Pegatina;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Lee la pegatina del router con una foto. El texto se reconoce en el propio móvil (ML Kit,
- * sin conexión) y la foto no se envía a ningún sitio; se borra al terminar.
+ * Lee la pegatina del router con una foto. El texto y los códigos QR se reconocen en el propio
+ * móvil (ML Kit, sin conexión) y la foto no se envía a ningún sitio; se borra al terminar.
  * Uso: {@link #scan} y reenviar {@link #onActivityResult} desde la actividad.
  */
 final class PegatinaScanner {
@@ -85,12 +90,28 @@ final class PegatinaScanner {
             if (bmp == null) throw new Exception("imagen vacía");
             final AlertDialog wait = new AlertDialog.Builder(a).setMessage(a.getString(R.string.photo_reading))
                     .setCancelable(false).show();
+            final InputImage img = InputImage.fromBitmap(bmp, 0);
             TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-                    .process(InputImage.fromBitmap(bmp, 0))
+                    .process(img)
                     .addOnSuccessListener(text -> {
-                        wait.dismiss();
-                        cleanup();
-                        review(text.getText(), cb);
+                        // Después, los códigos QR de la misma foto (si falla, se sigue solo con el texto).
+                        final String raw = text.getText();
+                        BarcodeScanning.getClient(new BarcodeScannerOptions.Builder()
+                                        .setBarcodeFormats(Barcode.FORMAT_QR_CODE, Barcode.FORMAT_DATA_MATRIX, Barcode.FORMAT_AZTEC)
+                                        .build())
+                                .process(img)
+                                .addOnSuccessListener(codes -> {
+                                    List<String> values = new ArrayList<>();
+                                    for (Barcode b : codes) if (b.getRawValue() != null) values.add(b.getRawValue());
+                                    wait.dismiss();
+                                    cleanup();
+                                    review(raw, values, cb);
+                                })
+                                .addOnFailureListener(e -> {
+                                    wait.dismiss();
+                                    cleanup();
+                                    review(raw, new ArrayList<>(), cb);
+                                });
                     })
                     .addOnFailureListener(e -> {
                         wait.dismiss();
@@ -106,11 +127,11 @@ final class PegatinaScanner {
     }
 
     /**
-     * Enseña lo leído antes de usarlo. «Copiar lo que se ha leído» copia el texto reconocido, con la
-     * contraseña tapada, para poder mandarlo y mejorar la lectura de ese tipo de pegatina.
+     * Enseña lo leído antes de usarlo. «Copiar lo que se ha leído» copia el texto reconocido, con las
+     * contraseñas tapadas, para poder mandarlo y mejorar la lectura de ese tipo de pegatina.
      */
-    private void review(String raw, Callback cb) {
-        Pegatina p = Pegatina.parse(raw);
+    private void review(String raw, List<String> codes, Callback cb) {
+        Pegatina p = Pegatina.parse(raw, codes);
         StringBuilder sb = new StringBuilder();
         line(sb, R.string.photo_vendor, p.vendor);
         line(sb, R.string.photo_model, p.model);
@@ -118,8 +139,17 @@ final class PegatinaScanner {
         line(sb, R.string.label_host, p.host);
         line(sb, R.string.label_user, p.user);
         line(sb, R.string.password, p.password);
+        if (!p.wifiName.isEmpty() || !p.wifiKey.isEmpty()) {
+            sb.append("\n").append(a.getString(R.string.photo_qr_wifi)).append("\n");
+            line(sb, R.string.photo_wifi_name, p.wifiName);
+            line(sb, R.string.photo_wifi_key, p.wifiKey);
+        } else if (!p.qrOther.isEmpty()) {
+            sb.append("\n").append(a.getString(R.string.photo_qr_other, p.qrOther)).append("\n");
+        }
         sb.append("\n").append(a.getString(p.isEmpty() ? R.string.photo_nothing : R.string.photo_check));
-        String masked = p.password.isEmpty() ? raw : raw.replace(p.password, "«CONTRASEÑA»");
+        StringBuilder all = new StringBuilder(raw);
+        for (String c : codes) all.append("\n[QR] ").append(c);
+        String masked = mask(mask(all.toString(), p.password, "«CONTRASEÑA»"), p.wifiKey, "«CLAVE WIFI»");
         AlertDialog.Builder b = new AlertDialog.Builder(a)
                 .setTitle(a.getString(R.string.photo_title))
                 .setMessage(sb.toString().trim())
@@ -132,6 +162,10 @@ final class PegatinaScanner {
                 .setNegativeButton(a.getString(R.string.cancel), null);
         if (!p.isEmpty()) b.setPositiveButton(a.getString(R.string.photo_use), (d, w) -> cb.onRead(p));
         b.show();
+    }
+
+    private static String mask(String text, String secret, String with) {
+        return secret == null || secret.isEmpty() ? text : text.replace(secret, with);
     }
 
     private void line(StringBuilder sb, int label, String value) {

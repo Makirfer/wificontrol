@@ -9,12 +9,16 @@ import java.util.regex.Pattern;
 /**
  * Saca los datos útiles del texto leído en la pegatina de un router (foto + reconocimiento de
  * texto en el móvil): marca, modelo, compañía, dirección, usuario y contraseña de acceso.
- * La clave del WiFi se ignora a propósito: no es la de entrar en el router.
+ * La clave del WiFi no es la de entrar en el router: se aparta. Si la pegatina tiene un código QR
+ * con los datos del WiFi (formato estándar «WIFI:S:…;P:…;;»), se leen letra por letra y además
+ * sirven para no confundir esa clave con la contraseña del router.
  * No depende de Android, así que se prueba en el ordenador.
  */
 public final class Pegatina {
 
     public String vendor = "", model = "", isp = "", host = "", user = "", password = "";
+    /** Datos del WiFi leídos del código QR (exactos) y el texto de otros códigos QR, si los hay. */
+    public String wifiName = "", wifiKey = "", qrOther = "";
 
     private static final String[] VENDORS = {
             "ZTE", "Askey", "MitraStar", "Mitrastar", "Sagemcom", "Huawei", "TP-Link", "TP-LINK", "Arcadyan",
@@ -41,7 +45,80 @@ public final class Pegatina {
     private static final Pattern HOSTNAME = Pattern.compile("(?i)\\bhttps?://([a-z][a-z0-9.\\-]{2,40})\\b");
     private static final Pattern MODEL_CODE = Pattern.compile("\\b([A-Z]{1,6}[- ]?[0-9]{3,5}[A-Z0-9\\-]{0,8})\\b");
 
-    public static Pegatina parse(String text) {
+    public static Pegatina parse(String text) { return parse(text, null); }
+
+    /** Texto reconocido en la foto más el contenido de los códigos QR que había en ella. */
+    public static Pegatina parse(String text, List<String> codes) {
+        String ssid = "", key = "";
+        List<String> other = new ArrayList<>();
+        if (codes != null) {
+            for (String c : codes) {
+                if (c == null || c.trim().isEmpty()) continue;
+                String[] w = wifiQr(c.trim());
+                if (w != null && ssid.isEmpty() && key.isEmpty()) { ssid = w[0]; key = w[1]; }
+                else if (w == null) other.add(c.trim());
+            }
+        }
+        Pegatina p = parseText(text, key);
+        p.wifiName = ssid;
+        p.wifiKey = key;
+        for (String o : other) {
+            if (p.host.isEmpty()) {
+                Matcher ip = IP.matcher(o);
+                if (ip.find()) p.host = ip.group(1);
+            }
+            if (p.isp.isEmpty()) p.isp = ispIn(o.toLowerCase(Locale.ROOT));
+            if (p.qrOther.isEmpty()) p.qrOther = o.length() > 200 ? o.substring(0, 200) : o;
+        }
+        return p;
+    }
+
+    /**
+     * Código QR de WiFi: «WIFI:T:WPA;S:MiRed;P:clave;;» (los campos van en cualquier orden y
+     * «\;», «\:», «\,» y «\\» son caracteres escapados). Devuelve {red, clave} o null.
+     */
+    static String[] wifiQr(String code) {
+        if (!code.regionMatches(true, 0, "WIFI:", 0, 5)) return null;
+        String ssid = "", pass = "";
+        StringBuilder field = new StringBuilder();
+        String body = code.substring(5);
+        for (int i = 0; i <= body.length(); i++) {
+            char ch = i < body.length() ? body.charAt(i) : ';';
+            if (ch == '\\' && i + 1 < body.length()) { field.append(body.charAt(++i)); continue; }
+            if (ch != ';') { field.append(ch); continue; }
+            String f = field.toString();
+            field.setLength(0);
+            int c = f.indexOf(':');
+            if (c <= 0) continue;
+            String k = f.substring(0, c).trim().toUpperCase(Locale.ROOT), v = unquote(f.substring(c + 1));
+            if (k.equals("S")) ssid = v;
+            else if (k.equals("P")) pass = v;
+        }
+        return ssid.isEmpty() && pass.isEmpty() ? null : new String[]{ssid, pass};
+    }
+
+    private static String unquote(String v) {
+        return v.length() >= 2 && v.startsWith("\"") && v.endsWith("\"") ? v.substring(1, v.length() - 1) : v;
+    }
+
+    private static String ispIn(String low) {
+        for (String[] i : ISPS) {
+            if (Pattern.compile("(?i)(?<![a-z])" + Pattern.quote(i[0]) + "(?![a-z])").matcher(low).find()) return i[1];
+        }
+        return "";
+    }
+
+    /** ¿Es la misma clave, aunque la lectura haya confundido 0/O o 1/l/I? */
+    static boolean sameKey(String a, String b) {
+        if (a == null || b == null || a.isEmpty() || b.isEmpty()) return false;
+        return norm(a).equals(norm(b));
+    }
+
+    private static String norm(String s) {
+        return s.trim().toUpperCase(Locale.ROOT).replace('O', '0').replace('I', '1').replace('L', '1');
+    }
+
+    private static Pegatina parseText(String text, String wifiKey) {
         Pegatina p = new Pegatina();
         if (text == null) return p;
         List<String> lines = new ArrayList<>();
@@ -55,9 +132,7 @@ public final class Pegatina {
                 break;
             }
         }
-        for (String[] i : ISPS) {
-            if (Pattern.compile("(?i)(?<![a-z])" + Pattern.quote(i[0]) + "(?![a-z])").matcher(low).find()) { p.isp = i[1]; break; }
-        }
+        p.isp = ispIn(low);
 
         String modelText = "";
         for (int k = 0; k < lines.size(); k++) {
@@ -72,12 +147,13 @@ public final class Pegatina {
             if (!isModel && !isPass && !isUser) continue;
             if (c < 0 && label.length() > 25) continue; // frase, no etiqueta
             if (val.isEmpty() && k + 1 < lines.size() && !isLabel(lines.get(k + 1))) val = lines.get(k + 1).trim();
+            if (isPass && sameKey(firstToken(val), wifiKey)) val = ""; // es la clave del WiFi (lo dice el QR)
             if (val.isEmpty() && isPass && !WIFI.matcher(label).find()) {
                 // «… con la contraseña:» y la clave en otro recuadro: la primera palabra con letras y números.
                 for (int j = k + 1; j < Math.min(lines.size(), k + 4) && val.isEmpty(); j++) {
                     for (String tok : lines.get(j).split("\\s+")) {
                         if (tok.matches("[A-Za-z0-9!#$%&*+.=?@_\\-]{6,24}") && tok.matches(".*[A-Za-z].*") && tok.matches(".*\\d.*")
-                                && !tok.toLowerCase(Locale.ROOT).startsWith("http")) { val = tok; break; }
+                                && !tok.toLowerCase(Locale.ROOT).startsWith("http") && !sameKey(tok, wifiKey)) { val = tok; break; }
                     }
                 }
             }
@@ -101,7 +177,7 @@ public final class Pegatina {
                 continue;
             }
             if (WIFI.matcher(label).find()) continue; // «Clave WiFi», «WPA key»…: no es la del router
-            if (isPass && p.password.isEmpty()) p.password = firstToken(val);
+            if (isPass && p.password.isEmpty() && !sameKey(firstToken(val), wifiKey)) p.password = firstToken(val);
             if (isUser && p.user.isEmpty()) p.user = firstToken(val);
         }
         Matcher ip = IP.matcher(all);
@@ -160,6 +236,7 @@ public final class Pegatina {
     }
 
     public boolean isEmpty() {
-        return vendor.isEmpty() && model.isEmpty() && isp.isEmpty() && host.isEmpty() && user.isEmpty() && password.isEmpty();
+        return vendor.isEmpty() && model.isEmpty() && isp.isEmpty() && host.isEmpty() && user.isEmpty() && password.isEmpty()
+                && wifiName.isEmpty() && wifiKey.isEmpty();
     }
 }

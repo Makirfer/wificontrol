@@ -34,7 +34,19 @@ Por fases:
   Datos en Europa (europe-west). Telegram queda como alternativa opcional.
 - Más adelante, si hay volumen: cajita propia con Raspberry Pi Zero 2 W (el motor Java se reutiliza).
 
-## Próxima versión: identificar los aparatos
+## Versión 3.3.0 (para la prueba cerrada con 12 personas)
+
+Hecho el 8 de noviembre de 2026:
+- **Leer el código QR** de la pegatina en la misma foto: red y clave del WiFi exactas, y así no se confunde la clave del WiFi con la contraseña del router.
+- **Iconos por tipo y marca** (abajo), con el tipo cambiable a mano.
+- **Pausa con temporizador**: 15 min, 30 min, 1 h, 2 h o hasta mañana a las 8; Internet vuelve sola (la devuelve el móvil, como los horarios).
+- **Enviar informe** con un botón cuando falla una receta, y aviso «¿Ha cambiado tu router?» si una receta que funcionaba deja de hacerlo.
+- **Enviar comentario** desde Ajustes (versión de la app, móvil y router; nunca contraseñas).
+- Durante la prueba todo está desbloqueado (aún no hay compras dentro de la app).
+
+Pendiente: poner el correo de la app en `Feedback.EMAIL` cuando exista.
+
+## Identificar los aparatos (hecho en 3.3.0)
 
 - **Iconos por tipo**: 📱 móvil · 💻 ordenador · 🎮 consola · 📺 tele · 🔊 altavoz · 🖨 impresora · ⌚ reloj · 📷 cámara · ❔ desconocido.
 - **Detección por el nombre** que da el router (p. ej. «iPhone», «android-…», «PS5-…», «LGwebOSTV», «DESKTOP-…»).

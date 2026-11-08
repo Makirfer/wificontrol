@@ -36,3 +36,7 @@ debe publicar también su código con la misma licencia.
 
 La licencia cubre el código y el catálogo. **No** cubre el nombre ni el logotipo de la app:
 las copias o versiones modificadas deben publicarse con otro nombre.
+
+La marca de cada aparato (`app/src/main/assets/oui.txt`) sale del registro público de fabricantes
+del IEEE, en la versión del proyecto [oui-data](https://github.com/silverwind/oui-data)
+(© silverwind, licencia BSD-2-Clause). Se regenera con `herramientas/generar_oui.py`.
