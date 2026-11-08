@@ -1,7 +1,7 @@
 import os, sys, html
 OUT = sys.argv[1]
 REPO = "https://github.com/Makirfer/wificontrol"
-CONTACT = "<a href='https://github.com/Makirfer/wificontrol/issues'>GitHub (issues)</a>"  # cambiar por el correo de la app
+CONTACT = "<a href='mailto:wifitimecontrol@gmail.com'>wifitimecontrol@gmail.com</a>"
 L = {
 "es": dict(dir="", lang="es", home="index.html", priv="privacidad.html",
   nav=("Inicio","Privacidad"), title="WiFi Time Control: pausa Internet a cada aparato",
@@ -111,7 +111,7 @@ def page(code, kind, body, title, desc):
 <header><a class="logo" href="{d["home"]}">WiFi <span>Time</span> Control</a>
 <nav><a href="{d["home"]}">{d["nav"][0]}</a><a href="{d["priv"]}">{d["nav"][1]}</a> · {langnav(code, kind)}</nav></header>
 {body}
-<footer>{d["foot"]} · <a href="{REPO}">GitHub</a> · <a href="{d["priv"]}">{d["nav"][1]}</a></footer>
+<footer>{d["foot"]} · <a href="mailto:wifitimecontrol@gmail.com">wifitimecontrol@gmail.com</a> · <a href="{REPO}">GitHub</a> · <a href="{d["priv"]}">{d["nav"][1]}</a></footer>
 </main></body></html>
 '''
 for code,d in L.items():

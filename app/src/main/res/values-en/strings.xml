@@ -333,8 +333,10 @@
     <string name="photo_filled">✓ Filled in: %1$s. Tap Save.</string>
     <string name="photo_no_router_pass">The router password isn\'t in the QR code: it\'s printed on the sticker. To read it, use «Take a photo».</string>
     <string name="label_wifi">Home WiFi (optional, to share with guests)</string>
-    <string name="demo_explain">It\'s an imaginary router with 6 sample devices (console, tablet, TV…). Use it to see how the app works without touching your router: you can pause, set schedules and timers, and nothing affects your network.\n\nTo use your real router, go back to Settings and choose its model.</string>
-    <string name="demo_banner">🎬 Demo mode: these are sample devices and your router isn\'t touched. Try everything; to use your real router, go to Settings → Router model.</string>
+    <string name="demo_explain">It\'s an imaginary router with 6 sample devices (console, tablet, TV…). Use it to see how the app works without touching your router: you can pause, set schedules and timers, and nothing affects your network.\n\nIt\'s a separate location: your home isn\'t changed. To go back, tap 📍 at the top. You can delete it in Settings when you no longer need it.</string>
+    <string name="demo_banner">🎬 Demo mode: these are sample devices and your router isn\'t touched. Try everything; to go back to your home, tap 📍 at the top.</string>
+    <string name="demo_location">🎬 Demo</string>
+    <string name="demo_open_item">🎬 Try the demo (your router isn\'t touched)</string>
     <string-array name="welcome_titles">
         <item>Welcome to WiFi Time Control</item>
         <item>Pause Internet for whoever you want</item>

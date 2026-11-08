@@ -11,8 +11,8 @@ import android.os.Build;
  */
 final class Feedback {
 
-    /** Correo de la app. Mientras esté vacío, el usuario elige a quién mandarlo. */
-    static final String EMAIL = "";
+    /** Correo de la app: el de correo se abre ya dirigido aquí (también se puede elegir WhatsApp, etc.). */
+    static final String EMAIL = "wifitimecontrol@gmail.com";
 
     private Feedback() { }
 

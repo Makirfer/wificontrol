@@ -14,7 +14,7 @@ actualizaciones después de publicar.
 | Precio | App **gratis** en Google Play con **compra dentro de la app** (pago único 1,99–2,99 €). Gratis: ver todos los aparatos y cortar uno a uno. De pago: pausa del grupo, horarios, varias ubicaciones. |
 | Remoto | Más adelante, como **suscripción** (1,99 €/mes; ver «Precios»): puente en un servidor + «agente» en casa (Android viejo, Android TV o una cajita propia), con órdenes cifradas de punta a punta. |
 | Idiomas | Castellano, catalán e inglés; preparada para añadir más con un archivo por idioma (`docs/TRADUCIR.md`). |
-| Web y privacidad | GitHub Pages en `docs/` (es/ca/en). Correo de contacto: uno propio de la app (pendiente de crear). |
+| Web y privacidad | GitHub Pages en `docs/` (es/ca/en). Correo de contacto: **wifitimecontrol@gmail.com** (cuenta de Google del proyecto: Play Console, Firebase y comentarios). |
 | Material de la tienda | Textos, capturas y vídeo con el **modo demostración** (`docs/TIENDA.md`). |
 | Orden | 1) conocidos con otros routers (APK a mano) → 2) cuenta de Play Console y prueba cerrada (12 personas, 14 días) → 3) compra dentro de la app. |
 
@@ -44,7 +44,7 @@ Hecho el 8 de noviembre de 2026:
 - **Enviar comentario** desde Ajustes (versión de la app, móvil y router; nunca contraseñas).
 - Durante la prueba todo está desbloqueado (aún no hay compras dentro de la app).
 
-Pendiente: poner el correo de la app en `Feedback.EMAIL` cuando exista.
+Correo de la app puesto en «Enviar comentario» e «Enviar informe» (3.3.3). El modo demostración es una ubicación aparte, «🎬 Demostración».
 
 ## Identificar los aparatos (hecho en 3.3.0)
 

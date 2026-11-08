@@ -333,8 +333,10 @@
     <string name="photo_filled">✓ Posat: %1$s. Toca Desa.</string>
     <string name="photo_no_router_pass">La contrasenya del router no és al QR: és impresa a l\'adhesiu. Per llegir-la, fes servir «Fes una foto».</string>
     <string name="label_wifi">WiFi de casa (opcional, per compartir-lo amb les visites)</string>
-    <string name="demo_explain">És un router imaginari amb 6 aparells d\'exemple (consola, tauleta, tele…). Serveix per veure com funciona l\'app sense tocar el teu router: pots pausar, posar horaris i temporitzadors, i res afecta la teva xarxa.\n\nPer fer servir el teu router de veritat, torna a Configuració i tria\'n el model.</string>
-    <string name="demo_banner">🎬 Mode demostració: són aparells d\'exemple i no es toca el teu router. Prova-ho tot; per fer servir el teu router de veritat, ves a Configuració → Model de router.</string>
+    <string name="demo_explain">És un router imaginari amb 6 aparells d\'exemple (consola, tauleta, tele…). Serveix per veure com funciona l\'app sense tocar el teu router: pots pausar, posar horaris i temporitzadors, i res afecta la teva xarxa.\n\nÉs una ubicació a part: casa teva no canvia. Per tornar-hi, toca 📍 a dalt. La pots esborrar a Configuració quan ja no la vulguis.</string>
+    <string name="demo_banner">🎬 Mode demostració: són aparells d\'exemple i no es toca el teu router. Prova-ho tot; per tornar a casa teva, toca 📍 a dalt.</string>
+    <string name="demo_location">🎬 Demostració</string>
+    <string name="demo_open_item">🎬 Mira la demostració (sense tocar el teu router)</string>
     <string-array name="welcome_titles">
         <item>Benvingut a WiFi Time Control</item>
         <item>Pausa Internet a qui vulguis</item>

@@ -135,6 +135,7 @@ public class MainActivity extends Activity {
         worker.execute(() -> { HorarioRunner.reprogram(app); AvisoJob.reprogram(app); });
         buildUi();
         lock = new AppLock(this);
+        cleanDemoLeftovers();
         loc = store.current();
         if (loc == null) {
             loc = store.create(t(R.string.loc_default));
@@ -388,6 +389,53 @@ public class MainActivity extends Activity {
     // ------------------------------------------------------------------ datos
 
     private RouterAdapter adapter() { return AdapterRegistry.get(loc.adapterId); }
+
+    /** Abre (o crea) la ubicación «🎬 Demostración», con el router imaginario. */
+    private void openDemo() {
+        Location demo = null;
+        for (Location l : store.all()) if (isDemo(l.adapterId)) { demo = l; break; }
+        if (demo == null) {
+            demo = store.create(t(R.string.demo_location));
+            demo.adapterId = com.makirfer.wifitimecontrol.adapters.demo.DemoAdapter.ID;
+            demo.host = "demo";
+            demo.user = "demo";
+            try {
+                store.save(demo, "demo");
+            } catch (Exception ignored) {
+                // la contraseña de la demo no importa
+            }
+        }
+        switchTo(demo);
+        refresh();
+        new AlertDialog.Builder(this).setTitle(t(R.string.demo_location))
+                .setMessage(t(R.string.demo_explain)).setPositiveButton(t(R.string.ok), null).show();
+    }
+
+    /**
+     * Antes la demostración se hacía en la misma ubicación que el router de verdad y sus aparatos
+     * de ejemplo se quedaban en la lista. Se quitan una vez (aparatos, horarios, avisos…).
+     */
+    private void cleanDemoLeftovers() {
+        android.content.SharedPreferences prefs = getSharedPreferences("bienvenida", MODE_PRIVATE);
+        if (prefs.getBoolean("demo_limpia", false)) return;
+        for (Location l : store.all()) {
+            if (isDemo(l.adapterId)) continue;
+            Set<String> gone = new java.util.HashSet<>();
+            for (NetDevice d : store.knownDevices(l)) {
+                if (com.makirfer.wifitimecontrol.adapters.demo.DemoAdapter.isDemoMac(d.mac)) gone.add(d.mac);
+            }
+            if (gone.isEmpty()) continue;
+            for (String mac : gone) {
+                store.forgetDevice(l, mac);
+                store.setNotify(l, mac, false);
+            }
+            for (com.makirfer.wifitimecontrol.core.Horario h : store.schedules(l)) {
+                if (!h.macs.removeAll(gone)) continue;
+                if (h.macs.isEmpty()) store.deleteSchedule(l, h.id); else store.saveSchedule(l, h);
+            }
+        }
+        prefs.edit().putBoolean("demo_limpia", true).apply();
+    }
 
     private static boolean isDemo(String adapterId) {
         return com.makirfer.wifitimecontrol.adapters.demo.DemoAdapter.ID.equals(adapterId);
@@ -942,19 +990,25 @@ public class MainActivity extends Activity {
     /** Elegir ubicación (casa, segunda residencia…) o crear una nueva. */
     private void chooseLocation() {
         final List<Location> all = store.all();
-        String[] items = new String[all.size() + 1];
+        boolean hasDemo = false;
+        for (Location l : all) if (isDemo(l.adapterId)) hasDemo = true;
+        final int demoItem = hasDemo ? -1 : all.size() + 1;
+        String[] items = new String[all.size() + (hasDemo ? 1 : 2)];
         int checked = 0;
         for (int i = 0; i < all.size(); i++) {
             items[i] = all.get(i).name;
             if (all.get(i).id.equals(loc.id)) checked = i;
         }
         items[all.size()] = t(R.string.new_location_item);
+        if (!hasDemo) items[demoItem] = t(R.string.demo_open_item);
         new AlertDialog.Builder(this)
                 .setTitle(t(R.string.location))
                 .setSingleChoiceItems(items, checked, (dialog, which) -> {
                     dialog.dismiss();
                     if (which == all.size()) {
                         askNewLocation();
+                    } else if (which == demoItem) {
+                        openDemo();
                     } else {
                         switchTo(all.get(which));
                         if (store.hasPassword(loc)) refresh(); else showSettings(true);
@@ -1020,12 +1074,14 @@ public class MainActivity extends Activity {
                             flows.showAddRouterMenu();
                             return;
                         }
+                        if (isDemo(adapters.get(which).id()) && !isDemo(editing.adapterId)) {
+                            // La demostración va en su propia ubicación: no se mezcla con la de verdad.
+                            if (settingsDlg[0] != null) settingsDlg[0].dismiss();
+                            openDemo();
+                            return;
+                        }
                         editing.adapterId = adapters.get(which).id();
                         model.setText(names[which] + "  ▾");
-                        if (isDemo(editing.adapterId)) {
-                            new AlertDialog.Builder(this).setTitle(t(R.string.demo_name))
-                                    .setMessage(t(R.string.demo_explain)).setPositiveButton(t(R.string.ok), null).show();
-                        }
                     }).show();
         });
         box.addView(model);

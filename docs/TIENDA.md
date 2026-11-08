@@ -1,5 +1,11 @@
 # Ficha de Google Play y material gráfico
 
+## Datos de contacto (Play Console → Ficha de la tienda)
+
+- **Correo:** wifitimecontrol@gmail.com
+- **Sitio web:** https://makirfer.github.io/wificontrol/
+- **Política de privacidad:** https://makirfer.github.io/wificontrol/privacidad.html
+
 ## Textos de la ficha
 
 ### Castellano (es-ES)

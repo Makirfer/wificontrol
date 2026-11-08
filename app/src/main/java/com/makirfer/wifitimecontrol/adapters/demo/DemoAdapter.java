@@ -32,6 +32,18 @@ public final class DemoAdapter implements RouterAdapter {
             {"02:00:00:00:10:05", "Movil-Ana", "192.168.1.24", "1"},
             {"00:71:47:00:10:06", "Altavoz", "192.168.1.25", "0"},
     };
+    /**
+     * ¿Es uno de los aparatos de ejemplo? (También los de versiones anteriores, que usaban
+     * 02:00:00:00:10:xx, para poder limpiarlos de las ubicaciones con router de verdad.)
+     */
+    public static boolean isDemoMac(String mac) {
+        if (mac == null) return false;
+        String m = mac.toLowerCase(java.util.Locale.ROOT);
+        if (m.startsWith("02:00:00:00:10:")) return true;
+        for (String[] d : DEVICES) if (d[0].equals(m)) return true;
+        return false;
+    }
+
     /** Estado simulado (mientras la app esté abierta). */
     private static final Map<String, Boolean> BLOCKED = new LinkedHashMap<>();
 
